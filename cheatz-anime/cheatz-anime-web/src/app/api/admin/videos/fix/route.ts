@@ -1,9 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { apiClient } from '@/lib/api'
 import { findAlternativeSource } from '@/services/videoSourceFinder'
-import { videoHealthStore } from '@/services/videoHealthService'
+import { updateEntry } from '@/services/videoHealthService'
+
+// ── Auth Helper ──────────────────────────────────────────────────────────────
+function getAuthHeader(request: NextRequest): string | null {
+  return request.headers.get('Authorization')
+}
+
+function unauthorizedResponse() {
+  return NextResponse.json(
+    { error: 'Unauthorized - Admin access required' },
+    { status: 401 }
+  )
+}
 
 export async function POST(request: NextRequest) {
+  const authHeader = getAuthHeader(request)
+  if (!authHeader) {
+    return unauthorizedResponse()
+  }
+
   try {
     const body = await request.json()
     const { episodeId, animeSlug, episodeNumber } = body
@@ -25,22 +42,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Update episode in backend
+    // Update episode in backend with auth header
     try {
-      await apiClient.put(`/admin/episodes/${episodeId}`, {
-        playback_url: foundUrl,
-      })
+      await apiClient.put(`/admin/episodes/${episodeId}`, 
+        { playback_url: foundUrl },
+        { headers: { Authorization: authHeader } }
+      )
 
       // Update store
-      const entry = videoHealthStore.get(episodeId)
-      if (entry) {
-        entry.status = 'fixed'
-        entry.fixedUrl = foundUrl
-        entry.currentUrl = foundUrl
-        entry.errorDetail = null
-        entry.checkedAt = new Date().toISOString()
-        videoHealthStore.set(episodeId, entry)
-      }
+      updateEntry(episodeId, {
+        status: 'fixed',
+        fixedUrl: foundUrl,
+        currentUrl: foundUrl,
+        errorDetail: null,
+        checkedAt: new Date().toISOString(),
+      })
 
       return NextResponse.json({ fixed: true, url: foundUrl })
     } catch (err) {

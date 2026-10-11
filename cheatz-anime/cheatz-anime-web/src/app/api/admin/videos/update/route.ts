@@ -1,8 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { apiClient } from '@/lib/api'
-import { checkVideoUrl, videoHealthStore } from '@/services/videoHealthService'
+import { checkVideoUrl, updateEntry } from '@/services/videoHealthService'
+
+// ── Auth Helper ──────────────────────────────────────────────────────────────
+function getAuthHeader(request: NextRequest): string | null {
+  return request.headers.get('Authorization')
+}
+
+function unauthorizedResponse() {
+  return NextResponse.json(
+    { error: 'Unauthorized - Admin access required' },
+    { status: 401 }
+  )
+}
 
 export async function POST(request: NextRequest) {
+  const authHeader = getAuthHeader(request)
+  if (!authHeader) {
+    return unauthorizedResponse()
+  }
+
   try {
     const body = await request.json()
     const { episodeId, newUrl } = body
@@ -24,21 +41,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Update episode in backend
+    // Update episode in backend with auth header
     try {
-      await apiClient.put(`/admin/episodes/${episodeId}`, {
-        playback_url: newUrl,
-      })
+      await apiClient.put(`/admin/episodes/${episodeId}`, 
+        { playback_url: newUrl },
+        { headers: { Authorization: authHeader } }
+      )
 
       // Update store
-      const entry = videoHealthStore.get(episodeId)
-      if (entry) {
-        entry.currentUrl = newUrl
-        entry.status = 'working'
-        entry.errorDetail = null
-        entry.checkedAt = new Date().toISOString()
-        videoHealthStore.set(episodeId, entry)
-      }
+      updateEntry(episodeId, {
+        currentUrl: newUrl,
+        status: 'working',
+        errorDetail: null,
+        checkedAt: new Date().toISOString(),
+      })
 
       return NextResponse.json({ updated: true })
     } catch (err) {

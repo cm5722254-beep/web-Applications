@@ -1,6 +1,11 @@
 import { apiClient } from '@/lib/api'
 import { checkVideoUrl } from './videoHealthService'
 
+// ── Helper: Sleep utility ────────────────────────────────────────────────────
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 // ── Find Alternative Video Source ────────────────────────────────────────────
 export async function findAlternativeSource(
   animeSlug: string,
@@ -21,24 +26,50 @@ export async function findAlternativeSource(
     console.error('Internal API playback failed:', err)
   }
 
-  // Try 2: External animekill API
-  try {
-    const externalUrl = `https://apis.animekill.com/api/v1/playback?anime=${animeSlug}&episode=${episodeNumber}`
-    const response = await fetch(externalUrl)
-    
-    if (response.ok) {
-      const data = await response.json()
-      const playbackUrl = data?.playback_url || data?.data?.playback_url
+  // Try 2: External animekill API with exponential backoff
+  const externalUrl = `https://apis.animekill.com/api/v1/playback?anime=${animeSlug}&episode=${episodeNumber}`
+  let retries = 0
+  const maxRetries = 3
 
-      if (playbackUrl) {
-        const check = await checkVideoUrl(playbackUrl)
-        if (check.ok) {
-          return playbackUrl
+  while (retries < maxRetries) {
+    try {
+      const response = await fetch(externalUrl)
+      
+      // Handle rate limiting
+      if (response.status === 429) {
+        const backoffMs = Math.pow(2, retries) * 1000 // 1s, 2s, 4s
+        console.warn(`Rate limited by animekill.com, retrying in ${backoffMs}ms...`)
+        await sleep(backoffMs)
+        retries++
+        continue
+      }
+      
+      if (response.ok) {
+        const data = await response.json()
+        const playbackUrl = data?.playback_url || data?.data?.playback_url
+
+        if (playbackUrl) {
+          const check = await checkVideoUrl(playbackUrl)
+          if (check.ok) {
+            return playbackUrl
+          }
         }
       }
+      
+      // Non-retryable error, break out
+      break
+    } catch (err) {
+      console.error(`External animekill API failed (attempt ${retries + 1}):`, err)
+      
+      // Retry on network errors with backoff
+      if (retries < maxRetries - 1) {
+        const backoffMs = Math.pow(2, retries) * 1000
+        await sleep(backoffMs)
+        retries++
+      } else {
+        break
+      }
     }
-  } catch (err) {
-    console.error('External animekill API failed:', err)
   }
 
   return null

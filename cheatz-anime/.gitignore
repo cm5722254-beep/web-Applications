@@ -43,6 +43,9 @@ desktop.ini
 npm-debug.log*
 yarn-debug.log*
 
+# Video health scan results
+cheatz-anime-web/.agents/video-health/
+
 # Testing
 coverage/
 .phpunit.result.cache

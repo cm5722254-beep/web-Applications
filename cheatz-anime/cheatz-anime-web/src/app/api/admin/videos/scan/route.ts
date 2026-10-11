@@ -1,10 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { scanAllEpisodes, getHealthStats, getAllEntries } from '@/services/videoHealthService'
 
+// ── Auth Helper ──────────────────────────────────────────────────────────────
+function getAuthHeader(request: NextRequest): string | null {
+  return request.headers.get('Authorization')
+}
+
+function unauthorizedResponse() {
+  return NextResponse.json(
+    { error: 'Unauthorized - Admin access required' },
+    { status: 401 }
+  )
+}
+
 export async function POST(request: NextRequest) {
+  const authHeader = getAuthHeader(request)
+  if (!authHeader) {
+    return unauthorizedResponse()
+  }
+
   try {
     // Fire and forget — start scan in background
-    scanAllEpisodes().catch(err => {
+    scanAllEpisodes(authHeader).catch(err => {
       console.error('Background scan failed:', err)
     })
 
@@ -19,6 +36,11 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  const authHeader = getAuthHeader(request)
+  if (!authHeader) {
+    return unauthorizedResponse()
+  }
+
   try {
     const stats = getHealthStats()
     const entries = getAllEntries()
