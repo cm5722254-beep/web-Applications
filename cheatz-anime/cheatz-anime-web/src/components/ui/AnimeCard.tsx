@@ -13,6 +13,7 @@ import Image from 'next/image'
 import { Play, Star, Film } from 'lucide-react'
 import type { AnimeCardData } from '@/types'
 import { cn } from '@/lib/utils'
+import { VIPBadge } from './VIPBadge'
 
 interface AnimeCardProps {
   anime: AnimeCardData & {
@@ -32,6 +33,7 @@ interface AnimeCardProps {
     episodes?:      number | null
     anime_type?:    string | null
     type?:          string | null
+    vip_only?:      boolean // NEW: VIP flag
   }
   /** Mark as high-priority (LCP image) for above-the-fold cards */
   priority?: boolean
@@ -101,6 +103,7 @@ export function AnimeCard({ anime, priority = false, className }: AnimeCardProps
   const eps          = resolveEpisodeCount(anime)
   const isOngoing    = resolveIsOngoing(anime)
   const airingStatus = anime.airing_status ?? (anime as any).status ?? null
+  const isVIP        = anime.vip_only ?? false // NEW: VIP check
 
   // Use next/image when we can (all https: sources are allowed via next.config.js)
   // Skip next/image for data: URIs
@@ -154,6 +157,13 @@ export function AnimeCard({ anime, priority = false, className }: AnimeCardProps
           {type && (
             <div className="absolute top-2 left-2 z-10">
               <span className="tag tag-cyan text-[9px]">{type}</span>
+            </div>
+          )}
+
+          {/* VIP badge — top-left (below type or replace it) */}
+          {isVIP && (
+            <div className={cn("absolute z-10", type ? "top-9 left-2" : "top-2 left-2")}>
+              <VIPBadge size="sm" />
             </div>
           )}
 
