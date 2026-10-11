@@ -1,0 +1,753 @@
+{
+  "sno": 164589,
+  "name": "Tales of Herding Gods",
+  "synonyms": "Tales of Herding Gods, Mushen Ji, Mu Shen Ji, 牧神记, Tales of Herding Gods (Mushen Ji), Tales of Herding Gods Episode",
+  "anime_id": "tales-of-herding-gods",
+  "description": "Qin Mu was born with a mortal body. After going through trials, he became the leader of the Heavenly Demon Sect and was named the first doctor of the Imperial Academy by the Yankang Kingdom. During the rebellion of the Yankang Kingdom, Qin Mu attracted the demon god, which set off a great storm. Later, he followed Wu Khan into the Golden Palace of Loulan and fought all the opponents in the Holy Palace alone. He returned to Yankang, assisted the national teacher in suppressing the rebellion and building the Sun-shooting Divine Cannon. Later, he inherited the legacy of the Human Emperor and became the new generation of the Human Emperor. By chance, Qin Mu learned about his life experience. With the help of Xiao Yujing and others from the Taoist sect, he started a great era of reforming Taoism and magical powers.",
+  "large_poster": "/poster/tales-of-herding-gods-hd.webp",
+  "small_poster": "/poster/tales-of-herding-gods.webp",
+  "orginal_poster": "/poster/tales-of-herding-gods-hd.webp",
+  "genre": "Action,Adventure,Fantasy",
+  "genres": [
+    "Action",
+    "Adventure",
+    "Fantasy"
+  ],
+  "status": "Completed",
+  "score": "5",
+  "total_watch": 180757,
+  "anime_type": "3D",
+  "episodeList": [
+    {
+      "episode_id": "tales-of-herding-gods-episode-1",
+      "number": 1,
+      "title": "Episode 1",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-1"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-2",
+      "number": 2,
+      "title": "Episode 2",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-2"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-3",
+      "number": 3,
+      "title": "Episode 3",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-3"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-4",
+      "number": 4,
+      "title": "Episode 4",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-4"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-5",
+      "number": 5,
+      "title": "Episode 5",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-5"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-6",
+      "number": 6,
+      "title": "Episode 6",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-6"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-7",
+      "number": 7,
+      "title": "Episode 7",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-7"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-8",
+      "number": 8,
+      "title": "Episode 8",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-8"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-9",
+      "number": 9,
+      "title": "Episode 9",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-9"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-10",
+      "number": 10,
+      "title": "Episode 10",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-10"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-11",
+      "number": 11,
+      "title": "Episode 11",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-11"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-12",
+      "number": 12,
+      "title": "Episode 12",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-12"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-13",
+      "number": 13,
+      "title": "Episode 13",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-13"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-14",
+      "number": 14,
+      "title": "Episode 14",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-14"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-15",
+      "number": 15,
+      "title": "Episode 15",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-15"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-16",
+      "number": 16,
+      "title": "Episode 16",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-16"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-17",
+      "number": 17,
+      "title": "Episode 17",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-17"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-18",
+      "number": 18,
+      "title": "Episode 18",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-18"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-19",
+      "number": 19,
+      "title": "Episode 19",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-19"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-20",
+      "number": 20,
+      "title": "Episode 20",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-20"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-21",
+      "number": 21,
+      "title": "Episode 21",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-21"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-22",
+      "number": 22,
+      "title": "Episode 22",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-22"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-23",
+      "number": 23,
+      "title": "Episode 23",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-23"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-24",
+      "number": 24,
+      "title": "Episode 24",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-24"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-25",
+      "number": 25,
+      "title": "Episode 25",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-25"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-26",
+      "number": 26,
+      "title": "Episode 26",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-26"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-27",
+      "number": 27,
+      "title": "Episode 27",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-27"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-28",
+      "number": 28,
+      "title": "Episode 28",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-28"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-29",
+      "number": 29,
+      "title": "Episode 29",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-29"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-30",
+      "number": 30,
+      "title": "Episode 30",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-30"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-31",
+      "number": 31,
+      "title": "Episode 31",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-31"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-32",
+      "number": 32,
+      "title": "Episode 32",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-32"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-33",
+      "number": 33,
+      "title": "Episode 33",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-33"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-34",
+      "number": 34,
+      "title": "Episode 34",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-34"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-35",
+      "number": 35,
+      "title": "Episode 35",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-35"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-36",
+      "number": 36,
+      "title": "Episode 36",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-36"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-37",
+      "number": 37,
+      "title": "Episode 37",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-37"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-38",
+      "number": 38,
+      "title": "Episode 38",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-38"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-39",
+      "number": 39,
+      "title": "Episode 39",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-39"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-40",
+      "number": 40,
+      "title": "Episode 40",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-40"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-41",
+      "number": 41,
+      "title": "Episode 41",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-41"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-42",
+      "number": 42,
+      "title": "Episode 42",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-42"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-43",
+      "number": 43,
+      "title": "Episode 43",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-43"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-44",
+      "number": 44,
+      "title": "Episode 44",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-44"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-45",
+      "number": 45,
+      "title": "Episode 45",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-45"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-46",
+      "number": 46,
+      "title": "Episode 46",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-46"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-47",
+      "number": 47,
+      "title": "Episode 47",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-47"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-48",
+      "number": 48,
+      "title": "Episode 48",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-48"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-49",
+      "number": 49,
+      "title": "Episode 49",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-49"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-50",
+      "number": 50,
+      "title": "Episode 50",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-50"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-51",
+      "number": 51,
+      "title": "Episode 51",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-51"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-52",
+      "number": 52,
+      "title": "Episode 52",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-52"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-53",
+      "number": 53,
+      "title": "Episode 53",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-53"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-54",
+      "number": 54,
+      "title": "Episode 54",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-54"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-55",
+      "number": 55,
+      "title": "Episode 55",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-55"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-56",
+      "number": 56,
+      "title": "Episode 56",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-56"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-57",
+      "number": 57,
+      "title": "Episode 57",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-57"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-58",
+      "number": 58,
+      "title": "Episode 58",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-58"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-59",
+      "number": 59,
+      "title": "Episode 59",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-59"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-60",
+      "number": 60,
+      "title": "Episode 60",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-60"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-61",
+      "number": 61,
+      "title": "Episode 61",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-61"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-62",
+      "number": 62,
+      "title": "Episode 62",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-62"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-63",
+      "number": 63,
+      "title": "Episode 63",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-63"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-64",
+      "number": 64,
+      "title": "Episode 64",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-64"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-65",
+      "number": 65,
+      "title": "Episode 65",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-65"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-66",
+      "number": 66,
+      "title": "Episode 66",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-66"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-67",
+      "number": 67,
+      "title": "Episode 67",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-67"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-68",
+      "number": 68,
+      "title": "Episode 68",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-68"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-69",
+      "number": 69,
+      "title": "Episode 69",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-69"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-70",
+      "number": 70,
+      "title": "Episode 70",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-70"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-71",
+      "number": 71,
+      "title": "Episode 71",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-71"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-72",
+      "number": 72,
+      "title": "Episode 72",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-72"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-73",
+      "number": 73,
+      "title": "Episode 73",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-73"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-74",
+      "number": 74,
+      "title": "Episode 74",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-74"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-75",
+      "number": 75,
+      "title": "Episode 75",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-75"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-76",
+      "number": 76,
+      "title": "Episode 76",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-76"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-77",
+      "number": 77,
+      "title": "Episode 77",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-77"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-78",
+      "number": 78,
+      "title": "Episode 78",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-78"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-79",
+      "number": 79,
+      "title": "Episode 79",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-79"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-80",
+      "number": 80,
+      "title": "Episode 80",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-80"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-81",
+      "number": 81,
+      "title": "Episode 81",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-81"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-82",
+      "number": 82,
+      "title": "Episode 82",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-82"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-83",
+      "number": 83,
+      "title": "Episode 83",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-83"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-84",
+      "number": 84,
+      "title": "Episode 84",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-84"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-85",
+      "number": 85,
+      "title": "Episode 85",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-85"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-86",
+      "number": 86,
+      "title": "Episode 86",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-86"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-87",
+      "number": 87,
+      "title": "Episode 87",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-87"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-87.5",
+      "number": 87.5,
+      "title": "Episode 87",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-87.5"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-88",
+      "number": 88,
+      "title": "Episode 88",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-88"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-89",
+      "number": 89,
+      "title": "Episode 89",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-89"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-90",
+      "number": 90,
+      "title": "Episode 90",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-90"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-91",
+      "number": 91,
+      "title": "Episode 91",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-91"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-92",
+      "number": 92,
+      "title": "Episode 92",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-92"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-93",
+      "number": 93,
+      "title": "Episode 93",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-93"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-94",
+      "number": 94,
+      "title": "Episode 94",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-94"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-95",
+      "number": 95,
+      "title": "Episode 95",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-95"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-96",
+      "number": 96,
+      "title": "Episode 96",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-96"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-97",
+      "number": 97,
+      "title": "Episode 97",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-97"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-98",
+      "number": 98,
+      "title": "Episode 98",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-98"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-99",
+      "number": 99,
+      "title": "Episode 99",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-99"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-100",
+      "number": 100,
+      "title": "Episode 100",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-100"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-101",
+      "number": 101,
+      "title": "Episode 101",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-101"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-102",
+      "number": 102,
+      "title": "Episode 102",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-102"
+    },
+    {
+      "episode_id": "tales-of-herding-gods-episode-103",
+      "number": 103,
+      "title": "Episode 103",
+      "thumbnail": "/poster/tales-of-herding-gods-hd.webp",
+      "url": "/tales-of-herding-gods-episode-103",
+      "full_title": "Tales of Herding Gods Episode 103 English Sub",
+      "video_host": "geo.dailymotion.com",
+      "video_path": "/player/x110cm.html?video=k5Tn5UULu9LFneL0oLc"
+    }
+  ]
+}
