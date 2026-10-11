@@ -1,0 +1,58 @@
+{
+  "name": "SC-ANIME KH — ទស្សនារឿងចិន ដុងហ្វ័រ អ្នីម៉េ",
+  "short_name": "SC-ANIME",
+  "description": "ទស្សនារឿងចិន (ដុងហ្វ័រ) · រឿងភាពយន្ត · រឿងគំនូរជីវចល ជាភាសាខ្មែរ ១០០% Full HD & 4K",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "background_color": "#0B0E14",
+  "theme_color": "#0B0E14",
+  "orientation": "any",
+  "scope": "/",
+  "lang": "km",
+  "icons": [
+    {
+      "src": "/pwa-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/pwa-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "ដុងហ្វ័រ (Chinese Anime)",
+      "short_name": "Donghua",
+      "url": "/anime?type=donghua",
+      "icons": [{ "src": "/icons/donghua.png", "sizes": "512x512" }]
+    },
+    {
+      "name": "អ្នីម៉េ (Anime)",
+      "short_name": "Anime",
+      "url": "/anime?type=anime",
+      "icons": [{ "src": "/icons/anime.png", "sizes": "512x512" }]
+    },
+    {
+      "name": "ភាពយន្ត (Movies)",
+      "short_name": "Movies",
+      "url": "/anime?type=movie",
+      "icons": [{ "src": "/icons/movies.png", "sizes": "512x512" }]
+    },
+    {
+      "name": "VIP Membership",
+      "short_name": "VIP",
+      "url": "/subscription"
+    }
+  ]
+}
