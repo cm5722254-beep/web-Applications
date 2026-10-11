@@ -6,7 +6,7 @@ export function Skeleton({ className }: { className?: string }) {
 
 export function AnimeCardSkeleton() {
   return (
-    <div className="rounded-2xl overflow-hidden bg-[#130a0b] border border-white/5">
+    <div className="rounded-2xl overflow-hidden bg-[#0d0f1a] border border-white/5">
       <Skeleton className="aspect-[2/3] w-full rounded-none" />
       <div className="p-3 space-y-2">
         <Skeleton className="h-4 w-3/4 rounded-md" />
@@ -19,7 +19,7 @@ export function AnimeCardSkeleton() {
 export function LoadingSpinner({ size = 24, className }: { size?: number; className?: string }) {
   return (
     <div
-      className={cn('border-2 border-white/10 border-t-red-500 rounded-full animate-spin', className)}
+      className={cn('border-2 border-white/10 border-t-cyan-500 rounded-full animate-spin', className)}
       style={{ width: size, height: size }}
     />
   )
@@ -29,11 +29,11 @@ export function ErrorMessage({ message, onRetry }: { message: string; onRetry?: 
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-12 text-center">
       <div className="text-4xl">⚠️</div>
-      <p className="text-rose-100/50 text-sm max-w-sm">{message}</p>
+      <p className="text-neutral-400 text-sm max-w-sm">{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="text-sm bg-[#130a0b] border border-red-500/20 hover:border-red-400/40 text-rose-100/70 hover:text-red-300 px-4 py-2 rounded-xl transition-colors"
+          className="text-sm bg-[#0d0f1a] border border-cyan-500/20 hover:border-cyan-400/40 text-neutral-300 hover:text-cyan-300 px-4 py-2 rounded-xl transition-colors"
         >
           Try Again
         </button>
@@ -48,14 +48,14 @@ export function EmptyState({ title, message, description }: { title?: string; me
     <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
       <div className="text-5xl opacity-25">🎬</div>
       <h3 className="text-white font-semibold">{displayTitle}</h3>
-      {description && <p className="text-rose-100/40 text-sm max-w-sm">{description}</p>}
+      {description && <p className="text-neutral-500 text-sm max-w-sm">{description}</p>}
     </div>
   )
 }
 
 export function Badge({ children, variant = 'default' }: { children: React.ReactNode; variant?: 'default' | 'premium' | 'success' | 'warning' | 'error' }) {
   const variants = {
-    default: 'bg-[#130a0b] border-red-500/15 text-rose-100/50',
+    default: 'bg-[#0d0f1a] border-cyan-500/15 text-neutral-400',
     premium: 'bg-amber-500/20 border-amber-500/40 text-amber-400',
     success: 'bg-green-500/20 border-green-500/40 text-green-400',
     warning: 'bg-yellow-500/20 border-yellow-500/40 text-yellow-400',
@@ -76,7 +76,7 @@ export function Section({ title, subtitle, children, action }: {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-white">{title}</h2>
-          {subtitle && <p className="text-xs text-rose-100/40 mt-0.5">{subtitle}</p>}
+          {subtitle && <p className="text-xs text-neutral-500 mt-0.5">{subtitle}</p>}
         </div>
         {action}
       </div>
