@@ -1,0 +1,127 @@
+version: '3.9'
+
+services:
+  # ─── PostgreSQL ───────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: cheatz_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-cheatz_anime}
+      POSTGRES_USER: ${DB_USERNAME:-cheatz}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-cheatz} -d ${DB_DATABASE:-cheatz_anime}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Redis ───────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: cheatz_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Laravel API ─────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: ./cheatz-anime-api
+      dockerfile: Dockerfile
+    container_name: cheatz_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./cheatz-anime-api/.env
+    volumes:
+      - ./cheatz-anime-api:/var/www/html
+      - /var/www/html/vendor
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─── Next.js Frontend ────────────────────────────────────────────────────────
+  web:
+    build:
+      context: ./cheatz-anime-web
+      dockerfile: Dockerfile
+    container_name: cheatz_web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./cheatz-anime-web/.env.local
+    depends_on:
+      - api
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─── Queue Worker ─────────────────────────────────────────────────────────────
+  worker:
+    build:
+      context: ./cheatz-anime-api
+      dockerfile: Dockerfile
+    container_name: cheatz_worker
+    restart: unless-stopped
+    command: php artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
+    env_file:
+      - ./cheatz-anime-api/.env
+    volumes:
+      - ./cheatz-anime-api:/var/www/html
+      - /var/www/html/vendor
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ─── Scheduler ───────────────────────────────────────────────────────────────
+  scheduler:
+    build:
+      context: ./cheatz-anime-api
+      dockerfile: Dockerfile
+    container_name: cheatz_scheduler
+    restart: unless-stopped
+    command: >
+      sh -c "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
+    env_file:
+      - ./cheatz-anime-api/.env
+    volumes:
+      - ./cheatz-anime-api:/var/www/html
+      - /var/www/html/vendor
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
