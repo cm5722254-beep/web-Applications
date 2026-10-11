@@ -14,6 +14,9 @@ const cache = new Map<string, VideoSourceCacheEntry>()
 /**
  * All available video sources in priority order.
  * Priority 0 = highest (tried first on auto-fallback)
+ * 
+ * NOTE: Only includes sources that return actual playable embed URLs.
+ * Sources returning search pages have been removed for better UX.
  */
 export const VIDEO_SOURCES: VideoSource[] = [
   {
@@ -56,106 +59,6 @@ export const VIDEO_SOURCES: VideoSource[] = [
       
       // Return the primary URL as fallback
       return baseUrl
-    },
-  },
-  {
-    id: 'dailymotion-2',
-    name: 'Dailymotion 2',
-    priority: 2,
-    getUrl: async (baseUrl, animeSlug, epNum) => {
-      // Alternative Dailymotion search with different query pattern
-      try {
-        const animeName = animeSlug.replace(/-/g, ' ')
-        const query = `${animeName} ep ${epNum} donghua`
-        
-        const params = new URLSearchParams({
-          fields: 'id',
-          search: query,
-          limit: '3',
-          sort: 'recent',
-        })
-        
-        const res = await fetch(`https://api.dailymotion.com/videos?${params}`, {
-          signal: AbortSignal.timeout(5000),
-        })
-        
-        if (res.ok) {
-          const json: { list?: Array<{ id: string }> } = await res.json()
-          const videoId = json.list?.[0]?.id
-          if (videoId) {
-            return `https://geo.dailymotion.com/player/xbj0x.html?video=${videoId}&autoplay=1&mute=0`
-          }
-        }
-      } catch {
-        // Fallback
-      }
-      
-      return baseUrl
-    },
-  },
-  {
-    id: 'rumble',
-    name: 'Rumble',
-    priority: 3,
-    getUrl: (baseUrl, animeSlug, epNum) => {
-      // Rumble embed pattern (generic - would need actual video IDs)
-      // For now, construct a search-based URL
-      const animeName = animeSlug.replace(/-/g, ' ')
-      const searchQuery = encodeURIComponent(`${animeName} episode ${epNum}`)
-      
-      // Rumble doesn't have a public API, so we return a placeholder
-      // In production, you'd need to scrape or have a database of Rumble video IDs
-      return `https://rumble.com/search/video?q=${searchQuery}`
-    },
-  },
-  {
-    id: 'odysee',
-    name: 'Odysee',
-    priority: 4,
-    getUrl: (baseUrl, animeSlug, epNum) => {
-      // Odysee/LBRY embed pattern
-      const animeName = animeSlug.replace(/-/g, '-')
-      
-      // Construct Odysee embed URL pattern
-      // Format: https://odysee.com/$/embed/{channel}/{video-name}
-      // For now, return a search URL as we don't have specific video IDs
-      const searchQuery = encodeURIComponent(`${animeName} episode ${epNum}`)
-      return `https://odysee.com/$/search?q=${searchQuery}`
-    },
-  },
-  {
-    id: 'odysee-2',
-    name: 'Odysee 2',
-    priority: 5,
-    getUrl: (baseUrl, animeSlug, epNum) => {
-      // Alternative Odysee source with different naming pattern
-      const animeName = animeSlug.replace(/-/g, ' ')
-      const searchQuery = encodeURIComponent(`${animeName} ep ${epNum} eng sub`)
-      return `https://odysee.com/$/search?q=${searchQuery}`
-    },
-  },
-  {
-    id: 'okru',
-    name: 'OK.ru',
-    priority: 6,
-    getUrl: (baseUrl, animeSlug, epNum) => {
-      // OK.ru embed pattern
-      // Format: https://ok.ru/videoembed/{video-id}
-      // For now, return search URL as we don't have specific video IDs
-      const animeName = animeSlug.replace(/-/g, ' ')
-      const searchQuery = encodeURIComponent(`${animeName} episode ${epNum}`)
-      return `https://ok.ru/search?q=${searchQuery}`
-    },
-  },
-  {
-    id: 'okru-2',
-    name: 'OK.ru 2',
-    priority: 7,
-    getUrl: (baseUrl, animeSlug, epNum) => {
-      // Alternative OK.ru source
-      const animeName = animeSlug.replace(/-/g, ' ')
-      const searchQuery = encodeURIComponent(`${animeName} ep ${epNum} english`)
-      return `https://ok.ru/search?q=${searchQuery}`
     },
   },
 ]

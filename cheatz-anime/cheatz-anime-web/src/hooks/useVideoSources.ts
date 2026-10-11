@@ -72,8 +72,8 @@ export function useVideoSources({
     if (typeof window !== 'undefined') {
       try {
         savedSourceId = localStorage.getItem(storageKey)
-      } catch {
-        // localStorage might be blocked
+      } catch (err) {
+        console.warn('Failed to load video source preference from localStorage:', err)
       }
     }
     
@@ -121,8 +121,8 @@ export function useVideoSources({
       if (typeof window !== 'undefined') {
         try {
           localStorage.setItem(storageKey, source.id)
-        } catch {
-          // localStorage might be full or blocked
+        } catch (err) {
+          console.warn('Failed to save video source preference to localStorage:', err)
         }
       }
     } catch (err) {

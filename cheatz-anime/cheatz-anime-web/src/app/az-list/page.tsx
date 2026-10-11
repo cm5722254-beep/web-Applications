@@ -32,6 +32,12 @@ function mapAnimeType(catalogType: string): string {
   if (type === '3d') return 'donghua'
   if (type === '2d') return 'cartoon'
   if (type === 'movie') return 'movie'
+  
+  // Warn about unrecognized types to surface catalog data issues
+  if (catalogType && !['3d', '2d', 'movie', 'anime', ''].includes(type)) {
+    console.warn(`Unrecognized anime_type "${catalogType}", defaulting to "anime"`)
+  }
+  
   return 'anime' // Default to anime for everything else
 }
 

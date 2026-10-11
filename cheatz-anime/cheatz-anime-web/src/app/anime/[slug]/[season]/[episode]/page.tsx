@@ -157,6 +157,12 @@ export default function VideoPlayerPage() {
     setPrimaryUrl(null)
     setShowFallbackPrompt(false)
 
+    // Clear iframe error timeout if active
+    if (iframeErrorTimeoutRef.current) {
+      clearTimeout(iframeErrorTimeoutRef.current)
+      iframeErrorTimeoutRef.current = null
+    }
+
     // Stop prior progress tracker
     if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null }
 
@@ -228,8 +234,14 @@ export default function VideoPlayerPage() {
 
     return () => {
       abortRef.current?.abort()
-      if (intervalRef.current) clearInterval(intervalRef.current)
-      if (iframeErrorTimeoutRef.current) clearTimeout(iframeErrorTimeoutRef.current)
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
+      if (iframeErrorTimeoutRef.current) {
+        clearTimeout(iframeErrorTimeoutRef.current)
+        iframeErrorTimeoutRef.current = null
+      }
     }
   }, [episode?.id, episode?.episode_number, user, loadPrimaryStream]) // eslint-disable-line react-hooks/exhaustive-deps
 

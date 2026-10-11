@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Server Selector Component — Video source switcher UI
-// Shows 8 server options with active highlighting and broken video reporting
+// Shows available video sources with active highlighting and broken video reporting
+// Currently displays 2 working sources (Primary + Dailymotion)
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { Server, AlertCircle, Loader2 } from 'lucide-react'
@@ -97,6 +98,13 @@ export function ServerSelector({
       {isLoading && (
         <p className="text-xs text-cyan-400 text-center font-medium animate-pulse">
           Switching server...
+        </p>
+      )}
+      
+      {/* Coming Soon Notice */}
+      {!isLoading && (
+        <p className="text-xs text-neutral-500 text-center font-medium">
+          More servers coming soon
         </p>
       )}
     </div>
