@@ -1,0 +1,32 @@
+{
+  "verdict": "CHANGES_REQUESTED",
+  "summary": "A-Z list with 1483 anime and 8-source video fallback system implemented. Type mapping and localStorage work correctly, but 6 of 8 video sources return search URLs instead of playable embeds, iframe timeout cleanup is incomplete, and errors are silently suppressed.",
+  "findings": [
+    {
+      "severity": "critical",
+      "file": "src/services/videoSourceFinder.ts",
+      "issue": "Video sources 3-8 (Rumble, Odysee, OK.ru variants) return search page URLs that cannot play in iframes, breaking the auto-fallback system after the first two sources fail",
+      "suggestion": "Remove non-functional sources 3-8 or implement server-side scraping to extract actual embed URLs from search results. Document that only Primary and Dailymotion are currently functional."
+    },
+    {
+      "severity": "major",
+      "file": "src/app/anime/[slug]/[season]/[episode]/page.tsx",
+      "issue": "iframeErrorTimeoutRef timeout is not cleared in useEffect cleanup or when loadPrimaryStream runs, causing stale 'Video not playing?' prompts to appear after navigation or episode changes",
+      "suggestion": "Add clearTimeout(iframeErrorTimeoutRef.current) to the useEffect cleanup return statement and at the top of loadPrimaryStream before setting a new timeout"
+    },
+    {
+      "severity": "minor",
+      "file": "src/hooks/useVideoSources.ts",
+      "issue": "localStorage save/load operations use empty catch blocks that silently suppress all errors, making it impossible to debug when localStorage is blocked or full",
+      "suggestion": "Replace empty catch blocks with console.warn() statements: catch (err) { console.warn('Failed to save video source preference:', err) }"
+    },
+    {
+      "severity": "minor",
+      "file": "src/app/az-list/page.tsx",
+      "issue": "mapAnimeType function defaults all unrecognized anime_type values to 'anime', which will silently misclassify catalog entries with typos or unexpected type values (e.g., 'OVA', 'special')",
+      "suggestion": "Add console.warn() for unrecognized type values before returning the default 'anime' classification to surface catalog data issues during development"
+    }
+  ],
+  "iteration": 1,
+  "reviewDoc": ".agents/tasks/az-list-multisource/2026-10-12-034140-review.md"
+}
