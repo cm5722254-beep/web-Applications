@@ -23,8 +23,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'var(--font-sans)', 'Kantumruy Pro', 'Noto Sans Khmer', 'system-ui', 'sans-serif'],
-        khmer: ['Kantumruy Pro', 'Noto Sans Khmer', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       animation: {
         'fade-in':    'fadeIn 0.3s ease-in-out',
