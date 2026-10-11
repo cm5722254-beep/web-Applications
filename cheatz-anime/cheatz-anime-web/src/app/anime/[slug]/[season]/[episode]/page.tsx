@@ -164,31 +164,31 @@ export default function VideoPlayerPage() {
   const useIframe   = videoUrl ? isEmbedUrl(videoUrl) : false
 
   return (
-    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
+    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-2 sm:px-4 py-4 flex flex-col items-center gap-4">
 
         {/* Guest banner */}
         {!user && (
-          <div className="w-full bg-gradient-to-r from-red-950/30 via-[#130a0b] to-rose-950/20 border border-red-500/20 rounded-2xl px-4 py-2.5 flex items-center justify-between gap-3 text-xs">
-            <span className="text-rose-100/60">⚡ Full HD streaming. Sign in to sync watch progress.</span>
+          <div className="w-full bg-gradient-to-r from-cyan-950/30 via-[#0d0f1a] to-sky-950/20 border border-cyan-500/20 rounded-2xl px-4 py-2.5 flex items-center justify-between gap-3 text-xs">
+            <span className="text-neutral-300">Full HD streaming. Sign in to sync watch progress.</span>
             <a href={`/api/auth/google?redirect=/anime/${slug}/${seasonSlug}/${episodeSlug}`}
-              className="bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1 rounded-xl shrink-0 transition-all shadow">
+              className="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-3 py-1 rounded-xl shrink-0 transition-all shadow">
               Sign In
             </a>
           </div>
         )}
 
         {/* ── Video Box ─────────────────────────────────────────────────── */}
-        <div className="w-full bg-black rounded-3xl overflow-hidden shadow-2xl relative border border-red-500/20 min-h-0">
+        <div className="w-full bg-black rounded-3xl overflow-hidden shadow-2xl relative border border-cyan-500/20 min-h-0">
 
           {/* Loading */}
           {showLoader && (
             <div className="aspect-video flex items-center justify-center bg-black">
               <div className="flex flex-col items-center gap-3">
                 <LoadingSpinner size={44} />
-                <p className="text-red-400 text-xs font-bold tracking-widest uppercase animate-pulse">
+                <p className="text-cyan-400 text-xs font-bold tracking-widest uppercase animate-pulse">
                   Loading Stream…
                 </p>
               </div>
@@ -199,12 +199,12 @@ export default function VideoPlayerPage() {
           {showError && (
             <div className="aspect-video flex items-center justify-center bg-black p-6">
               <div className="flex flex-col items-center gap-4 text-center">
-                <AlertCircle size={40} className="text-red-400" />
-                <p className="text-rose-100/70 text-sm font-semibold">
+                <AlertCircle size={40} className="text-cyan-400" />
+                <p className="text-neutral-300 text-sm font-semibold">
                   Stream unavailable — trying another server…
                 </p>
                 <button onClick={handleRetry}
-                  className="bg-red-600 hover:bg-red-500 text-white font-bold px-5 py-2 rounded-xl text-xs inline-flex items-center gap-2 transition-all">
+                  className="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-5 py-2 rounded-xl text-xs inline-flex items-center gap-2 transition-all">
                   <RefreshCw size={14} />
                   Retry {retries > 0 ? `(${retries})` : ''}
                 </button>
@@ -235,13 +235,13 @@ export default function VideoPlayerPage() {
           )}
 
           {/* Watermark */}
-          <div className="absolute top-3 left-3 z-20 pointer-events-none select-none flex items-center gap-2 bg-black/75 backdrop-blur-sm border border-red-500/30 px-3 py-1.5 rounded-xl shadow-lg opacity-90">
-            <div className="w-5 h-5 rounded-full overflow-hidden ring-1 ring-red-400 shrink-0">
+          <div className="absolute top-3 left-3 z-20 pointer-events-none select-none flex items-center gap-2 bg-black/75 backdrop-blur-sm border border-cyan-500/30 px-3 py-1.5 rounded-xl shadow-lg opacity-90">
+            <div className="w-5 h-5 rounded-full overflow-hidden ring-1 ring-cyan-400 shrink-0">
               <img src="/logo.png" alt="SC-ANIME KH" className="w-full h-full object-cover" />
             </div>
             <div className="flex flex-col text-left">
-              <span className="text-[10px] font-black text-red-300 tracking-wider">SC-ANIME KH</span>
-              <span className="text-[8px] text-rose-100/40 font-bold -mt-0.5">OFFICIAL 4K STREAM</span>
+              <span className="text-[10px] font-black text-cyan-300 tracking-wider">SC-ANIME KH</span>
+              <span className="text-[8px] text-neutral-400 font-bold -mt-0.5">OFFICIAL 4K STREAM</span>
             </div>
           </div>
         </div>
@@ -249,25 +249,25 @@ export default function VideoPlayerPage() {
         {/* ── Navigation Bar ────────────────────────────────────────────── */}
         <div className="w-full flex items-center justify-between gap-3 py-1 px-1">
           <Link href={`/anime/${slug}`}
-            className="inline-flex items-center gap-1.5 text-xs text-rose-100/50 hover:text-red-300 transition-colors">
+            className="inline-flex items-center gap-1.5 text-xs text-neutral-400 hover:text-cyan-300 transition-colors">
             <ArrowLeft size={14} /> All Episodes
           </Link>
 
           <div className="flex items-center gap-2">
             {prevEp && (
               <Link href={`/anime/${slug}/${seasonSlug}/${prevEp.slug}`}
-                className="inline-flex items-center gap-1 text-xs bg-[#1a0a0b] hover:bg-red-600 hover:text-white border border-red-500/20 text-rose-100/60 px-3 py-1.5 rounded-xl font-bold transition-all">
+                className="inline-flex items-center gap-1 text-xs bg-[#0d0f1a] hover:bg-cyan-600 hover:text-white border border-cyan-500/20 text-neutral-400 px-3 py-1.5 rounded-xl font-bold transition-all">
                 <ChevronLeft size={14} /> Prev
               </Link>
             )}
 
-            <span className="text-xs font-black text-red-300 bg-red-500/10 border border-red-500/25 px-3 py-1.5 rounded-xl">
+            <span className="text-xs font-black text-cyan-300 bg-cyan-500/10 border border-cyan-500/25 px-3 py-1.5 rounded-xl">
               Episode {currentEpNum}
             </span>
 
             {nextEp && (
               <Link href={`/anime/${slug}/${seasonSlug}/${nextEp.slug}`}
-                className="inline-flex items-center gap-1 text-xs bg-red-600 hover:bg-red-500 text-white px-3.5 py-1.5 rounded-xl font-black transition-all shadow-[0_0_12px_rgba(225,29,72,0.45)]">
+                className="inline-flex items-center gap-1 text-xs bg-cyan-600 hover:bg-cyan-500 text-white px-3.5 py-1.5 rounded-xl font-black transition-all shadow-[0_0_12px_rgba(0,212,255,0.45)]">
                 Next Ep <ChevronRight size={14} />
               </Link>
             )}
@@ -276,17 +276,17 @@ export default function VideoPlayerPage() {
 
         {/* ── Episode Info Card ─────────────────────────────────────────── */}
         {episode && (
-          <div className="w-full bg-[#130a0b] border border-red-500/15 rounded-3xl p-6 sm:p-8 shadow-xl">
-            <div className="inline-flex items-center gap-2 text-xs font-bold text-red-400 uppercase tracking-widest mb-1.5">
+          <div className="w-full bg-[#0d0f1a] border border-cyan-500/15 rounded-3xl p-6 sm:p-8 shadow-xl">
+            <div className="inline-flex items-center gap-2 text-xs font-bold text-cyan-400 uppercase tracking-widest mb-1.5">
               <span>Episode {episode.episode_number}</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
               <span className="text-white/50">Ultra HD Stream</span>
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-white">
               {episode.title_en || `Episode ${episode.episode_number}`}
             </h1>
             {episode.synopsis_en && (
-              <p className="text-rose-100/45 text-xs sm:text-sm mt-3 leading-relaxed max-w-3xl">
+              <p className="text-neutral-400 text-xs sm:text-sm mt-3 leading-relaxed max-w-3xl">
                 {episode.synopsis_en}
               </p>
             )}
@@ -294,7 +294,7 @@ export default function VideoPlayerPage() {
             {/* Quick Episode Selector */}
             {allEpisodes && allEpisodes.length > 1 && (
               <div className="mt-8 pt-6 border-t border-white/5">
-                <h3 className="text-xs font-bold text-rose-100/40 uppercase tracking-wider mb-3">
+                <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3">
                   Quick Episode Selector
                 </h3>
                 <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-16 gap-1.5 max-h-52 overflow-y-auto pr-1 scrollbar-none">
@@ -305,8 +305,8 @@ export default function VideoPlayerPage() {
                         href={`/anime/${slug}/${seasonSlug}/${ep.slug}`}
                         className={`text-center py-2 px-1 rounded-xl text-xs font-bold transition-all ${
                           isCurrent
-                            ? 'bg-red-600 text-white shadow-[0_0_12px_rgba(225,29,72,0.5)] scale-105'
-                            : 'bg-black/40 hover:bg-red-500/15 text-rose-100/50 border border-white/5 hover:border-red-500/30'
+                            ? 'bg-cyan-600 text-white shadow-[0_0_12px_rgba(0,212,255,0.5)] scale-105'
+                            : 'bg-black/40 hover:bg-cyan-500/15 text-neutral-400 border border-white/5 hover:border-cyan-500/30'
                         }`}>
                         {ep.episode_number}
                       </Link>
