@@ -31,7 +31,7 @@ export default function PopularAnimePage() {
               </p>
             </div>
           </div>
-          <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-red-500/18 border border-red-500/25 text-red-300">
+          <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-cyan-500/18 border border-cyan-500/25 text-cyan-300">
             {popularList.length} Trending Series
           </span>
         </div>
@@ -86,17 +86,12 @@ export default function PopularAnimePage() {
                 <div className="p-3 flex-1 flex flex-col justify-between">
                   <div>
                     <h3 className="text-xs sm:text-sm font-semibold line-clamp-2 text-brand-text group-hover:text-brand-glow transition-colors">
-                      {anime.title_km || anime.title}
+                      {anime.title}
                     </h3>
-                    {anime.title_km && (
-                      <p className="text-[11px] text-brand-muted truncate mt-0.5">
-                        {anime.title}
-                      </p>
-                    )}
                   </div>
                   <div className="mt-2 flex items-center justify-between text-[11px] text-brand-muted">
                     <span className="capitalize text-brand-glow">{anime.type || 'Donghua'}</span>
-                    <span>{anime.total_episodes || 24} ភាគ</span>
+                    <span>{anime.total_episodes || 24} eps</span>
                   </div>
                 </div>
               </Link>
