@@ -24,7 +24,7 @@ export default function SubscriptionPage() {
   const isUserVip = Boolean(user?.subscribed || status?.subscribed || activatedSuccess)
 
   return (
-    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
+    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-12">
@@ -33,10 +33,10 @@ export default function SubscriptionPage() {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold mb-5 uppercase tracking-wider">
             <Crown size={14} /> VIP LIFETIME ACCESS
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-3 font-khmer">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-3 font-sans">
             ជាវសមាជិក VIP មើលបានរហូត
           </h1>
-          <p className="text-neutral-400 text-base font-khmer">
+          <p className="text-neutral-400 text-base font-sans">
             បង់ត្រឹមតែ <span className="text-amber-400 font-bold text-lg">$1</span> ម្តងគត់ — មើលបានរហូតគ្រប់រឿង
             ទាំងរឿងចិន ដុងហ្វ័រ ភាពយន្ត និងគំនូរជីវចល។
           </p>
@@ -50,17 +50,17 @@ export default function SubscriptionPage() {
                 <Check className="text-emerald-400" size={24} />
               </div>
               <div>
-                <p className="text-emerald-400 font-bold text-lg font-khmer flex items-center gap-2">
+                <p className="text-emerald-400 font-bold text-lg font-sans flex items-center gap-2">
                   <Sparkles size={18} /> គណនី VIP របស់អ្នកសកម្ម!
                 </p>
-                <p className="text-neutral-400 text-sm font-khmer">
+                <p className="text-neutral-400 text-sm font-sans">
                   ទស្សនាគ្រប់រឿងទាំងអស់ Full HD / 4K ដោយគ្មានដែនកំណត់។
                 </p>
               </div>
             </div>
             <Link
               href="/anime"
-              className="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm transition-all hover:scale-105 shrink-0 font-khmer"
+              className="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm transition-all hover:scale-105 shrink-0 font-sans"
             >
               ចូលទស្សនា →
             </Link>
@@ -84,7 +84,7 @@ export default function SubscriptionPage() {
                 <Crown size={24} />
               </div>
               <div>
-                <h2 className="text-xl font-extrabold text-white font-khmer">VIP ពេញមួយជីវិត</h2>
+                <h2 className="text-xl font-extrabold text-white font-sans">VIP ពេញមួយជីវិត</h2>
                 <p className="text-neutral-500 text-xs uppercase tracking-wider">CHEATZ ANIME VIP PASS</p>
               </div>
             </div>
@@ -93,23 +93,23 @@ export default function SubscriptionPage() {
             <div className="flex items-baseline gap-2 mb-6 p-4 rounded-2xl bg-black/30 border border-white/5">
               <span className="text-5xl font-black text-amber-400">$1</span>
               <div>
-                <p className="text-white/60 text-sm font-khmer">ម្តងគត់</p>
-                <p className="text-amber-400/70 text-xs font-khmer">ទស្សនាបានពេញជីវិត</p>
+                <p className="text-white/60 text-sm font-sans">ម្តងគត់</p>
+                <p className="text-amber-400/70 text-xs font-sans">ទស្សនាបានពេញជីវិត</p>
               </div>
             </div>
 
             {/* Features */}
             <div className="space-y-3 mb-8">
               {[
-                'បង់តែ $1 — ទស្សនាបានរហូតគ្មានថ្ងៃផុតកំណត់',
-                'Anime, Donghua, Movies, Cartoon ទាំងអស់',
-                'Full HD 1080p & 4K Ultra HD ច្បាស់ត្រជាក់ភ្នែក',
-                'អក្សររត់ភាសាខ្មែរ (Khmer Subtitles)',
-                'គ្មានការផ្សាយពាណិជ្ជកម្ម ១០០% No Ads',
-                'ចូលមើលភាគថ្មីៗ មុនគេ Early Access',
-                'Multi-device — ទស្សនាបានលើទូរស័ព្ទ PC Tablet',
+                'Only $1 — Lifetime access, no expiry',
+                'All Anime, Donghua, Movies & Cartoon content',
+                'Full HD 1080p & 4K Ultra HD streaming',
+                'English subtitles included',
+                '100% Ad-free viewing experience',
+                'Early Access to new episodes',
+                'Multi-device — watch on Phone, PC, Tablet',
               ].map((f, i) => (
-                <div key={i} className="flex items-start gap-3 text-sm font-khmer text-white/90">
+                <div key={i} className="flex items-start gap-3 text-sm font-sans text-white/90">
                   <div className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
                     <Check size={12} />
                   </div>
@@ -124,12 +124,12 @@ export default function SubscriptionPage() {
                   href="https://t.me/BongCheatz_IT"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-black font-extrabold py-4 px-6 rounded-2xl shadow-[0_0_25px_rgba(245,158,11,0.35)] hover:scale-[1.015] active:scale-[0.99] transition-all font-khmer text-sm"
+                  className="w-full flex items-center justify-center gap-2.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-black font-extrabold py-4 px-6 rounded-2xl shadow-[0_0_25px_rgba(245,158,11,0.35)] hover:scale-[1.015] active:scale-[0.99] transition-all font-sans text-sm"
                 >
                   <Send size={18} />
                   ទាក់ទងជាវ VIP ភ្លាមៗ ($1 ពេញជីវិត)
                 </a>
-                <p className="text-center text-xs text-neutral-500 font-khmer">
+                <p className="text-center text-xs text-neutral-500 font-sans">
                   ទាក់ទង Admin @BongCheatz_IT — ដំណើរការតែ ១ នាទី
                 </p>
               </div>
@@ -143,17 +143,17 @@ export default function SubscriptionPage() {
                 <Send size={20} />
               </div>
               <div>
-                <h3 className="font-extrabold text-white font-khmer">ទិញ VIP តាម Telegram</h3>
+                <h3 className="font-extrabold text-white font-sans">ទិញ VIP តាម Telegram</h3>
                 <p className="text-xs text-rose-400 font-mono">@BongCheatz_IT</p>
               </div>
             </div>
 
-            <p className="text-sm text-neutral-300 font-khmer leading-relaxed mb-5">
+            <p className="text-sm text-neutral-300 font-sans leading-relaxed mb-5">
               ទាក់ទង Admin ផ្ទាល់តាម Telegram ដើម្បីជាវ VIP ក្នុងតម្លៃ{' '}
               <span className="text-amber-400 font-bold">$1</span> ដោយវេរប្រាក់តាម KHQR, ABA, Bakong ឬ Wing។
             </p>
 
-            <div className="space-y-3 bg-black/30 rounded-2xl p-4 border border-white/5 mb-5 font-khmer text-xs text-neutral-300">
+            <div className="space-y-3 bg-black/30 rounded-2xl p-4 border border-white/5 mb-5 font-sans text-xs text-neutral-300">
               {[
                 'ចុចប៊ូតុង Telegram ខាងក្រោម',
                 'វេរប្រាក់ $1 (KHQR / ABA / Wing / Bakong)',
@@ -172,12 +172,12 @@ export default function SubscriptionPage() {
               href="https://t.me/BongCheatz_IT"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 bg-[#0088cc] hover:bg-[#0099e6] text-white py-3.5 px-4 rounded-xl font-bold text-sm transition-all hover:scale-[1.02] shadow-lg shadow-sky-500/20 font-khmer"
+              className="w-full flex items-center justify-center gap-2 bg-[#0088cc] hover:bg-[#0099e6] text-white py-3.5 px-4 rounded-xl font-bold text-sm transition-all hover:scale-[1.02] shadow-lg shadow-sky-500/20 font-sans"
             >
               <Send size={17} /> ផ្ញើសារ @BongCheatz_IT
             </a>
 
-            <div className="mt-5 pt-4 border-t border-white/10 flex items-center justify-center gap-5 text-xs text-neutral-500 font-khmer">
+            <div className="mt-5 pt-4 border-t border-white/10 flex items-center justify-center gap-5 text-xs text-neutral-500 font-sans">
               <span className="flex items-center gap-1.5"><ShieldCheck size={13} className="text-emerald-400" /> សុវត្ថិភាព</span>
               <span className="flex items-center gap-1.5"><Zap size={13} className="text-amber-400" /> ភ្លាមៗ</span>
             </div>
@@ -186,7 +186,7 @@ export default function SubscriptionPage() {
 
         {/* Feature showcase */}
         <div className="mt-16 pt-10 border-t border-white/5">
-          <h3 className="text-xl font-extrabold text-center text-white mb-8 font-khmer">
+          <h3 className="text-xl font-extrabold text-center text-white mb-8 font-sans">
             VIP ផ្តល់ជូនអ្វីខ្លះ?
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
@@ -195,10 +195,10 @@ export default function SubscriptionPage() {
               { icon: Tv,   color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20', title: 'Full HD & 4K', desc: 'រូបភាពច្បាស់ 1080p និង 4K Ultra HD' },
               { icon: Crown, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20', title: 'គ្មានពាណិជ្ជកម្ម', desc: 'ទស្សនាជាប់ ១០០% No Ads No Interruptions' },
             ].map((item) => (
-              <div key={item.title} className={`p-5 rounded-2xl border ${item.bg} bg-[#130a0b]`}>
+              <div key={item.title} className={`p-5 rounded-2xl border ${item.bg} bg-[#0d0f1a]`}>
                 <item.icon className={`${item.color} mb-3`} size={24} />
-                <h4 className="font-bold text-white font-khmer mb-1.5">{item.title}</h4>
-                <p className="text-xs text-neutral-400 font-khmer">{item.desc}</p>
+                <h4 className="font-bold text-white font-sans mb-1.5">{item.title}</h4>
+                <p className="text-xs text-neutral-400 font-sans">{item.desc}</p>
               </div>
             ))}
           </div>
