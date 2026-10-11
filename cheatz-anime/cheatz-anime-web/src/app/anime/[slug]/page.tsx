@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -49,7 +49,7 @@ export default function AnimeDetailPage() {
 
   if (isLoading || authLoading) {
     return (
-      <div className="min-h-screen bg-[#0a0608] flex items-center justify-center">
+      <div className="min-h-screen bg-[#07080f] flex items-center justify-center">
         <LoadingSpinner size={44} />
       </div>
     )
@@ -57,7 +57,7 @@ export default function AnimeDetailPage() {
 
   if (isError || !anime) {
     return (
-      <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
+      <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
         <Navbar />
         <div className="max-w-4xl mx-auto px-4 py-20 flex-1">
           <ErrorMessage message="Anime series not found or failed to load." />
@@ -73,7 +73,7 @@ export default function AnimeDetailPage() {
   const watchHref = `/anime/${slug}/${firstSeason?.slug || 'season-1'}/${firstEpisodeSlug}`
 
   return (
-    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
+    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
       <Navbar />
 
       {/* Hero Banner */}
@@ -83,14 +83,14 @@ export default function AnimeDetailPage() {
           alt={anime.title_en}
           className="w-full h-full object-cover filter blur-sm scale-105 opacity-40"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0608] via-[#0a0608]/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#07080f] via-[#07080f]/80 to-transparent" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 -mt-44 md:-mt-64 relative z-10 flex-1 w-full pb-16">
         <div className="flex flex-col md:flex-row gap-8 items-start">
           {/* Poster Card */}
           <div className="shrink-0 w-48 md:w-64 mx-auto md:mx-0">
-            <div className="rounded-3xl overflow-hidden border-2 border-red-500/25 shadow-[0_0_35px_rgba(225,29,72,0.25)] bg-[#1a0a0b] relative group">
+            <div className="rounded-3xl overflow-hidden border-2 border-cyan-500/25 shadow-[0_0_35px_rgba(0,212,255,0.25)] bg-[#0d0f1a] relative group">
               <img
                 src={anime.poster_url || ''}
                 alt={anime.title_en}
@@ -101,7 +101,7 @@ export default function AnimeDetailPage() {
                 }}
               />
               <div className="absolute top-3 left-3 flex flex-col gap-1">
-                <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-red-600 text-black shadow-md">
+                <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md bg-cyan-600 text-white shadow-md">
                   {anime.type || 'Donghua'}
                 </span>
               </div>
@@ -111,7 +111,7 @@ export default function AnimeDetailPage() {
             <div className="mt-4 flex flex-col gap-2.5">
               <Link
                 href={watchHref}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-black font-extrabold py-3.5 px-6 rounded-2xl shadow-[0_0_20px_rgba(225,29,72,0.4)] transition-all hover:scale-105"
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 to-sky-700 hover:from-cyan-500 hover:to-sky-600 text-white font-extrabold py-3.5 px-6 rounded-2xl shadow-[0_0_20px_rgba(0,212,255,0.4)] transition-all hover:scale-105"
               >
                 <Play size={18} fill="currentColor" />
                 <span>Watch Episode 1</span>
@@ -120,7 +120,7 @@ export default function AnimeDetailPage() {
               <button
                 onClick={() => toggleFavorite()}
                 disabled={favoriting}
-                className="w-full flex items-center justify-center gap-2 bg-[#130a0b] hover:bg-white/10 border border-white/10 text-neutral-300 hover:text-white py-3 px-6 rounded-2xl transition-all"
+                className="w-full flex items-center justify-center gap-2 bg-[#0d0f1a] hover:bg-white/10 border border-white/10 text-neutral-300 hover:text-white py-3 px-6 rounded-2xl transition-all"
               >
                 <Heart size={16} />
                 <span>Save to Favorites</span>
@@ -132,7 +132,7 @@ export default function AnimeDetailPage() {
           <div className="flex-1 min-w-0">
             <div className="flex flex-col gap-2">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-500/18 text-red-300 border border-red-500/25">
+                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/18 text-cyan-300 border border-cyan-500/25">
                   {anime.airing_status === 'ongoing' ? 'Ongoing Broadcast' : 'Completed'}
                 </span>
                 {anime.release_year && (
@@ -164,9 +164,9 @@ export default function AnimeDetailPage() {
                   <Link
                     key={g.id}
                     href={`/anime?genre=${encodeURIComponent(g.name_en)}`}
-                    className="text-xs font-semibold bg-[#130a0b] border border-white/10 hover:border-red-400/45 text-neutral-300 hover:text-red-300 px-3 py-1 rounded-xl transition-all"
+                    className="text-xs font-semibold bg-[#0d0f1a] border border-white/10 hover:border-cyan-400/45 text-neutral-300 hover:text-cyan-300 px-3 py-1 rounded-xl transition-all"
                   >
-                    <span>{g.icon || 'ðŸ·ï¸'}</span>
+                    <span>{g.icon || '🎬'}</span>
                     <span className="ml-1.5">{g.name_en}</span>
                   </Link>
                 ))}
@@ -175,8 +175,8 @@ export default function AnimeDetailPage() {
 
             {/* Synopsis */}
             {anime.synopsis_en && (
-              <div className="mt-6 bg-[#130a0b]/80 border border-white/5 rounded-2xl p-5">
-                <h3 className="text-xs font-bold text-red-400 uppercase tracking-wider mb-2">
+              <div className="mt-6 bg-[#0d0f1a]/80 border border-white/5 rounded-2xl p-5">
+                <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">
                   Synopsis & Overview
                 </h3>
                 <p className="text-neutral-300 text-sm leading-relaxed whitespace-pre-line">
@@ -191,7 +191,7 @@ export default function AnimeDetailPage() {
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-bold text-white flex items-center gap-2">
                     <span>Available Episodes</span>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/18 text-red-300 font-bold">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/18 text-cyan-300 font-bold">
                       {anime.seasons.reduce((acc, s) => acc + (s.episodes?.length || 0), 0)} Total
                     </span>
                   </h2>
@@ -205,7 +205,7 @@ export default function AnimeDetailPage() {
                     return (
                       <div
                         key={season.id}
-                        className="bg-[#130a0b] border border-white/10 rounded-2xl overflow-hidden shadow-lg"
+                        className="bg-[#0d0f1a] border border-white/10 rounded-2xl overflow-hidden shadow-lg"
                       >
                         <button
                           className="w-full flex items-center justify-between px-6 py-4 text-white hover:bg-white/5 transition-colors"
@@ -227,9 +227,9 @@ export default function AnimeDetailPage() {
                                 <Link
                                   key={ep.id}
                                   href={`/anime/${slug}/${season.slug}/${ep.slug}`}
-                                  className="group flex flex-col items-center justify-center p-3 rounded-xl bg-[#1a0a0b] hover:bg-red-600 text-neutral-300 hover:text-black border border-white/5 hover:border-red-400 transition-all duration-200 hover:scale-105 shadow-md"
+                                  className="group flex flex-col items-center justify-center p-3 rounded-xl bg-[#111420] hover:bg-cyan-600 text-neutral-300 hover:text-white border border-white/5 hover:border-cyan-400 transition-all duration-200 hover:scale-105 shadow-md"
                                 >
-                                  <span className="text-[10px] text-neutral-500 group-hover:text-black/70 font-semibold">
+                                  <span className="text-[10px] text-neutral-500 group-hover:text-white/70 font-semibold">
                                     EP
                                   </span>
                                   <span className="text-sm font-black">
