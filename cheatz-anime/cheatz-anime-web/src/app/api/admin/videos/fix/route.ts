@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { apiClient } from '@/lib/api'
-import { findAlternativeSource } from '@/services/videoSourceFinder'
+import { findAlternativeSources } from '@/services/videoSourceFinder'
 import { updateEntry } from '@/services/videoHealthService'
 
 // ── Auth Helper ──────────────────────────────────────────────────────────────
@@ -33,7 +33,22 @@ export async function POST(request: NextRequest) {
     }
 
     // Find alternative source
-    const foundUrl = await findAlternativeSource(animeSlug, episodeNumber)
+    const sources = await findAlternativeSources(animeSlug, episodeNumber)
+    
+    // Try each source in order until one works
+    let foundUrl: string | null = null
+    for (const source of sources) {
+      try {
+        const url = await source.getUrl('', animeSlug, episodeNumber)
+        // Basic validation that URL is not empty or a search URL
+        if (url && !url.includes('/search') && (url.includes('dailymotion') || url.includes('ok.ru') || url.includes('rumble') || url.includes('odysee'))) {
+          foundUrl = url
+          break
+        }
+      } catch {
+        continue
+      }
+    }
 
     if (!foundUrl) {
       return NextResponse.json(

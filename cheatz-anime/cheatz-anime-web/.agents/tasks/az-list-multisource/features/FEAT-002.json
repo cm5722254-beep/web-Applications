@@ -1,0 +1,42 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Implement multiple video source system allowing users to switch between streaming servers when video fails. Current video player at c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\app\\anime\\[slug]\\[season]\\[episode]\\page.tsx uses single Dailymotion source from /api/playback. Add server selector UI with 8 sources (Primary, Rumble, Dailymotion, Dailymotion 2, Odysee, Odysee 2, OK.ru, OK.ru 2), auto-fallback on iframe load error, localStorage preference per episode, and 'Report Broken Video' button. This addresses user request to handle broken videos by letting users choose alternate sources.",
+  "status": "completed",
+  "steps": [
+    "1. Create c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\types\\video.ts with VideoSource interface { id:string, name:string, priority:number, getUrl:(baseUrl:string, animeSlug:string, epNum:number)=>string|Promise<string> }. Keep separate from index.ts to avoid breaking existing imports of Episode/PlaybackResult types.",
+    "2. Create c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\services\\videoSourceFinder.ts exporting VIDEO_SOURCES array (8 sources: Primary uses /api/playback result, others use hardcoded alternative embed patterns or search APIs if available). Include findAlternativeSource(animeSlug, epNum) function that tries sources in priority order. Add in-memory cache Map<episodeKey, VideoSource[]> with 30-min TTL.",
+    "3. Create c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\components\\video\\ServerSelector.tsx: renders horizontal pill buttons for each source. Active source highlighted cyan with shadow. Inactive sources gray with hover. Shows loading spinner when switching. Include 'Report Broken Video' button (logs to console for now, can connect to API later). Use Lucide icons: Server for sources, AlertCircle for report button.",
+    "4. Create c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\hooks\\useVideoSources.ts custom hook: accepts (animeSlug, episodeNumber, primaryUrl). Returns { sources:VideoSource[], activeSource:VideoSource|null, isLoading:boolean, error:string|null, switchSource:(sourceId)=>void, reportBroken:()=>void }. Reads localStorage key 'video_server_preference_{animeSlug}_{epNum}' for saved preference. On iframe error (via error callback prop), auto-switches to next source. Implements retry logic (max 3 attempts per source).",
+    "5. Modify c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\app\\anime\\[slug]\\[season]\\[episode]\\page.tsx: Import useVideoSources and ServerSelector. Replace single videoUrl state with useVideoSources hook. Pass hook result to ServerSelector component. Update iframe src to use activeSource.getUrl(). Add onError callback to iframe that triggers switchSource. Position ServerSelector below video player iframe, above navigation bar. Keep existing watermark, auth guard, episode selector - only modify video loading logic.",
+    "6. Handle iframe error detection: Since iframe onError doesn't fire for embed content failures, add timeout-based fallback: if iframe loads but video doesn't play after 10s, show 'Video not playing?' button that triggers manual source switch. Also detect postMessage errors from Dailymotion player if possible.",
+    "7. Style ServerSelector with SC-ANIME KH theme: bg-[#0d0f1a], active source bg-cyan-600 with shadow-[0_0_12px_rgba(0,212,255,0.5)], inactive hover:bg-cyan-500/15. Text xs font-bold. Mobile: wrap buttons in 2 rows if needed. Desktop: single row with gap-2."
+  ],
+  "acceptance_criteria": [
+    "Server selector shows 8 source buttons below video player",
+    "Active source button highlighted cyan with glow shadow",
+    "Clicking source button switches video to that source with loading state",
+    "localStorage saves user's source preference per episode (key: video_server_preference_{slug}_{epNum})",
+    "On video load failure, auto-switches to next available source (max 3 attempts)",
+    "Primary source uses existing /api/playback Dailymotion URL",
+    "Alternative sources provide embed URLs (Rumble/Odysee/OK.ru patterns or search results)",
+    "'Report Broken Video' button logs to console with episode details",
+    "ServerSelector is responsive: wraps on mobile, single row on desktop",
+    "Video player retains existing features: watermark, auth guard, episode navigation, episode selector"
+  ],
+  "verification": [
+    "Run 'npm run type-check' and verify no TypeScript errors in new files",
+    "Run 'npm run build' and verify build succeeds",
+    "Start dev server, login as test user, navigate to any episode watch page (e.g. localhost:3001/anime/tales-of-herding-gods/season-1/ep-1)",
+    "Verify ServerSelector appears below video player with 8 source buttons",
+    "Verify Primary source is active (cyan highlight) and video plays",
+    "Click 'Dailymotion' source button, verify loading spinner shows, then video switches",
+    "Open DevTools console, click 'Report Broken Video', verify console log with episode info",
+    "Open DevTools Application > Local Storage, verify key 'video_server_preference_tales-of-herding-gods_1' is set when source switched",
+    "Refresh page, verify previously selected source is remembered and auto-selected",
+    "Test on mobile viewport (375px), verify source buttons wrap to 2 rows if needed",
+    "Simulate video failure: switch to non-existent source ID manually in code, verify auto-fallback to next source triggers after timeout"
+  ],
+  "blocked_reason": null,
+  "findings": "Completed successfully. Implemented 8 video sources (Primary, Rumble, Dailymotion, Dailymotion 2, Odysee, Odysee 2, OK.ru, OK.ru 2) with ServerSelector UI component showing cyan-highlighted active source. Created useVideoSources hook managing localStorage preferences (key: video_server_preference_{slug}_{epNum}), auto-fallback with 3-retry limit, and source switching. Added timeout-based fallback detection (10s iframe load timeout shows 'Video not playing?' prompt). Primary and Dailymotion sources use /api/playback and Dailymotion search API; others use search URL patterns (Rumble/Odysee/OK.ru don't have public APIs without authentication). ServerSelector is responsive (2 cols mobile, 4 tablet, 8 desktop). Report Broken Video logs to console with episode details. Fixed pre-existing import error in admin/videos/fix API route (updated to use findAlternativeSources). All TypeScript strict mode checks pass, build succeeds."
+}

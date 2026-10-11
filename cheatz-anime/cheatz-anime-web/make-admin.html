@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Make Current User Admin - SC-ANIME KH</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0a0c18 0%, #1a1c2e 100%);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      background: #111420;
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 0 50px rgba(0, 212, 255, 0.1);
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #00d4ff;
+    }
+    p {
+      color: #a0a0a0;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .status {
+      background: #1a1c2e;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .status h3 {
+      font-size: 14px;
+      color: #00d4ff;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .user-info {
+      font-size: 14px;
+      color: #e0e0e0;
+      margin: 8px 0;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-left: 8px;
+    }
+    .badge.admin {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .badge.user {
+      background: rgba(156, 163, 175, 0.2);
+      color: #9ca3af;
+      border: 1px solid rgba(156, 163, 175, 0.3);
+    }
+    .badge.super-admin {
+      background: rgba(245, 158, 11, 0.2);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    button {
+      width: 100%;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 12px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+      color: white;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 212, 255, 0.4);
+    }
+    .btn-secondary {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .btn-secondary:hover {
+      background: rgba(245, 158, 11, 0.25);
+    }
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.25);
+    }
+    .success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      color: #10b981;
+      font-size: 14px;
+      display: none;
+    }
+    .error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      color: #ef4444;
+      font-size: 14px;
+      display: none;
+    }
+    code {
+      background: #1a1c2e;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🛡️ Admin Role Manager</h1>
+    <p>កំណត់ role admin ឬ super admin ជូន account បច្ចុប្បន្ន</p>
+
+    <div class="status" id="statusBox">
+      <h3>Current User Status</h3>
+      <div id="currentStatus">Loading...</div>
+    </div>
+
+    <div class="success" id="successMsg"></div>
+    <div class="error" id="errorMsg"></div>
+
+    <button class="btn-primary" onclick="makeAdmin()">
+      ⚡ Make Admin
+    </button>
+
+    <button class="btn-secondary" onclick="makeSuperAdmin()">
+      👑 Make Super Admin
+    </button>
+
+    <button class="btn-danger" onclick="removeAdmin()">
+      ❌ Remove Admin (Back to User)
+    </button>
+
+    <p style="margin-top: 30px; font-size: 13px; text-align: center;">
+      បន្ទាប់ពីប្តូរហើយ សូម reload page <code>localhost:3001</code>
+    </p>
+  </div>
+
+  <script>
+    function loadCurrentUser() {
+      try {
+        const authUser = localStorage.getItem('auth_user')
+        if (!authUser) {
+          document.getElementById('currentStatus').innerHTML = `
+            <div style="color: #ef4444;">❌ No user logged in</div>
+            <div style="font-size: 12px; color: #9ca3af; margin-top: 8px;">
+              Please login first at <a href="http://localhost:3001" style="color: #00d4ff;">localhost:3001</a>
+            </div>
+          `
+          return null
+        }
+        
+        const user = JSON.parse(authUser)
+        const roles = user.roles || ['user']
+        const isAdmin = roles.includes('admin')
+        const isSuperAdmin = roles.includes('super_admin')
+        
+        let roleDisplay = ''
+        if (isSuperAdmin) {
+          roleDisplay = '<span class="badge super-admin">Super Admin</span>'
+        } else if (isAdmin) {
+          roleDisplay = '<span class="badge admin">Admin</span>'
+        } else {
+          roleDisplay = '<span class="badge user">User</span>'
+        }
+        
+        document.getElementById('currentStatus').innerHTML = `
+          <div class="user-info">
+            <strong>Name:</strong> ${user.name || 'Unknown'} ${roleDisplay}
+          </div>
+          <div class="user-info">
+            <strong>Email:</strong> ${user.email || 'Unknown'}
+          </div>
+          <div class="user-info">
+            <strong>Roles:</strong> <code>${roles.join(', ')}</code>
+          </div>
+        `
+        
+        return user
+      } catch (err) {
+        document.getElementById('currentStatus').innerHTML = `
+          <div style="color: #ef4444;">Error loading user: ${err.message}</div>
+        `
+        return null
+      }
+    }
+
+    function showSuccess(msg) {
+      const el = document.getElementById('successMsg')
+      el.textContent = '✅ ' + msg
+      el.style.display = 'block'
+      document.getElementById('errorMsg').style.display = 'none'
+      setTimeout(() => { el.style.display = 'none' }, 5000)
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg')
+      el.textContent = '❌ ' + msg
+      el.style.display = 'block'
+      document.getElementById('successMsg').style.display = 'none'
+    }
+
+    function makeAdmin() {
+      try {
+        const authUser = localStorage.getItem('auth_user')
+        if (!authUser) {
+          showError('No user logged in')
+          return
+        }
+        
+        const user = JSON.parse(authUser)
+        user.roles = ['user', 'admin']
+        
+        localStorage.setItem('auth_user', JSON.stringify(user))
+        
+        // Also update in managed users list
+        updateManagedUserRole(user, ['user', 'admin'])
+        
+        showSuccess('Successfully set as Admin! Reload the page to see changes.')
+        loadCurrentUser()
+      } catch (err) {
+        showError('Error: ' + err.message)
+      }
+    }
+
+    function makeSuperAdmin() {
+      try {
+        const authUser = localStorage.getItem('auth_user')
+        if (!authUser) {
+          showError('No user logged in')
+          return
+        }
+        
+        const user = JSON.parse(authUser)
+        user.roles = ['user', 'admin', 'super_admin']
+        
+        localStorage.setItem('auth_user', JSON.stringify(user))
+        
+        // Also update in managed users list
+        updateManagedUserRole(user, ['user', 'admin', 'super_admin'])
+        
+        showSuccess('Successfully set as Super Admin! Reload the page to see changes.')
+        loadCurrentUser()
+      } catch (err) {
+        showError('Error: ' + err.message)
+      }
+    }
+
+    function removeAdmin() {
+      try {
+        const authUser = localStorage.getItem('auth_user')
+        if (!authUser) {
+          showError('No user logged in')
+          return
+        }
+        
+        const user = JSON.parse(authUser)
+        user.roles = ['user']
+        
+        localStorage.setItem('auth_user', JSON.stringify(user))
+        
+        // Also update in managed users list
+        updateManagedUserRole(user, ['user'])
+        
+        showSuccess('Successfully removed admin role! Reload the page to see changes.')
+        loadCurrentUser()
+      } catch (err) {
+        showError('Error: ' + err.message)
+      }
+    }
+
+    function updateManagedUserRole(user, newRoles) {
+      try {
+        const managedUsersStr = localStorage.getItem('sc_anime_managed_users')
+        if (!managedUsersStr) return
+        
+        const managedUsers = JSON.parse(managedUsersStr)
+        const index = managedUsers.findIndex(u => 
+          u.email.toLowerCase() === user.email.toLowerCase()
+        )
+        
+        if (index !== -1) {
+          managedUsers[index].roles = newRoles
+          localStorage.setItem('sc_anime_managed_users', JSON.stringify(managedUsers))
+        }
+      } catch (err) {
+        console.error('Error updating managed users:', err)
+      }
+    }
+
+    // Load on page load
+    loadCurrentUser()
+  </script>
+</body>
+</html>

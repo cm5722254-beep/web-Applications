@@ -190,10 +190,10 @@ export default function HomePage() {
               {genres.slice(0, 18).map((g: any) => (
                 <Link
                   key={g.id}
-                  href={`/genres?q=${encodeURIComponent((g.name ?? g.slug ?? '').toLowerCase())}`}
+                  href={`/anime?genre=${encodeURIComponent(g.name_en ?? g.name ?? g.slug ?? '')}`}
                   className="text-sm font-semibold text-neutral-300 hover:text-cyan-300 bg-white/4 hover:bg-cyan-500/8 border border-white/6 hover:border-cyan-500/20 px-3.5 py-1.5 rounded-xl transition-all"
                 >
-                  {g.name ?? g.slug}
+                  {g.name_en ?? g.name ?? g.slug}
                 </Link>
               ))}
             </div>

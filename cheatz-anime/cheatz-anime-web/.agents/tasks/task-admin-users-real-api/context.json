@@ -1,0 +1,23 @@
+{
+  "project_type": "Next.js 14 app router with TypeScript, React 18, Tailwind CSS, Axios for API calls",
+  "language": "TypeScript (strict mode enabled)",
+  "build_system": "Next.js 14.2.35 with npm, no custom build scripts",
+  "test_framework": "Jest configured (scripts/test commands exist), but no existing admin tests found",
+  "build_command": "npm run build",
+  "test_command": "npm run type-check",
+  "verification_instructions": "1. Run npm run type-check to verify TypeScript compilation. 2. Run npm run dev and manually test admin pages at http://localhost:3001/admin and /admin/users. 3. Verify API calls in browser Network tab hit https://apis.animekill.com/admin/* endpoints. 4. Test pagination, search, filters, VIP toggle, role changes, suspend/activate, delete.",
+  "snapshot_or_generated_files": null,
+  "environment_constraints": "API base is https://apis.animekill.com (no /api/v1 suffix). Admin routes are /admin/users not /api/v1/admin/users. Auth token stored in localStorage as 'auth_token' and attached via axios interceptor. Super admin email is hardcoded as socheatvinchan@gmail.com and cannot be deleted or demoted.",
+  "contribution_requirements": "No CONTRIBUTING.md or AGENTS.md found. Follow existing code patterns: use 'use client' for components with hooks, match Tailwind utility class patterns (bg-[#0d0f1a], border-cyan-500/15, etc.), maintain existing color scheme (cyan primary, amber for VIP, purple for admin roles). All admin pages already use useAuth hook and redirect non-admins to /.",
+  "key_patterns": "API responses wrap data in { data: T } or { data: T[], meta: PaginationMeta }. Transform API user objects to ManagedUser via transformUser helper. Use adminService.syncCurrentSession(updatedUser) after any user update to sync localStorage if the updated user is the logged-in user. Status toasts use fixed positioning with severity color variants. Modals use fixed overlay with backdrop-blur. Tables use divide-y with hover:bg-cyan-500/5 rows. All text shows English + Khmer labels. VIP badge uses Crown icon with amber-400 color. Admin badge uses ShieldCheck with purple-400.",
+  "relevant_files": [
+    "src/types/index.ts (add AdminUserFilters, AdminUserUpdate types)",
+    "src/lib/api.ts (apiClient is already configured, baseURL is https://apis.animekill.com)",
+    "src/services/adminService.ts (rewrite all methods to use real paginated API)",
+    "src/app/admin/page.tsx (dashboard with stats - replace derived counts with API meta.total)",
+    "src/app/admin/users/page.tsx (users table - add pagination UI, fix toggleStatus call)",
+    "src/hooks/useAuth.tsx (provides user, isAdmin, isSuperAdmin - DO NOT MODIFY)",
+    "src/components/layout/Navbar.tsx (referenced but not modified)"
+  ],
+  "directory_structure": "src/app/admin/* = admin pages using app router. src/services/* = API service layers. src/hooks/* = React hooks. src/types/index.ts = centralized type definitions. src/lib/api.ts = axios client with auth interceptor."
+}

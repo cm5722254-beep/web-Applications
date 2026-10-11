@@ -1,0 +1,51 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Rewrite admin users management page (src/app/admin/users/page.tsx) with full pagination, debounced search, API-driven filters, and proper CRUD operations. Add pagination controls (page buttons, per-page selector showing 20/50/100 options). Add debounced search (300ms delay) that sends search param to API. Wire filter tabs (All/VIP/Admin/Free) to API query params (subscribed=true for VIP, role=admin for Admin, no filters for All). Fix broken toggleStatus call - await the promise properly and reload data after. Add loading skeletons (5-row table skeleton). Add error state with retry button. Add confirmation dialogs before delete. Ensure all API calls use the new paginated adminService.getUsers(filters).",
+  "status": "pending",
+  "steps": [
+    "1. In src/app/admin/users/page.tsx, add state for: currentPage (number, default 1), perPage (number, default 20), totalPages (number, default 1), metaTotal (number, default 0).",
+    "2. Rewrite loadUsers() to accept no args. Build filters object from searchQuery, filterTab, currentPage, perPage. Map filterTab to API params: 'vip' → { subscribed: true }, 'admin' → { role: 'admin' }, 'free' → {} but client-side filter subscribed=false after load (API may not support subscribed=false param). Call adminService.getUsers(filters). Extract users and meta. Set usersList, metaTotal=meta.total, totalPages=meta.last_page. Set loadingUsers=false.",
+    "3. Add useEffect that calls loadUsers() whenever currentPage, perPage, searchQuery, or filterTab changes.",
+    "4. Replace searchQuery onChange to use debounced handler: import useState + useEffect to create a 300ms debounced effect. When user types, update local input value immediately, but only update searchQuery state (which triggers API call) after 300ms of no typing.",
+    "5. Add pagination controls below the table: show 'Page X of Y' label, Previous/Next buttons (disabled when on first/last page), and page number buttons for nearby pages (e.g. show pages currentPage-2 to currentPage+2, with ... ellipsis for gaps).",
+    "6. Add per-page selector: dropdown with options 20, 50, 100. On change, set perPage state and reset currentPage to 1.",
+    "7. Fix handleToggleVip to await adminService.toggleStatus(u.id), check if result is not null, then call loadUsers(). Show error toast if result is null.",
+    "8. Fix the inline suspend/activate button: change the onClick from `adminService.toggleStatus(u.id) && loadUsers()` to `async () => { const res = await adminService.toggleStatus(u.id); if (res) { loadUsers(); showToast(res.status === 'active' ? 'User activated' : 'User suspended') } else { showToast('Failed to toggle status', 'error') } }`.",
+    "9. Add loading skeleton: when loadingUsers=true, render 5 empty table rows with pulsing placeholders matching the table column structure (avatar circle, text lines, badge shapes).",
+    "10. Add error state: add errorMsg state (string | null). In loadUsers(), catch errors and set errorMsg. When errorMsg is set, show error banner above the table with retry button that clears errorMsg and calls loadUsers().",
+    "11. Update handleDelete to show confirmation dialog with window.confirm before calling adminService.deleteUser. If deleteUser returns false, show error toast.",
+    "12. Update filter tab click handlers to reset currentPage to 1 when changing tabs (so user doesn't land on page 5 of a different filter that only has 2 pages).",
+    "13. Update 'Showing X of Y users' footer text: change from 'Showing {filtered.length} of {totalCount}' to 'Showing {usersList.length} of {metaTotal} users (Page {currentPage} of {totalPages})'.",
+    "14. Remove useMemo for filtered list - no client-side filtering. API returns filtered/paginated data directly.",
+    "15. For the 'Free' filter tab: since API may not support subscribed=false, fetch all users (no filter) and client-side filter after, OR remove Free tab and only show All/VIP/Admin. Document the choice in a code comment.",
+    "16. Update stats counts at top (totalCount, vipCount, adminCount) to be derived from metaTotal when filterTab='all', otherwise show '...' or fetch separate counts via 3 additional API calls with per_page=1 (same pattern as FEAT-002 dashboard)."
+  ],
+  "acceptance_criteria": [
+    "TypeScript compilation passes",
+    "Users table shows paginated results with page controls (Previous, page numbers, Next)",
+    "Per-page dropdown (20/50/100) works and resets to page 1",
+    "Search input has 300ms debounce - typing doesn't immediately fire API calls, only after user stops typing",
+    "Filter tabs (All/VIP/Admin/Free) send correct query params to API",
+    "Suspend/Activate button properly awaits toggleStatus and reloads users on success",
+    "Delete shows confirmation dialog and prevents deletion of super admin",
+    "Loading skeleton (5 rows) appears while fetching",
+    "Error banner with retry button appears on API failure",
+    "Pagination state resets to page 1 when changing filters or search query",
+    "Footer shows 'Showing X of Y (Page N of M)' with real API totals"
+  ],
+  "verification": [
+    "npm run type-check",
+    "npm run dev, navigate to http://localhost:3001/admin/users",
+    "Test pagination: click Next, page numbers, Previous - verify API calls include ?page=N&per_page=20",
+    "Test per-page selector: change from 20 to 50 - verify API call includes per_page=50 and page resets to 1",
+    "Test search: type 'test', wait 300ms, verify API call includes search=test in Network tab",
+    "Test filters: click VIP tab - verify API call includes subscribed=true. Click Admin tab - verify role=admin",
+    "Test suspend/activate: click button, verify user status changes in UI and API POST /admin/users/{id}/suspend or /activate is called",
+    "Test delete: click delete on non-super-admin user, confirm dialog, verify DELETE /admin/users/{id} is called and user disappears from list",
+    "Test loading: throttle network in DevTools, verify 5-row skeleton appears while loading",
+    "Test error: break API temporarily (change baseURL in api.ts), verify error banner with retry button appears"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

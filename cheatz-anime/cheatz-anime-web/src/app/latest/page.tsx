@@ -39,7 +39,7 @@ export default function LatestReleasesPage() {
         {/* Grid of Latest Releases */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
           {latestList.map((item) => {
-            const watchUrl = `/${item.epSlug}`
+            const watchUrl = `/anime/${item.animeSlug}/season-1/ep-${item.epNum}`
             const poster = item.poster || `https://animekill.com/poster/${item.animeSlug}-hd.webp`
 
             return (

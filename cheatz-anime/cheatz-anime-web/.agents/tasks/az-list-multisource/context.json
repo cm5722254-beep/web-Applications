@@ -1,0 +1,26 @@
+{
+  "project_type": "Next.js 14 App Router TypeScript streaming platform",
+  "language": "TypeScript",
+  "build_system": "npm scripts, Next.js 14 with dev server on port 3001",
+  "test_framework": "jest configured but no existing tests for features being added",
+  "build_command": "npm run build",
+  "test_command": "npm run type-check",
+  "verification_instructions": "1. Run npm run type-check to verify TypeScript strict mode compliance. 2. Run npm run build to verify Next.js build succeeds. 3. Run npm run dev in background, manually test features in browser at localhost:3001. 4. For video sources: test switching between sources with developer tools network tab to verify fallback logic.",
+  "snapshot_or_generated_files": "None - all source files are hand-written, no generated/snapshot files to update",
+  "environment_constraints": "Dev server runs on port 3001 (not default 3000). Never restart dev server during implementation - let Next.js hot reload handle changes. Browser localStorage used for video source preferences and auth tokens. Videos play via Dailymotion iframe embeds only (no direct video files).",
+  "contribution_requirements": "TypeScript strict mode enabled. All anime data comes from animeDataService.ts which wraps animekill.com API and local JSON catalog (1483 anime in animekill_catalog.json). Use existing patterns: cn() for className merging, @tanstack/react-query for data fetching, Lucide icons, dark theme (bg #07080f, cyan accents). Auth via useAuth hook (Google OAuth, localStorage-based session). Video player authenticates users before playback.",
+  "key_patterns": "Component structure: 'use client' for interactive components, Suspense boundaries for loading states, useQuery with queryKey arrays for caching. UI: rounded-2xl for cards, cyan-500 for primary actions, neutral-400 for muted text, border-white/10 for subtle borders. Video URLs: /api/playback route resolves episode URLs to Dailymotion embeds (returns {playback_url, type:'embed', source, expires_at}). All video iframe embeds use geo.dailymotion.com player with allow='autoplay; encrypted-media; fullscreen' and sandbox='allow-scripts allow-same-origin allow-presentation'.",
+  "relevant_files": [
+    "c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\app\\az-list\\page.tsx",
+    "c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\app\\anime\\[slug]\\[season]\\[episode]\\page.tsx",
+    "c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\services\\animeDataService.ts",
+    "c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\app\\api\\playback\\route.ts",
+    "c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\components\\layout\\Navbar.tsx",
+    "c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\components\\ui\\AnimeCard.tsx",
+    "c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\app\\anime\\page.tsx",
+    "c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\types\\index.ts",
+    "c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\lib\\utils.ts",
+    "c:\\Users\\NIN\\Documents\\Anime\\cheatz-anime\\cheatz-anime-web\\src\\hooks\\useAuth.tsx"
+  ],
+  "directory_structure": "src/app/ contains Next.js 14 app router pages (page.tsx files in nested folders for routes). src/components/ has layout (Navbar, Footer) and ui (AnimeCard, shared UI components in index.tsx). src/services/ contains API client layer (animeDataService.ts wraps animekill.com, api.ts re-exports). src/types/index.ts has all TypeScript interfaces. src/hooks/ has custom React hooks (useAuth.tsx for authentication). src/app/api/ contains Next.js API routes (playback/route.ts resolves video URLs). src/data/ contains static JSON catalog (animekill_catalog.json with 1483 anime)."
+}

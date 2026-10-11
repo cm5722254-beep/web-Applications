@@ -23,6 +23,13 @@ const SORT_OPTIONS = [
   { value: 'views', label: 'Most Viewed' },
 ]
 
+const PER_PAGE_OPTIONS = [
+  { value: 24, label: '24 per page' },
+  { value: 48, label: '48 per page' },
+  { value: 96, label: '96 per page' },
+  { value: 200, label: '200 per page' },
+]
+
 const TYPE_TITLES: Record<string, string> = {
   donghua: 'Chinese Donghua Series',
   movie: 'Anime & Donghua Movies',
@@ -35,6 +42,7 @@ function AnimeCatalogContent() {
   const searchParams = useSearchParams()
 
   const [page, setPage] = useState(1)
+  const [perPage, setPerPage] = useState(96) // Increased default from 24 to 96
   const type = searchParams.get('type') || ''
   const genre = searchParams.get('genre') || undefined
   const sort = searchParams.get('sort') || 'latest'
@@ -42,8 +50,8 @@ function AnimeCatalogContent() {
   const { data: genres } = useQuery({ queryKey: ['genres'], queryFn: genreService.list })
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ['anime', 'catalog', type, genre, sort, page],
-    queryFn: () => animeService.list({ type: type || undefined, genre, sort, page, per_page: 24 }),
+    queryKey: ['anime', 'catalog', type, genre, sort, page, perPage],
+    queryFn: () => animeService.list({ type: type || undefined, genre, sort, page, per_page: perPage }),
   })
 
   const title = type ? TYPE_TITLES[type] || 'Anime Catalog' : genre ? `${genre} Anime & Donghua` : 'Complete Anime Catalog'
@@ -134,6 +142,22 @@ function AnimeCatalogContent() {
               </option>
             ))}
           </select>
+
+          {/* Per Page */}
+          <select
+            value={perPage}
+            onChange={(e) => {
+              setPerPage(Number(e.target.value))
+              setPage(1)
+            }}
+            className="bg-black/60 border border-white/10 text-neutral-200 text-xs rounded-xl px-3 py-2 focus:border-red-400 focus:outline-none"
+          >
+            {PER_PAGE_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Results */}
@@ -144,7 +168,7 @@ function AnimeCatalogContent() {
           />
         ) : isLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            {Array.from({ length: 24 }).map((_, i) => (
+            {Array.from({ length: perPage }).map((_, i) => (
               <AnimeCardSkeleton key={i} />
             ))}
           </div>

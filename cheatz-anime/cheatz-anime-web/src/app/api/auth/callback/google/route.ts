@@ -114,8 +114,52 @@ export async function GET(req: NextRequest) {
   </div>
   <script>
     try {
+      // 1. Save auth session
       localStorage.setItem('auth_user', ${JSON.stringify(JSON.stringify(sessionUser))});
       localStorage.setItem('auth_token', ${JSON.stringify(authToken)});
+
+      // 2. Auto-register into admin user DB (sc_anime_managed_users)
+      var USERS_KEY = 'sc_anime_managed_users';
+      var newUser = ${JSON.stringify(JSON.stringify({
+        id: sessionUser.id,
+        name: sessionUser.name,
+        email: sessionUser.email,
+        avatar: sessionUser.avatar,
+        roles: sessionUser.roles,
+        subscribed: sessionUser.subscribed,
+        subscription_plan: sessionUser.subscribed ? 'Google OAuth' : null,
+        subscription_expires_at: null,
+        status: 'active',
+        created_at: new Date().toISOString(),
+        login_provider: 'google',
+        last_login_at: new Date().toISOString(),
+      }))};
+      try {
+        var usersRaw = localStorage.getItem(USERS_KEY);
+        var users = usersRaw ? JSON.parse(usersRaw) : [];
+        var existingIndex = users.findIndex(function(u) {
+          return u.email.toLowerCase() === ${JSON.stringify(email)};
+        });
+        var parsedNewUser = JSON.parse(newUser);
+        if (existingIndex === -1) {
+          // New user — add to list
+          users.push(parsedNewUser);
+        } else {
+          // Existing user — update login info but preserve roles/VIP set by admin
+          users[existingIndex] = Object.assign({}, users[existingIndex], {
+            name: parsedNewUser.name,
+            avatar: parsedNewUser.avatar,
+            last_login_at: parsedNewUser.last_login_at,
+            login_provider: 'google',
+            status: users[existingIndex].status || 'active',
+          });
+        }
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+      } catch (dbErr) {
+        console.warn('Admin DB registration failed:', dbErr);
+      }
+
+      // 3. Notify auth listeners
       window.dispatchEvent(new Event('auth_updated'));
     } catch (e) {
       console.error(e);

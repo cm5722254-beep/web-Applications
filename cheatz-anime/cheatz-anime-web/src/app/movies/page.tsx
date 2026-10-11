@@ -24,11 +24,13 @@ export default function MoviesPage() {
   const [selectedGenre, setSelectedGenre] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState<'popular' | 'latest' | 'rating'>('popular')
+  const [page, setPage] = useState(1)
+  const [perPage, setPerPage] = useState(96)
 
   // Query movies from API
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['movies-list'],
-    queryFn: () => animeService.list({ type: 'movie', per_page: 48 }),
+    queryKey: ['movies-list', page, perPage],
+    queryFn: () => animeService.list({ type: 'movie', per_page: perPage, page }),
     staleTime: 5 * 60 * 1000,
   })
 
@@ -170,6 +172,11 @@ export default function MoviesPage() {
               <Flame size={20} className="text-cyan-400" />
               <span>Available Movies ({filteredMovies.length})</span>
             </h2>
+            {data && (
+              <p className="text-neutral-400 text-xs">
+                Showing {data.data.length} of {data.meta?.total || 0} total
+              </p>
+            )}
           </div>
 
           {isLoading ? (
@@ -185,11 +192,36 @@ export default function MoviesPage() {
               <p className="text-xs text-neutral-400">Try searching with a different keyword or genre.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-5">
-              {filteredMovies.map((movie) => (
-                <AnimeCard key={movie.id} anime={movie} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-5">
+                {filteredMovies.map((movie) => (
+                  <AnimeCard key={movie.id} anime={movie} />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {data && data.meta && data.meta.last_page > 1 && (
+                <div className="flex items-center justify-center gap-4 mt-8">
+                  <button
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="px-4 py-2 text-xs font-semibold rounded-xl bg-[#0d0f1a] border border-white/10 text-neutral-300 hover:text-white hover:border-cyan-500/50 disabled:opacity-30 transition-all"
+                  >
+                    Previous
+                  </button>
+                  <span className="text-neutral-400 text-xs font-semibold">
+                    Page {page} of {data.meta.last_page}
+                  </span>
+                  <button
+                    onClick={() => setPage((p) => Math.min(data.meta.last_page, p + 1))}
+                    disabled={page === data.meta.last_page}
+                    className="px-4 py-2 text-xs font-semibold rounded-xl bg-[#0d0f1a] border border-white/10 text-neutral-300 hover:text-white hover:border-cyan-500/50 disabled:opacity-30 transition-all"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </section>
       </main>

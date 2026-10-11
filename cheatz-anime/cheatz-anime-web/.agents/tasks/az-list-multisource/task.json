@@ -1,0 +1,7 @@
+{
+  "task_id": "az-list-multisource",
+  "task_description": "Build A-Z anime list page showing all 1483 catalog entries and implement multiple video source fallback system for broken videos",
+  "status": "pending",
+  "feature_order": ["FEAT-001", "FEAT-002"],
+  "blocked_reason": null
+}

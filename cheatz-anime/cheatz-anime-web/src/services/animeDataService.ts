@@ -140,7 +140,35 @@ let homeCache: AnimeKillHomeData | null = null
 let cacheTimestamp = 0
 const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
+/**
+ * All animekill API calls go through this function.
+ *
+ * SERVER-SIDE  → calls animekill.com/apis.animekill.com directly (no CORS issue)
+ * BROWSER-SIDE → calls /api/ak-proxy?path=... (proxy route on our own origin)
+ *                This avoids the CORS block completely.
+ */
 async function fetchFromApi(endpoint: string, options?: RequestInit): Promise<Response | null> {
+  // ── Browser: use our own proxy route ──────────────────────────────────────
+  if (typeof window !== 'undefined') {
+    try {
+      const proxyUrl = `/api/ak-proxy?path=${encodeURIComponent(endpoint)}`
+      const method   = options?.method?.toUpperCase() ?? 'GET'
+      const controller = new AbortController()
+      const timer = setTimeout(() => controller.abort(), 8000)
+
+      const res = await fetch(proxyUrl, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: options?.body,
+        signal: controller.signal,
+      })
+      clearTimeout(timer)
+      if (res.ok) return res
+    } catch (_e) { /* ignore */ }
+    return null
+  }
+
+  // ── Server: call animekill directly (no CORS restriction) ─────────────────
   const servers = [API_URL, FALLBACK_API]
   for (const base of servers) {
     try {
@@ -152,9 +180,7 @@ async function fetchFromApi(endpoint: string, options?: RequestInit): Promise<Re
       })
       clearTimeout(timer)
       if (res.ok) return res
-    } catch (_e) {
-      // Try next server
-    }
+    } catch (_e) { /* try next */ }
   }
   return null
 }
@@ -195,6 +221,24 @@ const STREAM_URLS = [
 export function getTalesOfHerdingGodsAnime(): Anime {
   const raw = talesOfHerdingGodsJson as any
   const poster = 'https://animekill.com/poster/tales-of-herding-gods-hd.webp'
+
+  // Dailymotion player base — all Tales episodes use geo.dailymotion.com
+  const DM_PLAYER = 'xbj0x'
+  const DM_IDS: Record<number, string> = {
+    1:   'x983o9q',
+    2:   'x9841s6',
+    3:   'x984p4r',
+    4:   'x98obrx',
+    5:   'x98u7nt',
+    10:  'x99efrc',
+    20:  'x9bq7y9',
+    50:  'k7JzamWXohwNagDVQwM',
+    100: 'k3tMhgfgcl7Gj6MiEIG',
+    102: 'k2v05Gn5BBzfpVKxwqG',
+    103: 'k5Tn5UULu9LFneL0oLc',
+    104: 'k7EQenfojRv0sXLqOOC',
+  }
+
   const genres: Genre[] = (raw.genres || ['Action', 'Adventure', 'Fantasy']).map((name: string, i: number) => ({
     id: i + 1,
     name_en: name,
@@ -206,16 +250,28 @@ export function getTalesOfHerdingGodsAnime(): Anime {
 
   const episodes: Episode[] = (raw.episodeList || []).map((ep: any) => {
     const num = ep.number
-    const playback_url =
-      ep.video_host && ep.video_path
-        ? `https://${ep.video_host}${ep.video_path}`
-        : num === 103
-        ? 'https://geo.dailymotion.com/player/x110cm.html?video=k5Tn5UULu9LFneL0oLc'
-        : num === 102
-        ? 'https://geo.dailymotion.com/player/x110cm.html?video=k2v05Gn5BBzfpVKxwqG'
-        : num === 1
-        ? 'https://www.dailymotion.com/embed/video/x983o9q?autoplay=1&subtitles-default=hi&mute=false'
-        : null
+
+    // Only use Dailymotion URLs — either from animekill data (if it's DM) or from known IDs
+    let playback_url: string | null = null
+
+    if (ep.video_host && ep.video_path) {
+      const host = String(ep.video_host).toLowerCase()
+      if (host.includes('dailymotion')) {
+        // Extract DM video ID and convert to geo.dailymotion.com embed
+        const path = String(ep.video_path)
+        const m = path.match(/\/embed\/video\/([a-zA-Z0-9_-]+)/)
+          ?? path.match(/[?&]video=([a-zA-Z0-9_-]+)/)
+        if (m?.[1]) {
+          playback_url = `https://geo.dailymotion.com/player/${DM_PLAYER}.html?video=${m[1]}&autoplay=1`
+        }
+      }
+      // Non-DM hosts (gdriveplayer, ok.ru, etc.) — leave null, /api/playback will resolve
+    }
+
+    // Use hardcoded DM ID if we have one for this episode number
+    if (!playback_url && DM_IDS[num]) {
+      playback_url = `https://geo.dailymotion.com/player/${DM_PLAYER}.html?video=${DM_IDS[num]}&autoplay=1`
+    }
 
     return {
       id: 164589 * 1000 + num,
@@ -455,38 +511,88 @@ export const animeService = {
   },
 
   async search(q: string, _options?: { per_page?: number }): Promise<PaginatedResponse<AnimeListItem>> {
-    const home = await getHomeData()
-    const allItems: AnimeListItem[] = []
-
-    Object.values(home).forEach((cat) => {
-      if (Array.isArray(cat)) {
-        allItems.push(...cat.map(transformAnimeKillItem))
-      }
-    })
-
     const query = q.toLowerCase().trim()
-    const matched = allItems.filter(
-      (a) =>
-        a.title_en.toLowerCase().includes(query) ||
-        (a.title_original && a.title_original.toLowerCase().includes(query))
-    )
+    if (!query) {
+      return {
+        data: [],
+        meta: { current_page: 1, last_page: 1, per_page: 0, total: 0, from: 1, to: 0 },
+        links: { first: null, last: null, prev: null, next: null },
+      }
+    }
 
     const seen = new Set<string>()
-    const unique = matched.filter((m) => {
-      if (seen.has(m.slug)) return false
-      seen.add(m.slug)
-      return true
-    })
+    const allItems: AnimeListItem[] = []
+
+    // 1. Search the full local catalog (1383 anime) — instant, no API call
+    const catalogEntries = Object.values(animekillCatalog.animes as Record<string, any>)
+    for (const item of catalogEntries) {
+      if (!item.slug) continue
+      const titleMatch =
+        (item.title || '').toLowerCase().includes(query) ||
+        (item.synonyms || '').toLowerCase().includes(query) ||
+        item.slug.replace(/-/g, ' ').includes(query)
+
+      if (titleMatch && !seen.has(item.slug)) {
+        seen.add(item.slug)
+        allItems.push({
+          id: Math.abs(item.slug.split('').reduce((a: number, b: string) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0)) % 100000 + 100,
+          slug: item.slug,
+          title_en: item.title || item.slug.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()),
+          title_km: null,
+          title_original: item.synonyms ? item.synonyms.split(',')[0].trim() : null,
+          poster_url: item.poster || `https://animekill.com/poster/${item.slug}-hd.webp`,
+          type: (item.anime_type === '3D' || (item.anime_origin === 'chinese'))
+            ? 'donghua'
+            : item.anime_type === '2D' ? 'cartoon' : 'donghua',
+          airing_status: 'ongoing',
+          release_year: 2024,
+          views_count: item.total_watch || 0,
+          average_score: item.score ? parseFloat(String(item.score)) || 8.8 : 8.8,
+          is_premium: false,
+          genres: (item.genres || item.genre?.split(',') || []).map((name: string, idx: number) => ({
+            id: idx + 10,
+            name_en: name.trim(),
+            name_km: null,
+            slug: slugify(name),
+            icon: null,
+            is_active: true,
+          })),
+        })
+      }
+    }
+
+    // 2. Also search live home page data (catches recently added items not yet in catalog)
+    try {
+      const home = await getHomeData()
+      Object.values(home).forEach((cat) => {
+        if (Array.isArray(cat)) {
+          cat.forEach((raw) => {
+            const item = raw as AnimeKillItem
+            const titleMatch =
+              (item.name || '').toLowerCase().includes(query) ||
+              (item.synonyms || '').toLowerCase().includes(query) ||
+              (item.anime_id || '').replace(/-/g, ' ').includes(query)
+            if (titleMatch) {
+              const transformed = transformAnimeKillItem(item)
+              if (!seen.has(transformed.slug)) {
+                seen.add(transformed.slug)
+                allItems.push(transformed)
+              }
+            }
+          })
+        }
+      })
+    } catch (_e) {}
 
     return {
-      data: unique,
+      data: allItems,
       meta: {
         current_page: 1,
         last_page: 1,
-        per_page: unique.length,
-        total: unique.length,
+        per_page: allItems.length,
+        total: allItems.length,
         from: 1,
-        to: unique.length,
+        to: allItems.length,
       },
       links: { first: null, last: null, prev: null, next: null },
     }
@@ -507,9 +613,65 @@ export const animeService = {
       return getTalesOfHerdingGodsAnime()
     }
 
+    // ── 1. Fetch real anime detail from animekill.com/api/data/anime/{slug} ──
+    // This gives us: real description, totalEpisodes, episodeNumbers, poster, status
+    // AK API response shape — includes episodeList with video_host/video_path per episode
+    interface AKDetailResponse {
+      description?: string
+      totalEpisodes?: number
+      maxEpisode?: number
+      episodeNumbers?: number[]
+      episodeList?: Array<{
+        episode_id?: string
+        number:      number
+        title?:      string
+        thumbnail?:  string
+        video_host?: string
+        video_path?: string
+        url?:        string
+      }>
+      anime?: {
+        name?: string
+        description?: string
+        large_poster?: string
+        small_poster?: string
+        orginal_poster?: string
+        genre?: string
+        score?: string | number
+        status?: string
+        synonyms?: string
+        anime_type?: string
+        anime_origin?: string
+        add_on_date?: string
+        total_watch?: number
+        next_episode_trailer_video_id?: string
+      }
+    }
+
+    let liveDetail: AKDetailResponse | null = null
+
+    try {
+      // Browser → use proxy (avoids CORS). Server → call directly.
+      const akPath = `/api/data/anime/${encodeURIComponent(slug)}`
+      const fetchUrl = typeof window !== 'undefined'
+        ? `/api/ak-proxy?path=${encodeURIComponent(akPath)}`
+        : `https://animekill.com${akPath}`
+
+      const res = await fetch(fetchUrl, {
+        headers: typeof window !== 'undefined'
+          ? { 'Content-Type': 'application/json' }
+          : { 'User-Agent': 'Mozilla/5.0 (compatible; SC-ANIME-KH/1.0)' },
+        next: { revalidate: 300 },
+      } as RequestInit)
+      if (res.ok) {
+        const json: AKDetailResponse = await res.json()
+        if (json?.anime || json?.episodeList) liveDetail = json
+      }
+    } catch (_e) {}
+
+    // ── 2. Also look in home data (for fields like trailer video id) ──────────
     const home = await getHomeData()
     let rawItem: AnimeKillItem | undefined
-
     for (const cat of Object.values(home)) {
       if (Array.isArray(cat)) {
         const found = cat.find(
@@ -517,44 +679,93 @@ export const animeService = {
             x.anime_id === slug ||
             x.anime_id_web === slug ||
             slugify(x.name) === slug ||
-            x.name.toLowerCase() === slug.toLowerCase()
+            (x.name || '').toLowerCase() === slug.toLowerCase()
         )
-        if (found) {
-          rawItem = found
-          break
-        }
+        if (found) { rawItem = found; break }
       }
     }
 
+    // ── 3. Fallback to local catalog ─────────────────────────────────────────
     const catalogItem = (animekillCatalog.animes as Record<string, any>)?.[slug]
 
-    const base = rawItem
-      ? transformAnimeKillItem(rawItem)
-      : catalogItem
-      ? {
-          id: Math.abs(slug.split('').reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0)) % 100000 + 100,
-          slug,
-          title_en: catalogItem.title,
-          title_km: null,
-          title_original: catalogItem.title_original || null,
-          poster_url: catalogItem.poster || `https://animekill.com/poster/${slug}-hd.webp`,
-          type: (catalogItem.type as any) || 'donghua',
-          airing_status: 'ongoing' as const,
-          release_year: 2024,
-          views_count: 5000,
-          average_score: catalogItem.score ? parseFloat(catalogItem.score) || 8.8 : 8.8,
-          is_premium: false,
-          genres: (catalogItem.genres || ['Action', 'Fantasy']).map((name: string, i: number) => ({
-            id: i + 1,
-            name_en: name,
+    // ── 4. Build base AnimeListItem from best available source ───────────────
+    const liveAnime = liveDetail?.anime
+    const base: AnimeListItem = (() => {
+      if (liveAnime) {
+        // Use live data — most accurate
+        const isChinese = liveAnime.anime_origin === 'chinese'
+        const is3D = liveAnime.anime_type === '3D'
+        const is2D = liveAnime.anime_type === '2D'
+        const isShortDrama = liveAnime.anime_type === 'ShortDrama'
+        let animeType: import('@/types').AnimeType =
+          isChinese || is3D ? 'donghua' : is2D ? 'cartoon' : 'anime'
+
+        const poster =
+          (liveAnime.large_poster && liveAnime.large_poster !== 'na'
+            ? `https://animekill.com${liveAnime.large_poster}`
+            : liveAnime.small_poster && liveAnime.small_poster !== 'na'
+            ? `https://animekill.com${liveAnime.small_poster}`
+            : null) ||
+          catalogItem?.poster ||
+          rawItem?.large_poster ||
+          rawItem?.small_poster ||
+          `https://animekill.com/poster/${slug}-hd.webp`
+
+        const year = liveAnime.add_on_date ? new Date(liveAnime.add_on_date).getFullYear() : 2024
+        const genres: Genre[] = (liveAnime.genre || catalogItem?.genre || '')
+          .split(',')
+          .filter(Boolean)
+          .map((g: string, idx: number) => ({
+            id: idx + 10,
+            name_en: g.trim(),
             name_km: null,
-            slug: slugify(name),
+            slug: slugify(g),
             icon: null,
             is_active: true,
+          }))
+
+        const idSeed = slug.split('').reduce((a: number, b: string) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0)
+        return {
+          id: Math.abs(idSeed) % 100000 + 100,
+          slug,
+          title_en: (liveAnime.name || catalogItem?.title || slug.replace(/-/g, ' ')).trim(),
+          title_km: null,
+          title_original: liveAnime.synonyms ? liveAnime.synonyms.split(',')[0].trim() : null,
+          poster_url: poster,
+          type: animeType,
+          airing_status: liveAnime.status === 'Completed' ? 'completed' : 'ongoing',
+          release_year: isNaN(year) ? 2024 : year,
+          views_count: liveAnime.total_watch || catalogItem?.total_watch || 0,
+          average_score: liveAnime.score ? parseFloat(String(liveAnime.score)) || 8.8 : 8.8,
+          is_premium: false,
+          genres,
+        }
+      } else if (rawItem) {
+        return transformAnimeKillItem(rawItem)
+      } else if (catalogItem) {
+        const idSeed = slug.split('').reduce((a: number, b: string) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0)
+        return {
+          id: Math.abs(idSeed) % 100000 + 100,
+          slug,
+          title_en: catalogItem.title || slug.replace(/-/g, ' '),
+          title_km: null,
+          title_original: catalogItem.synonyms ? catalogItem.synonyms.split(',')[0].trim() : null,
+          poster_url: catalogItem.poster || `https://animekill.com/poster/${slug}-hd.webp`,
+          type: 'donghua' as const,
+          airing_status: 'ongoing' as const,
+          release_year: 2024,
+          views_count: catalogItem.total_watch || 0,
+          average_score: catalogItem.score ? parseFloat(String(catalogItem.score)) || 8.8 : 8.8,
+          is_premium: false,
+          genres: (catalogItem.genres || []).map((name: string, i: number) => ({
+            id: i + 1, name_en: name, name_km: null,
+            slug: slugify(name), icon: null, is_active: true,
           })),
         }
-      : {
-          id: 100,
+      } else {
+        const idSeed = slug.split('').reduce((a: number, b: string) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0)
+        return {
+          id: Math.abs(idSeed) % 100000 + 100,
           slug,
           title_en: slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
           title_km: null,
@@ -568,33 +779,133 @@ export const animeService = {
           is_premium: false,
           genres: [],
         }
+      }
+    })()
 
-    const totalEps = catalogItem?.total_episodes || Math.max(rawItem?.next_episode_trailer_number || 24, 12)
+    // ── 5. Build real episode list ────────────────────────────────────────────
+    //
+    // Pre-fill playback_url ONLY when video_host is Dailymotion.
+    // All other hosts (gdriveplayer, ok.ru, etc.) → leave null so the watch
+    // page's /api/playback route resolves them to Dailymotion at playback time.
 
-    const episodes: Episode[] = Array.from(
-      { length: totalEps },
-      (_, i) => ({
-        id: base.id * 100 + i + 1,
-        season_id: 1,
-        slug: `ep-${i + 1}`,
-        title_en: `Episode ${i + 1}`,
-        title_km: null,
-        episode_number: i + 1,
-        synopsis_en: `Episode ${i + 1} of ${base.title_en}`,
-        synopsis_km: null,
-        thumbnail_url: base.poster_url,
-        duration_seconds: 1200,
-        has_hls: true,
-        status: 'published',
-        is_premium: false,
-        aired_at: '2024-01-01',
+    const DM_PLAYER = 'xbj0x'
+
+    interface AKEpItem {
+      episode_id?: string
+      number:      number
+      title?:      string
+      thumbnail?:  string
+      video_host?: string
+      video_path?: string
+    }
+    const rawEpList: AKEpItem[] = (liveDetail as any)?.episodeList ?? []
+
+    let episodes: Episode[]
+    let epNumbers: number[] = []
+
+    if (rawEpList.length > 0) {
+      epNumbers = rawEpList.map((ep) => ep.number)
+      episodes = rawEpList.map((ep) => {
+        const num = ep.number
+
+        // Only pre-fill if the host is Dailymotion
+        let playback_url: string | null = null
+        if (ep.video_host && ep.video_path) {
+          const host = ep.video_host.toLowerCase()
+          if (host.includes('dailymotion') || host.includes('dai.ly')) {
+            const path = ep.video_path
+            const m = path.match(/\/embed\/video\/([a-zA-Z0-9_-]+)/)
+              ?? path.match(/[?&]video=([a-zA-Z0-9_-]+)/)
+            if (m?.[1]) {
+              playback_url = `https://geo.dailymotion.com/player/${DM_PLAYER}.html?video=${m[1]}&autoplay=1`
+            } else {
+              // Full path is DM, use as-is but normalise to geo player
+              const cleaned = ep.video_path
+                .replace(/\\u0026/g, '&')
+                .replace(/\\\//g, '/')
+                .replace(/\\/g, '')
+              playback_url = `https://${ep.video_host.replace(/^https?:\/\//, '')}${cleaned}`
+            }
+          }
+          // Non-DM hosts → null (resolved at watch time via /api/playback)
+        }
+
+        const thumbnail = ep.thumbnail
+          ? (ep.thumbnail.startsWith('http') ? ep.thumbnail : `https://animekill.com${ep.thumbnail}`)
+          : base.poster_url
+
+        return {
+          id:             base.id * 1000 + Math.round(num * 10),
+          season_id:      1,
+          slug:           ep.episode_id ? ep.episode_id.replace(`${slug}-`, '') : `ep-${num}`,
+          title_en:       ep.title || `Episode ${num}`,
+          title_km:       null,
+          episode_number: num,
+          synopsis_en:    `${base.title_en} Episode ${num}`,
+          synopsis_km:    null,
+          thumbnail_url:  thumbnail,
+          duration_seconds: 1200,
+          has_hls:        true,
+          status:         'published' as const,
+          is_premium:     false,
+          aired_at:       '2024-01-01',
+          playback_url,
+        }
       })
-    )
+    } else {
+      // Fallback: build episode list from episodeNumbers array or total count
+      epNumbers =
+        (liveDetail?.episodeNumbers && liveDetail.episodeNumbers.length > 0)
+          ? liveDetail.episodeNumbers
+          : (() => {
+              const total =
+                liveDetail?.totalEpisodes ||
+                liveDetail?.maxEpisode ||
+                catalogItem?.total_episodes ||
+                catalogItem?.total_episode ||
+                rawItem?.next_episode_trailer_number ||
+                24
+              return Array.from({ length: Math.max(total, 1) }, (_, i) => i + 1)
+            })()
 
-    const trailerVideoId = rawItem?.next_episode_trailer_video_id
+      episodes = epNumbers.map((num) => ({
+        id:             base.id * 1000 + num,
+        season_id:      1,
+        slug:           `ep-${num}`,
+        title_en:       `Episode ${num}`,
+        title_km:       null,
+        episode_number: num,
+        synopsis_en:    `${base.title_en} Episode ${num}`,
+        synopsis_km:    null,
+        thumbnail_url:  base.poster_url,
+        duration_seconds: 1200,
+        has_hls:        true,
+        status:         'published' as const,
+        is_premium:     false,
+        aired_at:       '2024-01-01',
+        playback_url:   null,
+      }))
+    }
+
+    // ── 6. Real synopsis from live API ────────────────────────────────────────
+    const synopsis =
+      liveDetail?.anime?.description ||
+      liveDetail?.description ||
+      catalogItem?.description ||
+      null
+
+    const trailerVideoId =
+      liveAnime?.next_episode_trailer_video_id ||
+      rawItem?.next_episode_trailer_video_id
     const trailerUrl = trailerVideoId
       ? `https://www.youtube.com/watch?v=${trailerVideoId}`
       : null
+
+    const synonymsRaw =
+      liveAnime?.synonyms ||
+      rawItem?.synonyms ||
+      catalogItem?.synonyms ||
+      null
 
     const seasons: Season[] = [
       {
@@ -604,21 +915,21 @@ export const animeService = {
         title_en: 'Season 1',
         title_km: null,
         season_number: 1,
-        synopsis_en: rawItem?.synonyms || base.title_en,
+        synopsis_en: synopsis,
         synopsis_km: null,
         poster_url: base.poster_url,
         status: 'published',
         aired_from: '2024-01-01',
         aired_to: null,
-        total_episodes: totalEps,
+        total_episodes: epNumbers.length,
         episodes,
       },
     ]
 
     return {
       ...base,
-      alt_titles: rawItem?.synonyms ? rawItem.synonyms.split(',') : null,
-      synopsis_en: rawItem?.synonyms || base.title_en,
+      alt_titles: synonymsRaw ? synonymsRaw.split(',').map((s: string) => s.trim()) : null,
+      synopsis_en: synopsis,
       synopsis_km: null,
       banner_url: base.poster_url,
       trailer_url: trailerUrl,

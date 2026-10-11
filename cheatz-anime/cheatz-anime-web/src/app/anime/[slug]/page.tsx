@@ -109,13 +109,23 @@ export default function AnimeDetailPage() {
 
             {/* Quick Watch & Favorite */}
             <div className="mt-4 flex flex-col gap-2.5">
-              <Link
-                href={watchHref}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 to-sky-700 hover:from-cyan-500 hover:to-sky-600 text-white font-extrabold py-3.5 px-6 rounded-2xl shadow-[0_0_20px_rgba(0,212,255,0.4)] transition-all hover:scale-105"
-              >
-                <Play size={18} fill="currentColor" />
-                <span>Watch Episode 1</span>
-              </Link>
+              {user ? (
+                <Link
+                  href={watchHref}
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 to-sky-700 hover:from-cyan-500 hover:to-sky-600 text-white font-extrabold py-3.5 px-6 rounded-2xl shadow-[0_0_20px_rgba(0,212,255,0.4)] transition-all hover:scale-105"
+                >
+                  <Play size={18} fill="currentColor" />
+                  <span>Watch Episode 1</span>
+                </Link>
+              ) : (
+                <Link
+                  href={`/login?redirect=${encodeURIComponent(watchHref)}`}
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 to-sky-700 hover:from-cyan-500 hover:to-sky-600 text-white font-extrabold py-3.5 px-6 rounded-2xl shadow-[0_0_20px_rgba(0,212,255,0.4)] transition-all hover:scale-105"
+                >
+                  <Play size={18} fill="currentColor" />
+                  <span>Sign In to Watch</span>
+                </Link>
+              )}
 
               <button
                 onClick={() => toggleFavorite()}
@@ -223,20 +233,23 @@ export default function AnimeDetailPage() {
                         {isExpanded && (
                           <div className="border-t border-white/5 p-5 bg-black/30">
                             <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2.5">
-                              {season.episodes?.map((ep) => (
-                                <Link
-                                  key={ep.id}
-                                  href={`/anime/${slug}/${season.slug}/${ep.slug}`}
-                                  className="group flex flex-col items-center justify-center p-3 rounded-xl bg-[#111420] hover:bg-cyan-600 text-neutral-300 hover:text-white border border-white/5 hover:border-cyan-400 transition-all duration-200 hover:scale-105 shadow-md"
-                                >
-                                  <span className="text-[10px] text-neutral-500 group-hover:text-white/70 font-semibold">
-                                    EP
-                                  </span>
-                                  <span className="text-sm font-black">
-                                    {ep.episode_number}
-                                  </span>
-                                </Link>
-                              ))}
+                              {season.episodes?.map((ep) => {
+                                const epHref = `/anime/${slug}/${season.slug}/${ep.slug}`
+                                return (
+                                  <Link
+                                    key={ep.id}
+                                    href={user ? epHref : `/login?redirect=${encodeURIComponent(epHref)}`}
+                                    className="group flex flex-col items-center justify-center p-3 rounded-xl bg-[#111420] hover:bg-cyan-600 text-neutral-300 hover:text-white border border-white/5 hover:border-cyan-400 transition-all duration-200 hover:scale-105 shadow-md"
+                                  >
+                                    <span className="text-[10px] text-neutral-500 group-hover:text-white/70 font-semibold">
+                                      EP
+                                    </span>
+                                    <span className="text-sm font-black">
+                                      {ep.episode_number}
+                                    </span>
+                                  </Link>
+                                )
+                              })}
                             </div>
                           </div>
                         )}
