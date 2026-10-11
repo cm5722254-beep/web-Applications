@@ -1,41 +1,58 @@
 import Link from 'next/link'
-import { ShieldAlert, Calendar, Compass, Send } from 'lucide-react'
+
+const EXPLORE_LINKS = [
+  { href: '/anime?type=donghua', label: 'Chinese Donghua' },
+  { href: '/anime?type=anime',   label: 'Japanese Anime'  },
+  { href: '/movies',             label: 'Movies'          },
+  { href: '/popular',            label: 'Popular'         },
+  { href: '/latest',             label: 'Latest'          },
+]
+
+const INFO_LINKS = [
+  { href: '/about',   label: 'About'        },
+  { href: '/contact', label: 'Contact'      },
+  { href: '/terms',   label: 'Terms of Use' },
+  { href: '/privacy', label: 'Privacy'      },
+]
+
+const GENRE_TAGS = [
+  'Cultivation', 'Martial Arts', 'Rebirth', 'Overpowered MC',
+  'Monster Evolution', 'Fantasy', 'Action', 'Adventure',
+]
 
 export function Footer() {
   return (
-    <footer className="bg-[#0a0608] border-t border-red-500/15 mt-20 relative overflow-hidden">
-      {/* Red glow at top */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px] bg-gradient-to-r from-transparent via-red-500/40 to-transparent" />
-      <div className="absolute top-0 left-1/4 w-[400px] h-[200px] bg-red-600/4 rounded-full blur-[80px] pointer-events-none" />
+    <footer className="bg-[#07080f] border-t border-white/5 mt-20 relative overflow-hidden">
+      {/* Top glow line */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[1px] bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent" />
+      <div className="absolute top-0 left-1/4 w-[400px] h-[180px] bg-cyan-600/3 rounded-full blur-[80px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
 
-          {/* Brand */}
-          <div className="col-span-1 md:col-span-2">
-            <Link href="/" className="inline-flex items-center gap-3 mb-4 group">
-              <div className="w-9 h-9 rounded-xl overflow-hidden ring-2 ring-red-500/50 shadow-[0_0_14px_rgba(225,29,72,0.35)] group-hover:scale-105 transition-all">
+          {/* Brand column */}
+          <div className="col-span-2 md:col-span-1">
+            <Link href="/" className="inline-flex items-center gap-2.5 mb-4 group">
+              <div className="w-9 h-9 rounded-xl overflow-hidden ring-1 ring-cyan-400/35 shadow-[0_0_12px_rgba(0,212,255,0.25)] group-hover:ring-cyan-400/60 transition-all">
                 <img src="/logo.png" alt="SC-ANIME KH" className="w-full h-full object-cover" />
               </div>
-              <div className="flex items-center font-black text-xl tracking-wider">
-                <span className="bg-gradient-to-r from-red-400 via-rose-300 to-red-500 bg-clip-text text-transparent">
+              <div className="flex items-center gap-1 font-black text-lg tracking-wide">
+                <span className="bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-400 bg-clip-text text-transparent">
                   SC-ANIME
                 </span>
-                <span className="ml-1 text-xs px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 font-bold border border-red-500/30">
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-300 font-bold border border-cyan-500/25">
                   KH
                 </span>
               </div>
             </Link>
 
-            <p className="text-rose-100/50 text-sm leading-relaxed max-w-md">
-              The premier streaming catalog for high-definition Chinese Donghua, Japanese Anime, and Movies.
-              Ultra-fast playback in Full HD & 4K.
+            <p className="text-neutral-500 text-sm leading-relaxed">
+              The premier streaming catalog for Chinese Donghua, Japanese Anime, and Movies in Full HD &amp; 4K.
             </p>
 
-            <div className="flex flex-wrap gap-2 mt-5">
-              {['Chinese Donghua', 'Japanese Anime', '4K Ultra HD', 'Weekly Schedule', 'Instant Stream'].map((tag) => (
-                <span key={tag}
-                  className="text-[11px] font-semibold text-rose-100/40 bg-red-500/8 border border-red-500/15 px-2.5 py-1 rounded-lg">
+            <div className="flex flex-wrap gap-1.5 mt-4">
+              {GENRE_TAGS.slice(0, 4).map((tag) => (
+                <span key={tag} className="text-[10px] font-semibold text-cyan-300/50 bg-cyan-500/6 border border-cyan-500/12 px-2 py-0.5 rounded-lg">
                   {tag}
                 </span>
               ))}
@@ -44,65 +61,63 @@ export function Footer() {
 
           {/* Explore */}
           <div>
-            <h3 className="text-red-400 font-bold mb-3.5 text-xs uppercase tracking-wider">Explore</h3>
-            <ul className="space-y-2 text-sm">
-              {[
-                { href: '/anime?type=donghua', label: 'Chinese Donghua' },
-                { href: '/anime?type=anime',   label: 'Japanese Anime' },
-                { href: '/movies',             label: 'Anime Movies' },
-              ].map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="text-rose-100/45 hover:text-red-300 transition-colors">{l.label}</Link>
+            <h3 className="text-cyan-400/70 font-bold mb-3.5 text-[11px] uppercase tracking-widest">Explore</h3>
+            <ul className="space-y-2">
+              {EXPLORE_LINKS.map(({ href, label }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className="text-sm text-neutral-400 hover:text-cyan-300 transition-colors"
+                  >
+                    {label}
+                  </Link>
                 </li>
               ))}
-              <li>
-                <Link href="/schedule" className="text-rose-100/45 hover:text-red-300 transition-colors flex items-center gap-1.5">
-                  <Calendar size={12} className="text-amber-400" /> Release Schedule
-                </Link>
-              </li>
-              <li>
-                <Link href="/genres" className="text-rose-100/45 hover:text-red-300 transition-colors flex items-center gap-1.5">
-                  <Compass size={12} /> Browse Genres
-                </Link>
-              </li>
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Info */}
           <div>
-            <h3 className="text-red-400 font-bold mb-3.5 text-xs uppercase tracking-wider">Legal & Support</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/settings" className="text-rose-100/45 hover:text-red-300 transition-colors flex items-center gap-1.5">
-                  <ShieldAlert size={12} className="text-red-400" /> Copyright & DMCA
-                </Link>
-              </li>
-              {[
-                { href: '/terms',   label: 'Terms of Service' },
-                { href: '/privacy', label: 'Privacy Policy' },
-                { href: '/about',   label: 'About' },
-                { href: '/contact', label: 'Contact' },
-              ].map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="text-rose-100/45 hover:text-red-300 transition-colors">{l.label}</Link>
+            <h3 className="text-cyan-400/70 font-bold mb-3.5 text-[11px] uppercase tracking-widest">Info</h3>
+            <ul className="space-y-2">
+              {INFO_LINKS.map(({ href, label }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className="text-sm text-neutral-400 hover:text-cyan-300 transition-colors"
+                  >
+                    {label}
+                  </Link>
                 </li>
               ))}
-              <li>
-                <a href="https://t.me/BongCheatz_IT" target="_blank" rel="noopener noreferrer"
-                  className="text-amber-400 hover:text-amber-300 font-semibold transition-colors flex items-center gap-1.5">
-                  <Send size={12} /> Telegram Admin
-                </a>
-              </li>
             </ul>
+          </div>
+
+          {/* Genres */}
+          <div>
+            <h3 className="text-cyan-400/70 font-bold mb-3.5 text-[11px] uppercase tracking-widest">Genres</h3>
+            <div className="flex flex-wrap gap-1.5">
+              {GENRE_TAGS.map((tag) => (
+                <Link
+                  key={tag}
+                  href={`/genres?q=${encodeURIComponent(tag.toLowerCase())}`}
+                  className="text-[10px] font-semibold text-neutral-400 hover:text-cyan-300 bg-white/3 hover:bg-cyan-500/8 border border-white/6 hover:border-cyan-500/20 px-2 py-1 rounded-lg transition-all"
+                >
+                  {tag}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-red-500/10 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-rose-100/30">
-          <p>© 2026 SC-ANIME KH. All rights reserved.</p>
-          <p className="text-center md:text-right max-w-xl">
-            Disclaimer: This platform does not host any media files on its servers. All streams are indexed from third-party public web services.
-          </p>
+        <div className="mt-10 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-600">
+          <span>© {new Date().getFullYear()} SC-ANIME KH. All rights reserved.</span>
+          <div className="flex items-center gap-4">
+            <Link href="/terms"   className="hover:text-neutral-400 transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-neutral-400 transition-colors">Privacy</Link>
+            <Link href="/contact" className="hover:text-neutral-400 transition-colors">Contact</Link>
+          </div>
         </div>
       </div>
     </footer>
