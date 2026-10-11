@@ -30,7 +30,7 @@ export default function LatestReleasesPage() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-red-500/18 border border-red-500/35 text-red-300">
+            <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-cyan-500/18 border border-cyan-500/35 text-cyan-300">
               {latestList.length} Recent Episodes
             </span>
           </div>
