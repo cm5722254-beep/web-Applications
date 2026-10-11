@@ -2,19 +2,17 @@
 const nextConfig = {
   output: 'standalone',
 
+  // English-only — no locale switching
+  // i18n is NOT configured here; the app is 100% English
+
   images: {
     remotePatterns: [
-      // animekill.com CDN — posters, banners
       { protocol: 'https', hostname: 'animekill.com' },
       { protocol: 'https', hostname: '*.animekill.com' },
-      // Cloudinary / imageban (used by animekill catalog)
       { protocol: 'https', hostname: 'i7.imageban.ru' },
       { protocol: 'https', hostname: 'imageban.ru' },
-      // Unsplash (used for avatar placeholders)
       { protocol: 'https', hostname: 'images.unsplash.com' },
-      // Google user avatars
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
-      // Generic wildcard for any remaining CDN hosts
       { protocol: 'https', hostname: '**' },
     ],
     formats: ['image/avif', 'image/webp'],
@@ -29,7 +27,6 @@ const nextConfig = {
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-XSS-Protection', value: '1; mode=block' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          // Allow iframes from video hosts (dailymotion, ok.ru, donghuaworld, etc.)
           {
             key: 'Content-Security-Policy',
             value: [
