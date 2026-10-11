@@ -49,7 +49,7 @@ function AnimeCatalogContent() {
   const title = type ? TYPE_TITLES[type] || 'Anime Catalog' : genre ? `${genre} Anime & Donghua` : 'Complete Anime Catalog'
 
   return (
-    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
+    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
@@ -82,8 +82,8 @@ function AnimeCatalogContent() {
               }}
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 border ${
                 type === opt.value
-                  ? 'bg-red-600 text-black border-red-400 shadow-[0_0_20px_rgba(225,29,72,0.4)]'
-                  : 'bg-[#130a0b] text-neutral-300 border-white/5 hover:border-red-500/35 hover:text-white'
+                  ? 'bg-cyan-600 text-black border-red-400 shadow-[0_0_20px_rgba(0,212,255,0.4)]'
+                  : 'bg-[#0d0f1a] text-neutral-300 border-white/5 hover:border-cyan-500/35 hover:text-white'
               }`}
             >
               {opt.label}
@@ -92,9 +92,9 @@ function AnimeCatalogContent() {
         </div>
 
         {/* Sub-filters */}
-        <div className="flex flex-wrap items-center gap-3 mb-8 p-4 bg-[#130a0b] border border-white/10 rounded-2xl">
+        <div className="flex flex-wrap items-center gap-3 mb-8 p-4 bg-[#0d0f1a] border border-white/10 rounded-2xl">
           <div className="flex items-center gap-2 text-neutral-400 text-xs font-semibold">
-            <Filter size={15} className="text-red-400" />
+            <Filter size={15} className="text-cyan-400" />
             <span>Filter:</span>
           </div>
 
@@ -196,7 +196,7 @@ export default function AnimeCatalogPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#0a0608] flex items-center justify-center">
+        <div className="min-h-screen bg-[#07080f] flex items-center justify-center">
           <LoadingSpinner size={40} />
         </div>
       }
