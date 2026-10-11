@@ -40,7 +40,7 @@ const SECTIONS = [
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
+    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-14">
@@ -49,7 +49,7 @@ export default function TermsPage() {
 
         <div className="space-y-6">
           {SECTIONS.map((s) => (
-            <div key={s.title} className="bg-[#130a0b] border border-white/5 rounded-2xl p-6">
+            <div key={s.title} className="bg-[#0d0f1a] border border-white/5 rounded-2xl p-6">
               <h2 className="text-white font-bold text-base mb-2">{s.title}</h2>
               <p className="text-neutral-400 text-sm leading-relaxed">{s.body}</p>
             </div>
