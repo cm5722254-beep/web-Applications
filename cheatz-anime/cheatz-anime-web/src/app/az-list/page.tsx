@@ -85,7 +85,7 @@ export default function AzListPage() {
                 setSearchQuery(e.target.value)
                 setLimit(INITIAL_LIMIT)
               }}
-              className="w-full bg-[#130a0b] border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-red-400 transition-colors"
+              className="w-full bg-[#0d0f1a] border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-red-400 transition-colors"
             />
           </div>
         </div>
