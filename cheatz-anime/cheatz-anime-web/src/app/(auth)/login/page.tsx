@@ -42,20 +42,20 @@ function LoginForm() {
   return (
     <div className="w-full max-w-md relative z-10">
       {/* Background Glow */}
-      <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 bg-red-500/18 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 bg-cyan-500/18 rounded-full blur-3xl pointer-events-none" />
 
       {/* Brand Header */}
       <div className="text-center mb-8">
         <Link href="/" className="inline-flex items-center gap-3 group">
-          <div className="w-14 h-14 rounded-2xl overflow-hidden ring-2 ring-red-400 shadow-[0_0_20px_rgba(225,29,72,0.4)] group-hover:scale-105 transition-transform">
+          <div className="w-14 h-14 rounded-2xl overflow-hidden ring-2 ring-cyan-400 shadow-[0_0_20px_rgba(0,212,255,0.4)] group-hover:scale-105 transition-transform">
             <img src="/logo.png" alt="SC-ANIME KH" className="w-full h-full object-cover" />
           </div>
           <div className="text-left">
             <div className="flex items-center">
-              <span className="text-2xl font-black bg-gradient-to-r from-red-500 via-sky-200 to-rose-600 bg-clip-text text-transparent block tracking-wide">
+              <span className="text-2xl font-black bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-400 bg-clip-text text-transparent block tracking-wide">
                 SC-ANIME
               </span>
-              <span className="ml-1 text-xs px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">
+              <span className="ml-1 text-xs px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-bold border border-cyan-500/30">
                 KH
               </span>
             </div>
@@ -67,8 +67,8 @@ function LoginForm() {
       </div>
 
       {/* Card */}
-      <div className="bg-[#130a0b]/95 backdrop-blur-2xl border border-red-500/25 rounded-3xl p-8 sm:p-10 shadow-2xl shadow-black/80 relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-400 to-transparent" />
+      <div className="bg-[#0d0f1a]/95 backdrop-blur-2xl border border-cyan-500/25 rounded-3xl p-8 sm:p-10 shadow-2xl shadow-black/80 relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
 
         <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2">
@@ -99,7 +99,7 @@ function LoginForm() {
           </button>
 
           <div className="flex items-center justify-center gap-2 text-xs text-neutral-400 pt-1">
-            <ShieldCheck size={14} className="text-red-400" />
+            <ShieldCheck size={14} className="text-cyan-400" />
             <span>Secure 1-click Google OAuth verification</span>
           </div>
         </div>
@@ -107,15 +107,15 @@ function LoginForm() {
         {/* Feature List */}
         <div className="mt-8 pt-6 border-t border-white/10 space-y-2.5 text-xs text-neutral-300">
           <div className="flex items-center gap-2">
-            <CheckCircle2 size={14} className="text-red-400" />
+            <CheckCircle2 size={14} className="text-cyan-400" />
             <span>Full HD 1080p & 4K Ultra HD streaming</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle2 size={14} className="text-red-400" />
+            <CheckCircle2 size={14} className="text-cyan-400" />
             <span>Multi-device watch history synchronization</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle2 size={14} className="text-red-400" />
+            <CheckCircle2 size={14} className="text-cyan-400" />
             <span>Personal favorites & notification bookmarks</span>
           </div>
         </div>
@@ -126,9 +126,9 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-[#0a0608] flex items-center justify-center px-4 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-[#07080f] flex items-center justify-center px-4 py-12 relative overflow-hidden">
       {/* Background blobs */}
-      <div className="fixed top-0 left-1/4 w-96 h-96 bg-red-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed top-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
 
       <Suspense fallback={<LoadingSpinner size={40} />}>
