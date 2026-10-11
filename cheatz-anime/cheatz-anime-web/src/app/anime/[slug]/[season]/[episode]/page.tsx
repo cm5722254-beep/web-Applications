@@ -176,14 +176,14 @@ export default function VideoPlayerPage() {
   const useIframe = videoUrl ? isEmbedUrl(videoUrl) : false
 
   return (
-    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
+    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-2 sm:px-4 py-4 flex flex-col items-center gap-4">
 
         {/* Guest sync banner */}
         {!user && (
-          <div className="w-full bg-gradient-to-r from-cyan-950/40 via-blue-950/30 to-cyan-950/40 border border-cyan-500/30 rounded-2xl px-4 py-2.5 flex items-center justify-between gap-3 text-xs">
+          <div className="w-full bg-gradient-to-r from-red-950/30 via-[#130a0b] to-rose-950/20 border border-red-500/20 rounded-2xl px-4 py-2.5 flex items-center justify-between gap-3 text-xs">
             <span className="text-neutral-300">
               ⚡ Playing in Full HD. Sign in to sync watch progress across devices.
             </span>
@@ -197,14 +197,14 @@ export default function VideoPlayerPage() {
         )}
 
         {/* ── Video Player ─────────────────────────────────────────────── */}
-        <div className="w-full bg-black rounded-3xl overflow-hidden shadow-2xl relative border border-cyan-500/30">
+        <div className="w-full bg-black rounded-3xl overflow-hidden shadow-2xl relative border border-red-500/20">
 
           {/* Loading state */}
           {showLoader && (
             <div className="aspect-video flex items-center justify-center bg-black">
               <div className="flex flex-col items-center gap-3">
                 <LoadingSpinner size={44} />
-                <p className="text-cyan-400 text-xs font-bold tracking-wider uppercase animate-pulse">
+                <p className="text-red-400 text-xs font-bold tracking-wider uppercase animate-pulse">
                   Connecting High-Speed Stream...
                 </p>
               </div>
@@ -221,7 +221,7 @@ export default function VideoPlayerPage() {
                 </p>
                 <button
                   onClick={handleRetry}
-                  className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold px-5 py-2 rounded-xl text-xs inline-flex items-center gap-2 transition-all"
+                  className="bg-red-600 hover:bg-red-500 text-white font-bold px-5 py-2 rounded-xl text-xs inline-flex items-center gap-2 transition-all"
                 >
                   <RefreshCw size={14} />
                   Retry Stream {retryCount > 0 ? `(${retryCount})` : ''}

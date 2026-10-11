@@ -4,45 +4,34 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&family=Noto+Sans+Khmer:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-/* ─── Design Tokens ─────────────────────────────────────────────────────── */
+/* ─── Design Tokens — RED GLASS THEME ──────────────────────────────────── */
 :root {
   --font-sans: 'Inter', 'Kantumruy Pro', 'Noto Sans Khmer', system-ui, sans-serif;
 
-  /* Dark mode (default) */
-  --bg:        #07080f;
-  --surface:   #0e111f;
-  --border:    #1a1d2e;
-  --text:      #e2e2f0;
-  --muted:     #6e6e8a;
-  --purple:    #7c3aed;
-  --violet:    #8b5cf6;
-  --glow:      #a78bfa;
-  --cyan:      #06b6d4;
-  --cyan-dim:  rgba(6,182,212,0.15);
+  /* Base backgrounds — deep near-black with a subtle red warmth */
+  --bg:        #0a0608;
+  --surface:   #130a0b;
+  --border:    #2a1015;
+  --text:      #f0e0e2;
+  --muted:     #7a4a50;
+
+  /* Brand accent — blood red / crimson */
+  --red:       #e11d48;
+  --red-light: #fb7185;
+  --red-dim:   rgba(225, 29, 72, 0.15);
+  --red-glow:  rgba(225, 29, 72, 0.35);
+
+  /* Glass surface tint */
+  --glass-bg:     rgba(30, 8, 12, 0.75);
+  --glass-border: rgba(225, 29, 72, 0.18);
 
   /* Scrollbar */
   --scroll-track: var(--surface);
   --scroll-thumb: var(--border);
 }
 
-/* Light theme overrides */
-html.light {
-  --bg:       #f0f4ff;
-  --surface:  #ffffff;
-  --border:   #dde3f0;
-  --text:     #0f172a;
-  --muted:    #64748b;
-  --purple:   #6d28d9;
-  --violet:   #7c3aed;
-  --glow:     #8b5cf6;
-  --cyan:     #0891b2;
-  --cyan-dim: rgba(8,145,178,0.1);
-}
-
 /* ─── Base ──────────────────────────────────────────────────────────────── */
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
   background-color: var(--bg);
@@ -50,68 +39,64 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Subtle red-tinted grain texture */
+  background-image:
+    radial-gradient(ellipse 80% 60% at 20% 0%, rgba(225,29,72,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(190,18,60,0.06) 0%, transparent 60%);
+  background-attachment: fixed;
 }
 
-.font-khmer,
-[lang="km"] {
+.font-khmer, [lang="km"] {
   font-family: 'Kantumruy Pro', 'Noto Sans Khmer', system-ui, sans-serif;
 }
 
 /* ─── Scrollbar ─────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar          { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track    { background: var(--scroll-track); }
-::-webkit-scrollbar-thumb    { background: var(--scroll-thumb); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--muted); }
-
-/* Hide horizontal scrollbar on carousel rows */
+::-webkit-scrollbar-thumb    { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3d1520; }
 .scrollbar-none::-webkit-scrollbar { display: none; }
 .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* ─── Selection ─────────────────────────────────────────────────────────── */
-::selection {
-  background-color: rgba(6,182,212,0.3);
-  color: #e2e2f0;
-}
+::selection { background-color: rgba(225,29,72,0.35); color: #fff; }
 
 /* ─── Skeleton shimmer ──────────────────────────────────────────────────── */
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--surface) 25%,
-    #1a1d2e 50%,
-    var(--surface) 75%
-  );
+  background: linear-gradient(90deg, #130a0b 25%, #2a1015 50%, #130a0b 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
-
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position:  200% 0; }
 }
 
-/* ─── Glass card ────────────────────────────────────────────────────────── */
+/* ─── Red Glass card ────────────────────────────────────────────────────── */
 .glass {
-  background: rgba(14, 17, 31, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(26, 29, 46, 0.6);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid var(--glass-border);
 }
 
 /* ─── Gradient text utilities ───────────────────────────────────────────── */
-.text-gradient-cyan {
-  background: linear-gradient(135deg, #06b6d4, #38bdf8, #06b6d4);
+.text-gradient-red {
+  background: linear-gradient(135deg, #e11d48, #fb7185, #e11d48);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.text-gradient-rose {
+  background: linear-gradient(135deg, #fb7185, #fda4af, #fb7185);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.text-gradient-violet {
-  background: linear-gradient(135deg, #8b5cf6, #a78bfa, #8b5cf6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+/* ─── Glow shadows ──────────────────────────────────────────────────────── */
+.shadow-red-glow  { box-shadow: 0 0 25px rgba(225,29,72,0.4); }
+.shadow-rose-glow { box-shadow: 0 0 20px rgba(251,113,133,0.3); }
 
 /* ─── 3D Logo animations ────────────────────────────────────────────────── */
 @keyframes revolve3d {
@@ -129,20 +114,24 @@ body {
   to   { transform: rotate(360deg) scale(1); }
 }
 @keyframes coinShine {
-  0%, 15%    { opacity: 0;   transform: translateX(-150%) rotate(35deg); }
-  30%, 45%   { opacity: 0.7; transform: translateX(150%)  rotate(35deg); }
-  60%, 100%  { opacity: 0;   transform: translateX(150%)  rotate(35deg); }
+  0%, 15%   { opacity: 0;   transform: translateX(-150%) rotate(35deg); }
+  30%, 45%  { opacity: 0.7; transform: translateX(150%)  rotate(35deg); }
+  60%, 100% { opacity: 0;   transform: translateX(150%)  rotate(35deg); }
+}
+@keyframes redPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(225,29,72,0.3); }
+  50%       { box-shadow: 0 0 30px rgba(225,29,72,0.65); }
 }
 
 .logo-3d-stage   { perspective: 1200px; transform-style: preserve-3d; animation: float3d 4s ease-in-out infinite; }
 .logo-3d-revolve { animation: revolve3d 9s linear infinite; transform-style: preserve-3d; }
 .logo-3d-revolve:hover { animation-play-state: paused; }
 .orbit-ring-glow { animation: orbitRingSpin 12s linear infinite; }
+.pulse-red        { animation: redPulse 2s ease-in-out infinite; }
 
-/* ─── Page section fade-in ──────────────────────────────────────────────── */
-@keyframes fadeIn  { from { opacity: 0; }                          to { opacity: 1; } }
+/* ─── Page transitions ──────────────────────────────────────────────────── */
+@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-
 .animate-fade-in  { animation: fadeIn  0.35s ease-in-out both; }
 .animate-slide-up { animation: slideUp 0.4s  ease-out     both; }
 

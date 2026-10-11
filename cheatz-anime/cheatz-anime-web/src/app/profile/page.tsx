@@ -61,7 +61,7 @@ export default function ProfilePage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-[#07080f] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0608] flex items-center justify-center">
         <LoadingSpinner size={44} />
       </div>
     )
@@ -73,26 +73,26 @@ export default function ProfilePage() {
 
   const stats = [
     { icon: Heart, label: 'Favorites', value: favCount, color: 'text-pink-400', href: '/favorites' },
-    { icon: History, label: 'Watched', value: histCount, color: 'text-cyan-400', href: '/history' },
-    { icon: Film, label: 'Episodes', value: histCount * 1, color: 'text-blue-400', href: '/history' },
+    { icon: History, label: 'Watched', value: histCount, color: 'text-red-400', href: '/history' },
+    { icon: Film, label: 'Episodes', value: histCount * 1, color: 'text-red-400', href: '/history' },
   ]
 
   return (
-    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
+    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
       <Navbar />
 
       {/* Background glow */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/3 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-[160px]" />
+        <div className="absolute top-0 left-1/3 w-[600px] h-[600px] bg-red-600/5 rounded-full blur-[160px]" />
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-blue-600/5 rounded-full blur-[120px]" />
       </div>
 
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-10 relative z-10">
 
         {/* Profile Hero Card */}
-        <div className="relative bg-gradient-to-br from-[#0c0e18] via-[#0e111f] to-[#0c0e18] border border-cyan-500/20 rounded-3xl p-8 mb-6 overflow-hidden shadow-2xl">
+        <div className="relative bg-gradient-to-br from-[#0c0e18] via-[#0e111f] to-[#0c0e18] border border-red-500/18 rounded-3xl p-8 mb-6 overflow-hidden shadow-2xl">
           {/* Top accent line */}
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-400/60 to-transparent" />
 
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
             {/* Avatar */}
@@ -101,10 +101,10 @@ export default function ProfilePage() {
                 <img
                   src={user.avatar}
                   alt={user.name}
-                  className="w-24 h-24 rounded-2xl object-cover border-2 border-cyan-400/50 shadow-[0_0_25px_rgba(6,182,212,0.3)]"
+                  className="w-24 h-24 rounded-2xl object-cover border-2 border-red-400/50 shadow-[0_0_20px_rgba(225,29,72,0.3)]"
                 />
               ) : (
-                <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-4xl font-black text-white shadow-[0_0_25px_rgba(6,182,212,0.3)] border-2 border-cyan-400/50">
+                <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center text-4xl font-black text-white shadow-[0_0_20px_rgba(225,29,72,0.3)] border-2 border-red-400/50">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
               )}
@@ -140,7 +140,7 @@ export default function ProfilePage() {
               ) : (
                 <Link
                   href="/subscription"
-                  className="inline-flex items-center gap-1.5 text-xs bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-extrabold px-3 py-1.5 rounded-xl hover:scale-105 transition-transform shadow-[0_0_12px_rgba(6,182,212,0.4)]"
+                  className="inline-flex items-center gap-1.5 text-xs bg-gradient-to-r from-red-600 to-rose-700 text-black font-extrabold px-3 py-1.5 rounded-xl hover:scale-105 transition-transform shadow-[0_0_20px_rgba(225,29,72,0.4)]"
                 >
                   <Sparkles size={12} /> Upgrade to VIP — $1 Forever
                 </Link>
@@ -172,7 +172,7 @@ export default function ProfilePage() {
               <Link
                 key={stat.label}
                 href={stat.href}
-                className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-black/30 hover:bg-white/5 border border-white/5 hover:border-cyan-500/30 transition-all group"
+                className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-black/30 hover:bg-white/5 border border-white/5 hover:border-red-500/25 transition-all group"
               >
                 <stat.icon size={20} className={`${stat.color} group-hover:scale-110 transition-transform`} />
                 <span className="text-xl font-black text-white">{stat.value}</span>
@@ -186,7 +186,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <Link
             href="/favorites"
-            className="group flex items-center gap-4 p-5 bg-[#0e111f] border border-white/5 hover:border-pink-500/30 rounded-2xl transition-all hover:bg-pink-500/5"
+            className="group flex items-center gap-4 p-5 bg-[#130a0b] border border-white/5 hover:border-pink-500/30 rounded-2xl transition-all hover:bg-pink-500/5"
           >
             <div className="w-11 h-11 rounded-xl bg-pink-500/20 flex items-center justify-center border border-pink-500/20 group-hover:scale-110 transition-transform">
               <Heart size={20} className="text-pink-400" />
@@ -199,10 +199,10 @@ export default function ProfilePage() {
 
           <Link
             href="/history"
-            className="group flex items-center gap-4 p-5 bg-[#0e111f] border border-white/5 hover:border-cyan-500/30 rounded-2xl transition-all hover:bg-cyan-500/5"
+            className="group flex items-center gap-4 p-5 bg-[#130a0b] border border-white/5 hover:border-red-500/25 rounded-2xl transition-all hover:bg-red-600/5"
           >
-            <div className="w-11 h-11 rounded-xl bg-cyan-500/20 flex items-center justify-center border border-cyan-500/20 group-hover:scale-110 transition-transform">
-              <History size={20} className="text-cyan-400" />
+            <div className="w-11 h-11 rounded-xl bg-red-500/18 flex items-center justify-center border border-red-500/18 group-hover:scale-110 transition-transform">
+              <History size={20} className="text-red-400" />
             </div>
             <div>
               <p className="text-white font-bold text-sm">Watch History</p>
@@ -212,7 +212,7 @@ export default function ProfilePage() {
 
           <Link
             href="/subscription"
-            className="group flex items-center gap-4 p-5 bg-[#0e111f] border border-white/5 hover:border-amber-500/30 rounded-2xl transition-all hover:bg-amber-500/5"
+            className="group flex items-center gap-4 p-5 bg-[#130a0b] border border-white/5 hover:border-amber-500/30 rounded-2xl transition-all hover:bg-amber-500/5"
           >
             <div className="w-11 h-11 rounded-xl bg-amber-500/20 flex items-center justify-center border border-amber-500/20 group-hover:scale-110 transition-transform">
               <Crown size={20} className="text-amber-400" />
@@ -225,10 +225,10 @@ export default function ProfilePage() {
 
           <Link
             href="/settings"
-            className="group flex items-center gap-4 p-5 bg-[#0e111f] border border-white/5 hover:border-blue-500/30 rounded-2xl transition-all hover:bg-blue-500/5"
+            className="group flex items-center gap-4 p-5 bg-[#130a0b] border border-white/5 hover:border-blue-500/30 rounded-2xl transition-all hover:bg-blue-500/5"
           >
             <div className="w-11 h-11 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/20 group-hover:scale-110 transition-transform">
-              <Settings size={20} className="text-blue-400" />
+              <Settings size={20} className="text-red-400" />
             </div>
             <div>
               <p className="text-white font-bold text-sm">Settings</p>

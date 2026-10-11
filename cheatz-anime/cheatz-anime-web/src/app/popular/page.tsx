@@ -31,7 +31,7 @@ export default function PopularAnimePage() {
               </p>
             </div>
           </div>
-          <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-cyan-500/20 border border-cyan-500/30 text-cyan-300">
+          <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-red-500/18 border border-red-500/25 text-red-300">
             {popularList.length} Trending Series
           </span>
         </div>

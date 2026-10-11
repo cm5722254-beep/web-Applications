@@ -33,18 +33,18 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
+    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-10">
         {/* Title */}
         <div className="mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/25 text-red-400 text-xs font-bold uppercase tracking-wider mb-2">
             <Sliders size={13} />
             <span>Preferences & Legal</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-white">
-            Settings & <span className="bg-gradient-to-r from-cyan-400 to-sky-300 bg-clip-text text-transparent">Copyright</span>
+            Settings & <span className="bg-gradient-to-r from-red-500 to-sky-300 bg-clip-text text-transparent">Copyright</span>
           </h1>
           <p className="text-neutral-400 text-sm mt-1">
             Manage your player configurations and review intellectual property policies.
@@ -53,9 +53,9 @@ export default function SettingsPage() {
 
         <div className="space-y-8">
           {/* Account Overview */}
-          <div className="bg-[#0e111f] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-xl">
+          <div className="bg-[#130a0b] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-xl">
             <h2 className="text-lg font-bold text-white flex items-center gap-2.5 mb-4">
-              <User size={18} className="text-cyan-400" />
+              <User size={18} className="text-red-400" />
               <span>Google Account Information</span>
             </h2>
 
@@ -63,16 +63,16 @@ export default function SettingsPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
                 <div className="flex items-center gap-3">
                   {user.avatar ? (
-                    <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full border-2 border-cyan-400/50" />
+                    <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full border-2 border-red-400/50" />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-cyan-500/20 text-cyan-400 font-bold flex items-center justify-center text-lg">
+                    <div className="w-12 h-12 rounded-full bg-red-500/18 text-red-400 font-bold flex items-center justify-center text-lg">
                       {user.name.charAt(0)}
                     </div>
                   )}
                   <div>
                     <h3 className="font-bold text-white text-base">{user.name}</h3>
                     <p className="text-xs text-neutral-400">{user.email}</p>
-                    <span className="inline-flex items-center gap-1 text-[10px] text-cyan-300 mt-1 font-semibold">
+                    <span className="inline-flex items-center gap-1 text-[10px] text-red-300 mt-1 font-semibold">
                       <ShieldCheck size={11} /> Verified Real Google Login
                     </span>
                   </div>
@@ -89,7 +89,7 @@ export default function SettingsPage() {
                 <span>Not signed in with Google.</span>
                 <a
                   href="/login"
-                  className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold px-4 py-1.5 rounded-xl text-xs transition-colors"
+                  className="bg-red-600 hover:bg-red-500 text-black font-bold px-4 py-1.5 rounded-xl text-xs transition-colors"
                 >
                   Sign In with Google
                 </a>
@@ -98,9 +98,9 @@ export default function SettingsPage() {
           </div>
 
           {/* Streaming & Player Preferences */}
-          <div className="bg-[#0e111f] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-xl">
+          <div className="bg-[#130a0b] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-xl">
             <h2 className="text-lg font-bold text-white flex items-center gap-2.5 mb-4">
-              <Sliders size={18} className="text-cyan-400" />
+              <Sliders size={18} className="text-red-400" />
               <span>Player & Streaming Preferences</span>
             </h2>
 
@@ -113,7 +113,7 @@ export default function SettingsPage() {
                 <button
                   onClick={() => setAutoplay(!autoplay)}
                   className={`w-12 h-6 rounded-full transition-colors relative ${
-                    autoplay ? 'bg-cyan-500' : 'bg-neutral-700'
+                    autoplay ? 'bg-red-600' : 'bg-neutral-700'
                   }`}
                 >
                   <div
@@ -158,18 +158,18 @@ export default function SettingsPage() {
           </div>
 
           {/* Copyright & Intellectual Property Notice (កម្មសិទ្ធិបញ្ញា) */}
-          <div className="bg-[#0e111f] border border-cyan-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="bg-[#130a0b] border border-red-500/25 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="flex items-start gap-4 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/25 flex items-center justify-center text-red-400 shrink-0">
                 <ShieldAlert size={26} />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-white">
                   Copyright & Intellectual Property Disclaimer (កម្មសិទ្ធិបញ្ញា)
                 </h2>
-                <p className="text-xs text-cyan-200/70 mt-1">
+                <p className="text-xs text-rose-200/70 mt-1">
                   Legal compliance, content ownership statements, and DMCA takedown procedures.
                 </p>
               </div>
@@ -192,8 +192,8 @@ export default function SettingsPage() {
 
             <div className="mt-6 pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-xs text-neutral-400">
-                <Mail size={15} className="text-cyan-400" />
-                <span>DMCA Inquiries: <a href="mailto:dmca@sc-anime.com" className="text-cyan-400 hover:underline">dmca@sc-anime.com</a></span>
+                <Mail size={15} className="text-red-400" />
+                <span>DMCA Inquiries: <a href="mailto:dmca@sc-anime.com" className="text-red-400 hover:underline">dmca@sc-anime.com</a></span>
               </div>
 
               <a

@@ -49,7 +49,7 @@ function AnimeCatalogContent() {
   const title = type ? TYPE_TITLES[type] || 'Anime Catalog' : genre ? `${genre} Anime & Donghua` : 'Complete Anime Catalog'
 
   return (
-    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
+    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
@@ -82,8 +82,8 @@ function AnimeCatalogContent() {
               }}
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 border ${
                 type === opt.value
-                  ? 'bg-cyan-500 text-black border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.4)]'
-                  : 'bg-[#0e111f] text-neutral-300 border-white/5 hover:border-cyan-500/40 hover:text-white'
+                  ? 'bg-red-600 text-black border-red-400 shadow-[0_0_20px_rgba(225,29,72,0.4)]'
+                  : 'bg-[#130a0b] text-neutral-300 border-white/5 hover:border-red-500/35 hover:text-white'
               }`}
             >
               {opt.label}
@@ -92,9 +92,9 @@ function AnimeCatalogContent() {
         </div>
 
         {/* Sub-filters */}
-        <div className="flex flex-wrap items-center gap-3 mb-8 p-4 bg-[#0e111f] border border-white/10 rounded-2xl">
+        <div className="flex flex-wrap items-center gap-3 mb-8 p-4 bg-[#130a0b] border border-white/10 rounded-2xl">
           <div className="flex items-center gap-2 text-neutral-400 text-xs font-semibold">
-            <Filter size={15} className="text-cyan-400" />
+            <Filter size={15} className="text-red-400" />
             <span>Filter:</span>
           </div>
 
@@ -107,7 +107,7 @@ function AnimeCatalogContent() {
               else params.delete('genre')
               router.push(`?${params.toString()}`)
             }}
-            className="bg-black/60 border border-white/10 text-neutral-200 text-xs rounded-xl px-3 py-2 focus:border-cyan-400 focus:outline-none"
+            className="bg-black/60 border border-white/10 text-neutral-200 text-xs rounded-xl px-3 py-2 focus:border-red-400 focus:outline-none"
           >
             <option value="">All Genres</option>
             {genres?.map((g) => (
@@ -126,7 +126,7 @@ function AnimeCatalogContent() {
               router.push(`?${params.toString()}`)
               setPage(1)
             }}
-            className="bg-black/60 border border-white/10 text-neutral-200 text-xs rounded-xl px-3 py-2 focus:border-cyan-400 focus:outline-none"
+            className="bg-black/60 border border-white/10 text-neutral-200 text-xs rounded-xl px-3 py-2 focus:border-red-400 focus:outline-none"
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -167,7 +167,7 @@ function AnimeCatalogContent() {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="flex items-center gap-1 text-xs text-neutral-400 hover:text-white disabled:opacity-30 transition-colors px-4 py-2 border border-white/10 rounded-xl hover:border-cyan-400"
+                  className="flex items-center gap-1 text-xs text-neutral-400 hover:text-white disabled:opacity-30 transition-colors px-4 py-2 border border-white/10 rounded-xl hover:border-red-400"
                 >
                   <ChevronLeft size={16} /> <span>Previous</span>
                 </button>
@@ -177,7 +177,7 @@ function AnimeCatalogContent() {
                 <button
                   onClick={() => setPage((p) => Math.min(data.meta.last_page, p + 1))}
                   disabled={page === data.meta.last_page}
-                  className="flex items-center gap-1 text-xs text-neutral-400 hover:text-white disabled:opacity-30 transition-colors px-4 py-2 border border-white/10 rounded-xl hover:border-cyan-400"
+                  className="flex items-center gap-1 text-xs text-neutral-400 hover:text-white disabled:opacity-30 transition-colors px-4 py-2 border border-white/10 rounded-xl hover:border-red-400"
                 >
                   <span>Next</span> <ChevronRight size={16} />
                 </button>
@@ -196,7 +196,7 @@ export default function AnimeCatalogPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#07080f] flex items-center justify-center">
+        <div className="min-h-screen bg-[#0a0608] flex items-center justify-center">
           <LoadingSpinner size={40} />
         </div>
       }

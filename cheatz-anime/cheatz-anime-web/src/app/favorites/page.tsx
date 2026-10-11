@@ -31,7 +31,7 @@ export default function FavoritesPage() {
   const items = data?.data ?? []
 
   return (
-    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
+    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-10">
@@ -63,7 +63,7 @@ export default function FavoritesPage() {
             </div>
             <Link
               href="/"
-              className="bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-extrabold px-6 py-2.5 rounded-xl hover:scale-105 transition-transform shadow-[0_0_15px_rgba(6,182,212,0.4)] text-sm flex items-center gap-2"
+              className="bg-gradient-to-r from-red-600 to-rose-700 text-black font-extrabold px-6 py-2.5 rounded-xl hover:scale-105 transition-transform shadow-[0_0_20px_rgba(225,29,72,0.4)] text-sm flex items-center gap-2"
             >
               <Sparkles size={15} /> Browse Catalog
             </Link>

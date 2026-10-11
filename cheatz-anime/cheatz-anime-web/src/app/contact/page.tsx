@@ -6,7 +6,7 @@ import { Footer } from '@/components/layout/Footer'
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
+    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-14">
@@ -23,14 +23,14 @@ export default function ContactPage() {
             href="https://t.me/BongCheatz_IT"
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-start gap-4 p-6 bg-[#0e111f] border border-sky-500/20 hover:border-sky-500/50 rounded-2xl transition-all hover:bg-sky-500/5"
+            className="group flex items-start gap-4 p-6 bg-[#130a0b] border border-sky-500/20 hover:border-sky-500/50 rounded-2xl transition-all hover:bg-sky-500/5"
           >
             <div className="w-12 h-12 rounded-xl bg-sky-500/20 border border-sky-500/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-              <Send size={22} className="text-sky-400" />
+              <Send size={22} className="text-rose-400" />
             </div>
             <div>
               <h3 className="font-bold text-white mb-1">Telegram (Fastest)</h3>
-              <p className="text-sky-400 text-sm font-mono">@BongCheatz_IT</p>
+              <p className="text-rose-400 text-sm font-mono">@BongCheatz_IT</p>
               <p className="text-neutral-400 text-xs mt-1.5">VIP purchase, episode requests, tech support</p>
             </div>
           </a>
@@ -38,7 +38,7 @@ export default function ContactPage() {
           {/* DMCA */}
           <a
             href="mailto:dmca@sc-anime.kh"
-            className="group flex items-start gap-4 p-6 bg-[#0e111f] border border-red-500/20 hover:border-red-500/50 rounded-2xl transition-all hover:bg-red-500/5"
+            className="group flex items-start gap-4 p-6 bg-[#130a0b] border border-red-500/20 hover:border-red-500/50 rounded-2xl transition-all hover:bg-red-500/5"
           >
             <div className="w-12 h-12 rounded-xl bg-red-500/20 border border-red-500/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
               <ShieldCheck size={22} className="text-red-400" />
@@ -52,9 +52,9 @@ export default function ContactPage() {
         </div>
 
         {/* Disclaimer Box */}
-        <div className="bg-[#0e111f] border border-white/5 rounded-2xl p-6">
+        <div className="bg-[#130a0b] border border-white/5 rounded-2xl p-6">
           <h3 className="font-bold text-white mb-3 flex items-center gap-2">
-            <ShieldCheck size={18} className="text-cyan-400" /> Platform Notice
+            <ShieldCheck size={18} className="text-red-400" /> Platform Notice
           </h3>
           <p className="text-neutral-400 text-sm leading-relaxed">
             SC-ANIME KH does not host any video files on its own servers. All streams are sourced from

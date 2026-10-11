@@ -40,7 +40,7 @@ const SECTIONS = [
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
+    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-14">
@@ -49,8 +49,8 @@ export default function PrivacyPage() {
 
         <div className="space-y-5">
           {SECTIONS.map((s) => (
-            <div key={s.title} className="bg-[#0e111f] border border-white/5 rounded-2xl p-6">
-              <h2 className="text-cyan-400 font-bold text-sm uppercase tracking-wider mb-2">{s.title}</h2>
+            <div key={s.title} className="bg-[#130a0b] border border-white/5 rounded-2xl p-6">
+              <h2 className="text-red-400 font-bold text-sm uppercase tracking-wider mb-2">{s.title}</h2>
               <p className="text-neutral-300 text-sm leading-relaxed">{s.body}</p>
             </div>
           ))}

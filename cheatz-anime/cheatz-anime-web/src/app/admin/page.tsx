@@ -85,7 +85,7 @@ export default function AdminDashboardPage() {
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <StatCard
-            icon={<Users size={22} className="text-blue-400" />}
+            icon={<Users size={22} className="text-red-400" />}
             label="អ្នកប្រើប្រាស់សរុប (Users)"
             value={totalUsers}
             sub="Active community accounts"

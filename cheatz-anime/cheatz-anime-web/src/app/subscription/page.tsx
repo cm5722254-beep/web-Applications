@@ -24,7 +24,7 @@ export default function SubscriptionPage() {
   const isUserVip = Boolean(user?.subscribed || status?.subscribed || activatedSuccess)
 
   return (
-    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
+    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-12">
@@ -139,12 +139,12 @@ export default function SubscriptionPage() {
           {/* Telegram Guide */}
           <div className="lg:col-span-5 bg-gradient-to-b from-sky-950/40 to-[#0c0e18] border border-sky-500/30 rounded-3xl p-6 sm:p-7 shadow-xl">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-11 h-11 rounded-2xl bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400">
+              <div className="w-11 h-11 rounded-2xl bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-rose-400">
                 <Send size={20} />
               </div>
               <div>
                 <h3 className="font-extrabold text-white font-khmer">ទិញ VIP តាម Telegram</h3>
-                <p className="text-xs text-sky-400 font-mono">@BongCheatz_IT</p>
+                <p className="text-xs text-rose-400 font-mono">@BongCheatz_IT</p>
               </div>
             </div>
 
@@ -160,7 +160,7 @@ export default function SubscriptionPage() {
                 'ផ្ញើវិក្កយបត្រ → ទទួល VIP ភ្លាមៗ',
               ].map((step, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-sky-500/20 text-sky-400 font-bold flex items-center justify-center shrink-0 text-[11px]">
+                  <span className="w-5 h-5 rounded-full bg-sky-500/20 text-rose-400 font-bold flex items-center justify-center shrink-0 text-[11px]">
                     {i + 1}
                   </span>
                   {step}
@@ -195,7 +195,7 @@ export default function SubscriptionPage() {
               { icon: Tv,   color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20', title: 'Full HD & 4K', desc: 'រូបភាពច្បាស់ 1080p និង 4K Ultra HD' },
               { icon: Crown, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20', title: 'គ្មានពាណិជ្ជកម្ម', desc: 'ទស្សនាជាប់ ១០០% No Ads No Interruptions' },
             ].map((item) => (
-              <div key={item.title} className={`p-5 rounded-2xl border ${item.bg} bg-[#0e111f]`}>
+              <div key={item.title} className={`p-5 rounded-2xl border ${item.bg} bg-[#130a0b]`}>
                 <item.icon className={`${item.color} mb-3`} size={24} />
                 <h4 className="font-bold text-white font-khmer mb-1.5">{item.title}</h4>
                 <p className="text-xs text-neutral-400 font-khmer">{item.desc}</p>

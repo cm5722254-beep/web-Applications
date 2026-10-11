@@ -58,7 +58,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/logo.png" />
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
-      <body className="bg-[#07080f] text-neutral-100 antialiased selection:bg-cyan-500 selection:text-black">
+      <body className="bg-[#0a0608] text-rose-50 antialiased selection:bg-red-600 selection:text-white">
         <Providers>
           {children}
           <PwaInstallPrompt />

@@ -252,7 +252,7 @@ export default function AdminUsersPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           <div className="bg-brand-surface border border-brand-border rounded-2xl p-4 sm:p-5">
             <div className="flex items-center gap-2 text-brand-muted text-xs font-khmer mb-2">
-              <Users size={16} className="text-blue-400" />
+              <Users size={16} className="text-red-400" />
               <span>អ្នកប្រើប្រាស់សរុប</span>
             </div>
             <p className="text-2xl sm:text-3xl font-extrabold text-white">{totalCount}</p>

@@ -41,7 +41,7 @@ export default function HistoryPage() {
   const entries = data?.data ?? []
 
   return (
-    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
+    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-10">
@@ -49,8 +49,8 @@ export default function HistoryPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-cyan-500/15 border border-cyan-500/20">
-                <Clock size={22} className="text-cyan-400" />
+              <div className="p-2.5 rounded-xl bg-red-500/12 border border-red-500/18">
+                <Clock size={22} className="text-red-400" />
               </div>
               Watch History
             </h1>
@@ -77,8 +77,8 @@ export default function HistoryPage() {
           </div>
         ) : entries.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-5 py-24 text-center">
-            <div className="w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
-              <Film size={36} className="text-cyan-400/50" />
+            <div className="w-20 h-20 rounded-2xl bg-red-500/10 border border-red-500/18 flex items-center justify-center">
+              <Film size={36} className="text-red-400/50" />
             </div>
             <div>
               <h3 className="text-white font-bold text-lg mb-1">No watch history yet</h3>
@@ -86,7 +86,7 @@ export default function HistoryPage() {
             </div>
             <Link
               href="/"
-              className="bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-extrabold px-6 py-2.5 rounded-xl hover:scale-105 transition-transform shadow-[0_0_15px_rgba(6,182,212,0.4)] text-sm"
+              className="bg-gradient-to-r from-red-600 to-rose-700 text-black font-extrabold px-6 py-2.5 rounded-xl hover:scale-105 transition-transform shadow-[0_0_20px_rgba(225,29,72,0.4)] text-sm"
             >
               Browse Anime
             </Link>
@@ -103,7 +103,7 @@ export default function HistoryPage() {
               return (
                 <div
                   key={entry.id}
-                  className="group flex items-center gap-4 bg-[#0e111f] border border-white/5 hover:border-cyan-500/20 rounded-2xl p-4 transition-all"
+                  className="group flex items-center gap-4 bg-[#130a0b] border border-white/5 hover:border-red-500/18 rounded-2xl p-4 transition-all"
                 >
                   {/* Thumbnail */}
                   <div className="w-20 h-14 rounded-xl overflow-hidden bg-black shrink-0 border border-white/5">
@@ -133,7 +133,7 @@ export default function HistoryPage() {
                       <div className="mt-2.5">
                         <div className="w-full bg-white/5 rounded-full h-1">
                           <div
-                            className="bg-gradient-to-r from-cyan-500 to-blue-500 h-1 rounded-full transition-all"
+                            className="bg-gradient-to-r from-red-600 to-rose-600 h-1 rounded-full transition-all"
                             style={{ width: `${progressPct}%` }}
                           />
                         </div>
@@ -151,7 +151,7 @@ export default function HistoryPage() {
                       {animeSlug && (
                         <Link
                           href={`/anime/${animeSlug}/season-1/${epSlug}`}
-                          className="p-1.5 rounded-lg text-cyan-400 hover:bg-cyan-500/15 transition-colors"
+                          className="p-1.5 rounded-lg text-red-400 hover:bg-red-500/12 transition-colors"
                           title="Resume watching"
                         >
                           <Play size={14} fill="currentColor" />
