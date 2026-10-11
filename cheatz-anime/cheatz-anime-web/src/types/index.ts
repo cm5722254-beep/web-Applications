@@ -348,3 +348,22 @@ export interface VideoHealthStats {
   scanProgress: number // 0–100
   isScanning: boolean
 }
+
+// ── Admin Management Types ───────────────────────────────────────────────────
+
+export interface AdminUserFilters {
+  page?: number
+  per_page?: number
+  search?: string
+  status?: UserStatus
+  role?: string
+  subscribed?: boolean
+}
+
+export interface AdminUserUpdate {
+  name?: string
+  status?: UserStatus
+  subscribed?: boolean
+  subscription_plan?: string | null
+  subscription_expires_at?: string | null
+}

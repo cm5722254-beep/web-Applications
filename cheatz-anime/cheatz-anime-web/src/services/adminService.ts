@@ -1,4 +1,5 @@
-import type { User } from '@/types'
+import { apiClient } from '@/lib/api'
+import type { User, AdminUserFilters, AdminUserUpdate, PaginationMeta } from '@/types'
 
 export interface ManagedUser {
   id: number
@@ -11,84 +12,29 @@ export interface ManagedUser {
   subscription_plan?: string | null
   status: 'active' | 'suspended'
   created_at: string
+  login_provider?: 'google' | 'email' | null
+  last_login_at?: string | null
 }
 
 const SUPERADMIN_EMAIL = 'socheatvinchan@gmail.com'
 
-const DEFAULT_USERS: ManagedUser[] = [
-  {
-    id: 1,
-    name: 'Socheat Vinchan (Super Admin)',
-    email: 'socheatvinchan@gmail.com',
-    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&auto=format&fit=crop&q=80',
-    roles: ['super_admin', 'admin'],
-    subscribed: true,
-    subscription_plan: 'Lifetime VIP',
-    subscription_expires_at: '2099-12-31T23:59:59Z',
-    status: 'active',
-    created_at: '2024-01-01T00:00:00Z',
-  },
-  {
-    id: 2,
-    name: 'Sokha Rith',
-    email: 'sokha.rith@gmail.com',
-    avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=120&auto=format&fit=crop&q=80',
-    roles: ['user'],
-    subscribed: true,
-    subscription_plan: '1 Month VIP',
-    subscription_expires_at: '2026-11-15T00:00:00Z',
-    status: 'active',
-    created_at: '2024-02-14T08:30:00Z',
-  },
-  {
-    id: 3,
-    name: 'Bopha Chan',
-    email: 'bopha.chan@gmail.com',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80',
-    roles: ['user'],
-    subscribed: false,
-    subscription_plan: null,
-    status: 'active',
-    created_at: '2024-03-20T11:20:00Z',
-  },
-  {
-    id: 4,
-    name: 'Vireak Vong (Moderator)',
-    email: 'vireak.vong@gmail.com',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80',
-    roles: ['admin'],
-    subscribed: true,
-    subscription_plan: '1 Year VIP',
-    subscription_expires_at: '2027-01-01T00:00:00Z',
-    status: 'active',
-    created_at: '2024-04-05T09:15:00Z',
-  },
-  {
-    id: 5,
-    name: 'Chenda Khem',
-    email: 'chenda.khem@gmail.com',
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&auto=format&fit=crop&q=80',
-    roles: ['user'],
-    subscribed: false,
-    subscription_plan: null,
-    status: 'active',
-    created_at: '2024-05-18T14:40:00Z',
-  },
-  {
-    id: 6,
-    name: 'Piseth Meng',
-    email: 'piseth.meng@gmail.com',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80',
-    roles: ['user'],
-    subscribed: true,
-    subscription_plan: '3 Months VIP',
-    subscription_expires_at: '2026-12-31T00:00:00Z',
-    status: 'active',
-    created_at: '2024-06-10T16:05:00Z',
-  },
-]
-
-const USERS_STORAGE_KEY = 'sc_anime_managed_users'
+// Transform API user to ManagedUser format
+function transformUser(apiUser: any): ManagedUser {
+  return {
+    id: apiUser.id,
+    name: apiUser.name || 'Unknown User',
+    email: apiUser.email,
+    avatar: apiUser.avatar_url || apiUser.avatar || null,
+    roles: apiUser.roles?.map((r: any) => r.name || r) || ['user'],
+    subscribed: apiUser.subscribed || false,
+    subscription_expires_at: apiUser.subscription_expires_at || null,
+    subscription_plan: apiUser.subscription_plan || null,
+    status: apiUser.status || 'active',
+    created_at: apiUser.created_at || new Date().toISOString(),
+    login_provider: apiUser.login_provider || null,
+    last_login_at: apiUser.last_login_at || null,
+  }
+}
 
 export const adminService = {
   isSuperAdmin(email?: string | null): boolean {
@@ -96,102 +42,161 @@ export const adminService = {
     return email.trim().toLowerCase() === SUPERADMIN_EMAIL.toLowerCase()
   },
 
-  getUsers(): ManagedUser[] {
-    if (typeof window === 'undefined') return DEFAULT_USERS
+  async getUsers(filters?: AdminUserFilters): Promise<{ users: ManagedUser[]; meta: PaginationMeta }> {
     try {
-      const stored = localStorage.getItem(USERS_STORAGE_KEY)
-      if (!stored) {
-        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(DEFAULT_USERS))
-        return DEFAULT_USERS
+      const response = await apiClient.get('/admin/users', { params: filters })
+      const users = response.data.data || []
+      const meta = response.data.meta || {
+        current_page: 1,
+        last_page: 1,
+        per_page: filters?.per_page || 20,
+        total: Array.isArray(users) ? users.length : 0,
       }
-      const users: ManagedUser[] = JSON.parse(stored)
-      // Ensure superadmin is always present and active
-      const hasSuperAdmin = users.some(u => u.email.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase())
-      if (!hasSuperAdmin) {
-        users.unshift(DEFAULT_USERS[0])
-        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users))
+      return {
+        users: Array.isArray(users) ? users.map(transformUser) : [],
+        meta,
       }
-      return users
-    } catch {
-      return DEFAULT_USERS
+    } catch (error) {
+      console.error('Failed to fetch users:', error)
+      return {
+        users: [],
+        meta: {
+          current_page: 1,
+          last_page: 1,
+          per_page: filters?.per_page || 20,
+          total: 0,
+        },
+      }
     }
   },
 
-  saveUsers(users: ManagedUser[]): void {
-    if (typeof window === 'undefined') return
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users))
+  async getUser(userId: number): Promise<ManagedUser | null> {
+    try {
+      const response = await apiClient.get(`/admin/users/${userId}`)
+      const user = response.data.data || response.data
+      return transformUser(user)
+    } catch (error) {
+      console.error('Failed to fetch user:', error)
+      return null
+    }
   },
 
-  setVip(userId: number, isVip: boolean, plan: string = '1 Month VIP'): ManagedUser | null {
-    const users = this.getUsers()
-    const index = users.findIndex(u => u.id === userId)
-    if (index === -1) return null
-
-    let expiresAt: string | null = null
-    if (isVip) {
-      const date = new Date()
-      if (plan.includes('1 Month')) date.setMonth(date.getMonth() + 1)
-      else if (plan.includes('3 Months')) date.setMonth(date.getMonth() + 3)
-      else if (plan.includes('1 Year')) date.setFullYear(date.getFullYear() + 1)
-      else if (plan.includes('Lifetime')) date.setFullYear(date.getFullYear() + 99)
-      else date.setMonth(date.getMonth() + 1)
-      expiresAt = date.toISOString()
+  async updateUser(userId: number, data: AdminUserUpdate): Promise<ManagedUser | null> {
+    try {
+      const response = await apiClient.put(`/admin/users/${userId}`, data)
+      const user = response.data.data || response.data
+      const updated = transformUser(user)
+      this.syncCurrentSession(updated)
+      return updated
+    } catch (error) {
+      console.error('Failed to update user:', error)
+      return null
     }
-
-    users[index] = {
-      ...users[index],
-      subscribed: isVip,
-      subscription_plan: isVip ? plan : null,
-      subscription_expires_at: expiresAt,
-    }
-
-    this.saveUsers(users)
-    this.syncCurrentSession(users[index])
-    return users[index]
   },
 
-  setRole(userId: number, role: 'user' | 'admin' | 'super_admin'): ManagedUser | null {
-    const users = this.getUsers()
-    const index = users.findIndex(u => u.id === userId)
-    if (index === -1) return null
-
-    let roles: string[] = ['user']
-    if (role === 'admin') roles = ['user', 'admin']
-    else if (role === 'super_admin') roles = ['user', 'admin', 'super_admin']
-
-    users[index] = {
-      ...users[index],
-      roles,
+  async assignRoles(userId: number, roles: string[]): Promise<ManagedUser | null> {
+    try {
+      const response = await apiClient.post(`/admin/users/${userId}/roles`, { roles })
+      const user = response.data.data || response.data
+      const updated = transformUser(user)
+      this.syncCurrentSession(updated)
+      return updated
+    } catch (error) {
+      console.error('Failed to assign roles:', error)
+      return null
     }
-
-    this.saveUsers(users)
-    this.syncCurrentSession(users[index])
-    return users[index]
   },
 
-  toggleStatus(userId: number): ManagedUser | null {
-    const users = this.getUsers()
-    const index = users.findIndex(u => u.id === userId)
-    if (index === -1) return null
-
-    users[index] = {
-      ...users[index],
-      status: users[index].status === 'active' ? 'suspended' : 'active',
+  async suspendUser(userId: number): Promise<ManagedUser | null> {
+    try {
+      const response = await apiClient.post(`/admin/users/${userId}/suspend`)
+      const user = response.data.data || response.data
+      return transformUser(user)
+    } catch (error) {
+      console.error('Failed to suspend user:', error)
+      return null
     }
-
-    this.saveUsers(users)
-    return users[index]
   },
 
-  deleteUser(userId: number): boolean {
-    const users = this.getUsers()
-    const target = users.find(u => u.id === userId)
-    if (target && target.email.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase()) {
-      return false // cannot delete root superadmin
+  async activateUser(userId: number): Promise<ManagedUser | null> {
+    try {
+      const response = await apiClient.post(`/admin/users/${userId}/activate`)
+      const user = response.data.data || response.data
+      return transformUser(user)
+    } catch (error) {
+      console.error('Failed to activate user:', error)
+      return null
     }
-    const filtered = users.filter(u => u.id !== userId)
-    this.saveUsers(filtered)
-    return true
+  },
+
+  async setVip(userId: number, isVip: boolean, plan: string = '1 Month VIP'): Promise<ManagedUser | null> {
+    try {
+      let expiresAt: string | null = null
+      if (isVip) {
+        const date = new Date()
+        if (plan.includes('1 Month')) date.setMonth(date.getMonth() + 1)
+        else if (plan.includes('3 Months')) date.setMonth(date.getMonth() + 3)
+        else if (plan.includes('1 Year')) date.setFullYear(date.getFullYear() + 1)
+        else if (plan.includes('Lifetime')) date.setFullYear(date.getFullYear() + 99)
+        else date.setMonth(date.getMonth() + 1)
+        expiresAt = date.toISOString()
+      }
+
+      return await this.updateUser(userId, {
+        subscribed: isVip,
+        subscription_plan: isVip ? plan : null,
+        subscription_expires_at: expiresAt,
+      })
+    } catch (error) {
+      console.error('Failed to set VIP:', error)
+      return null
+    }
+  },
+
+  async setRole(userId: number, role: 'user' | 'admin' | 'super_admin'): Promise<ManagedUser | null> {
+    try {
+      let roles: string[] = ['user']
+      if (role === 'admin') roles = ['user', 'admin']
+      else if (role === 'super_admin') roles = ['user', 'admin', 'super_admin']
+
+      return await this.assignRoles(userId, roles)
+    } catch (error) {
+      console.error('Failed to set role:', error)
+      return null
+    }
+  },
+
+  async toggleStatus(userId: number): Promise<ManagedUser | null> {
+    try {
+      // First get current status
+      const current = await this.getUser(userId)
+      if (!current) return null
+
+      // Call appropriate endpoint based on current status
+      if (current.status === 'active') {
+        return await this.suspendUser(userId)
+      } else {
+        return await this.activateUser(userId)
+      }
+    } catch (error) {
+      console.error('Failed to toggle status:', error)
+      return null
+    }
+  },
+
+  async deleteUser(userId: number): Promise<boolean> {
+    try {
+      const user = await this.getUser(userId)
+      if (user && this.isSuperAdmin(user.email)) {
+        return false // cannot delete superadmin
+      }
+
+      await apiClient.delete(`/admin/users/${userId}`)
+      return true
+    } catch (error) {
+      console.error('Failed to delete user:', error)
+      return false
+    }
   },
 
   syncCurrentSession(updatedUser: ManagedUser) {
