@@ -6,7 +6,8 @@ export async function GET(req: NextRequest) {
 
   const clientId =
     process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
-    '61487303458-624qdiqs823cj2875obupfo9mnd0m6st.apps.googleusercontent.com'
+    process.env.GOOGLE_CLIENT_ID ||
+    ''
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const redirectUri = `${appUrl}/api/auth/callback/google`
