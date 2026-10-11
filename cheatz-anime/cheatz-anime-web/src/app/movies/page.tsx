@@ -66,20 +66,20 @@ export default function MoviesPage() {
   const featuredMovie = data?.data?.[0]
 
   return (
-    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
+    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-8 w-full">
         {/* Hero Banner for Movies */}
-        <section className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-cyan-950/40 via-blue-950/30 to-black border border-red-500/18 p-6 sm:p-10 shadow-2xl">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-red-500/10 rounded-full blur-3xl -z-10 pointer-events-none" />
+        <section className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-cyan-950/40 via-blue-950/30 to-black border border-cyan-500/18 p-6 sm:p-10 shadow-2xl">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl -z-10 pointer-events-none" />
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="max-w-2xl space-y-4 text-center md:text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-500/18 border border-red-500/35 text-red-300 text-xs font-bold uppercase tracking-wider">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/18 border border-cyan-500/35 text-cyan-300 text-xs font-bold uppercase tracking-wider">
                 <Film size={14} /> Theatrical Cinema & Specials
               </div>
               <h1 className="text-3xl sm:text-5xl font-black text-white leading-tight">
-                Anime & Donghua <span className="bg-gradient-to-r from-red-500 to-sky-300 bg-clip-text text-transparent">Movies</span>
+                Anime & Donghua <span className="bg-gradient-to-r from-cyan-400 to-sky-300 bg-clip-text text-transparent">Movies</span>
               </h1>
               <p className="text-neutral-400 text-sm sm:text-base leading-relaxed">
                 Feature-length theatrical anime movies, 3D Donghua special editions, and full cinematic films in 4K & Full HD.
@@ -99,7 +99,7 @@ export default function MoviesPage() {
                     className="w-full aspect-[2/3] object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-3">
-                    <span className="text-[10px] bg-red-600 text-black font-black px-2 py-0.5 rounded w-max mb-1 uppercase">
+                    <span className="text-[10px] bg-cyan-600 text-black font-black px-2 py-0.5 rounded w-max mb-1 uppercase">
                       Featured Film
                     </span>
                     <p className="text-xs font-bold text-white line-clamp-1">
@@ -113,7 +113,7 @@ export default function MoviesPage() {
         </section>
 
         {/* Filter and Search Bar */}
-        <div className="bg-[#130a0b] border border-white/10 rounded-2xl p-4 sm:p-5 space-y-4">
+        <div className="bg-[#0d0f1a] border border-white/10 rounded-2xl p-4 sm:p-5 space-y-4">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             {/* Search Input */}
             <div className="relative flex-1 max-w-md">
@@ -152,7 +152,7 @@ export default function MoviesPage() {
                   onClick={() => setSelectedGenre(g.id)}
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                     active
-                      ? 'bg-red-600 text-black shadow-md shadow-cyan-500/30'
+                      ? 'bg-cyan-600 text-black shadow-md shadow-cyan-500/30'
                       : 'bg-black/30 border border-white/5 text-neutral-400 hover:text-white hover:bg-white/10'
                   }`}
                 >
@@ -167,7 +167,7 @@ export default function MoviesPage() {
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Flame size={20} className="text-red-400" />
+              <Flame size={20} className="text-cyan-400" />
               <span>Available Movies ({filteredMovies.length})</span>
             </h2>
           </div>
@@ -179,7 +179,7 @@ export default function MoviesPage() {
           ) : isError ? (
             <ErrorMessage message="Unable to load movies. Please try again." />
           ) : filteredMovies.length === 0 ? (
-            <div className="text-center py-16 bg-[#130a0b] border border-white/5 rounded-2xl p-8">
+            <div className="text-center py-16 bg-[#0d0f1a] border border-white/5 rounded-2xl p-8">
               <Film size={48} className="text-neutral-600 mx-auto mb-3" />
               <h3 className="text-lg font-bold text-white mb-1">No movies found</h3>
               <p className="text-xs text-neutral-400">Try searching with a different keyword or genre.</p>
