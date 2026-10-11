@@ -113,7 +113,7 @@ export function PwaInstallPrompt() {
               <h4 className="font-extrabold text-white text-xs sm:text-sm tracking-tight">SC-ANIME KH</h4>
               <span className="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1 rounded font-bold">APP</span>
             </div>
-            <p className="text-[11px] text-brand-muted font-khmer mt-0.5 line-clamp-1">
+            <p className="text-[11px] text-brand-muted font-sans mt-0.5 line-clamp-1">
               ដំឡើង App លើទូរស័ព្ទ / កុំព្យូទ័រ
             </p>
           </div>
@@ -122,7 +122,7 @@ export function PwaInstallPrompt() {
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={handleInstallClick}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs rounded-xl shadow-[0_0_15px_rgba(245,158,11,0.4)] transition-all font-khmer hover:scale-105 active:scale-95"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs rounded-xl shadow-[0_0_15px_rgba(245,158,11,0.4)] transition-all font-sans hover:scale-105 active:scale-95"
           >
             <Download size={14} />
             <span>ដំឡើង</span>
