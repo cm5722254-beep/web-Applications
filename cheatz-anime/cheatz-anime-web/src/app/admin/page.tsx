@@ -161,28 +161,71 @@ function KhqrDonationCard() {
 export default function AdminDashboardPage() {
   const { user, isAdmin, isSuperAdmin, loading } = useAuth()
   const router = useRouter()
-  const [usersList, setUsersList] = useState<ManagedUser[]>([])
-  const [loadingUsers, setLoadingUsers] = useState(true)
+  
+  // Stats state
+  const [statsLoading, setStatsLoading] = useState(true)
+  const [statsError, setStatsError] = useState<string | null>(null)
+  const [totalUsers, setTotalUsers] = useState(0)
+  const [vipUsers, setVipUsers] = useState(0)
+  const [adminStaff, setAdminStaff] = useState(0)
+  
+  // Recent users state
+  const [recentUsers, setRecentUsers] = useState<ManagedUser[]>([])
+  const [recentLoading, setRecentLoading] = useState(true)
+  const [recentError, setRecentError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) router.push('/')
   }, [user, isAdmin, loading, router])
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setLoadingUsers(true)
-      const users = await adminService.getUsers()
-      setUsersList(users)
-      setLoadingUsers(false)
+  // Fetch stats from API
+  const fetchStats = async () => {
+    setStatsLoading(true)
+    setStatsError(null)
+    try {
+      // Make 3 parallel API calls to get counts via meta.total
+      // Note: role=admin filter should return both admin + super_admin roles.
+      // If API doesn't include super_admin, we'd need a second call with role=super_admin and sum the totals.
+      const [totalResult, vipResult, adminResult] = await Promise.all([
+        adminService.getUsers({ per_page: 1 }),
+        adminService.getUsers({ per_page: 1, subscribed: true }),
+        adminService.getUsers({ per_page: 1, role: 'admin' }),
+      ])
+      
+      setTotalUsers(totalResult.meta.total)
+      setVipUsers(vipResult.meta.total)
+      setAdminStaff(adminResult.meta.total)
+    } catch (error) {
+      console.error('Failed to fetch stats:', error)
+      setStatsError('Failed to load statistics. Please try again.')
+    } finally {
+      setStatsLoading(false)
     }
-    fetchUsers()
-  }, [])
+  }
+
+  // Fetch recent 5 users
+  const fetchRecentUsers = async () => {
+    setRecentLoading(true)
+    setRecentError(null)
+    try {
+      const result = await adminService.getUsers({ per_page: 5 })
+      setRecentUsers(result.users)
+    } catch (error) {
+      console.error('Failed to fetch recent users:', error)
+      setRecentError('Failed to load recent users. Please try again.')
+    } finally {
+      setRecentLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (user && isAdmin) {
+      fetchStats()
+      fetchRecentUsers()
+    }
+  }, [user, isAdmin])
 
   if (loading || !user || !isAdmin) return null
-
-  const totalUsers  = usersList.length
-  const vipUsers    = usersList.filter(u => u.subscribed).length
-  const adminStaff  = usersList.filter(u => u.roles.some(r => ['admin','super_admin'].includes(r))).length
 
   return (
     <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
@@ -231,22 +274,48 @@ export default function AdminDashboardPage() {
 
         {/* ── Stats Grid ───────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {[
-            { icon: Users,      label: 'Total Users',    value: totalUsers,    sub: 'Community accounts',     color: 'text-cyan-400',     bg: 'bg-cyan-500/10 border-cyan-500/20' },
-            { icon: Crown,      label: 'VIP Members',    value: vipUsers,      sub: 'Active subscribers',     color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/20' },
-            { icon: ShieldCheck,label: 'Admin Staff',    value: adminStaff,    sub: 'Admins & Super Admins',  color: 'text-purple-400',  bg: 'bg-purple-500/10 border-purple-500/20' },
-            { icon: Film,       label: 'Catalog Titles', value: '1,386+',      sub: 'Donghua · Anime · Films',color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
-          ].map(stat => (
-            <div key={stat.label}
-              className={`bg-[#0d0f1a] border ${stat.bg} rounded-2xl p-5 hover:-translate-y-0.5 transition-transform`}>
-              <div className="flex items-center gap-2 mb-2">
-                <stat.icon size={20} className={stat.color} />
-                <span className="text-xs text-neutral-500 font-sans font-semibold">{stat.label}</span>
-              </div>
-              <p className={`text-2xl sm:text-3xl font-extrabold ${stat.color}`}>{stat.value}</p>
-              {stat.sub && <p className="text-neutral-500 text-[11px] mt-1 font-sans">{stat.sub}</p>}
+          {statsError ? (
+            <div className="col-span-2 md:col-span-4 bg-[#0d0f1a] border border-red-500/20 rounded-2xl p-6 text-center">
+              <p className="text-red-400 text-sm mb-3">{statsError}</p>
+              <button
+                onClick={fetchStats}
+                className="px-4 py-2 rounded-lg bg-red-500/20 border border-red-500/30 text-red-300 hover:bg-red-500/30 transition-colors text-sm font-semibold"
+              >
+                Retry
+              </button>
             </div>
-          ))}
+          ) : statsLoading ? (
+            // Loading skeleton
+            <>
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="bg-[#0d0f1a] border border-cyan-500/10 rounded-2xl p-5 animate-pulse">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-5 h-5 bg-cyan-500/20 rounded" />
+                    <div className="h-3 w-20 bg-neutral-700/50 rounded" />
+                  </div>
+                  <div className="h-8 w-16 bg-neutral-700/50 rounded mb-2" />
+                  <div className="h-2 w-24 bg-neutral-700/50 rounded" />
+                </div>
+              ))}
+            </>
+          ) : (
+            [
+              { icon: Users,      label: 'Total Users',    value: totalUsers,    sub: 'Community accounts',     color: 'text-cyan-400',     bg: 'bg-cyan-500/10 border-cyan-500/20' },
+              { icon: Crown,      label: 'VIP Members',    value: vipUsers,      sub: 'Active subscribers',     color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/20' },
+              { icon: ShieldCheck,label: 'Admin Staff',    value: adminStaff,    sub: 'Admins & Super Admins',  color: 'text-purple-400',  bg: 'bg-purple-500/10 border-purple-500/20' },
+              { icon: Film,       label: 'Catalog Titles', value: '1,386+',      sub: 'Donghua · Anime · Films',color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
+            ].map(stat => (
+              <div key={stat.label}
+                className={`bg-[#0d0f1a] border ${stat.bg} rounded-2xl p-5 hover:-translate-y-0.5 transition-transform`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <stat.icon size={20} className={stat.color} />
+                  <span className="text-xs text-neutral-500 font-sans font-semibold">{stat.label}</span>
+                </div>
+                <p className={`text-2xl sm:text-3xl font-extrabold ${stat.color}`}>{stat.value}</p>
+                {stat.sub && <p className="text-neutral-500 text-[11px] mt-1 font-sans">{stat.sub}</p>}
+              </div>
+            ))
+          )}
         </div>
 
         {/* ── Quick Access Modules ──────────────────────────────────────── */}
@@ -318,16 +387,26 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="space-y-2.5">
-            {loadingUsers ? (
+            {recentError ? (
+              <div className="text-center py-8">
+                <p className="text-red-400 text-sm mb-3">{recentError}</p>
+                <button
+                  onClick={fetchRecentUsers}
+                  className="px-4 py-2 rounded-lg bg-red-500/20 border border-red-500/30 text-red-300 hover:bg-red-500/30 transition-colors text-sm font-semibold"
+                >
+                  Retry
+                </button>
+              </div>
+            ) : recentLoading ? (
               <div className="text-center py-8 text-neutral-500">
                 Loading users...
               </div>
-            ) : usersList.length === 0 ? (
+            ) : recentUsers.length === 0 ? (
               <div className="text-center py-8 text-neutral-500">
                 No users found
               </div>
             ) : (
-              usersList.slice(0, 5).map((u) => {
+              recentUsers.map((u) => {
                 const isSuper = u.email.toLowerCase() === 'socheatvinchan@gmail.com'
                 return (
                   <div key={u.id}
