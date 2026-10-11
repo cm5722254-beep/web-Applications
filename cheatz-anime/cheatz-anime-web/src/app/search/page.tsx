@@ -37,7 +37,7 @@ function SearchContent() {
   const total = data?.meta?.total ?? 0
 
   return (
-    <div className="min-h-screen bg-[#0a0608] text-white flex flex-col">
+    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-10">
@@ -53,7 +53,7 @@ function SearchContent() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search donghua, anime, movies... (Khmer or English)"
-              className="w-full bg-[#130a0b] border border-white/10 hover:border-red-500/25 focus:border-red-500/55 focus:outline-none focus:ring-2 focus:ring-red-500/18 rounded-2xl pl-12 pr-10 py-4 text-white placeholder-neutral-500 text-sm transition-all shadow-lg"
+              className="w-full bg-[#0d0f1a] border border-white/10 hover:border-cyan-500/25 focus:border-cyan-500/55 focus:outline-none focus:ring-2 focus:ring-cyan-500/18 rounded-2xl pl-12 pr-10 py-4 text-white placeholder-neutral-500 text-sm transition-all shadow-lg"
               autoFocus
             />
             {query && (
@@ -73,7 +73,7 @@ function SearchContent() {
                 <button
                   key={s}
                   onClick={() => setQuery(s)}
-                  className="text-xs bg-white/5 hover:bg-red-500/10 border border-white/10 hover:border-red-500/25 text-neutral-300 hover:text-red-300 px-3 py-1.5 rounded-xl transition-all"
+                  className="text-xs bg-white/5 hover:bg-cyan-500/10 border border-white/10 hover:border-cyan-500/25 text-neutral-300 hover:text-cyan-300 px-3 py-1.5 rounded-xl transition-all"
                 >
                   {s}
                 </button>
@@ -103,7 +103,7 @@ function SearchContent() {
           <>
             <p className="text-neutral-400 text-sm mb-5">
               Found <span className="text-white font-bold">{total}</span> result{total !== 1 ? 's' : ''} for{' '}
-              <span className="text-red-400 font-bold">&ldquo;{debounced}&rdquo;</span>
+              <span className="text-cyan-400 font-bold">&ldquo;{debounced}&rdquo;</span>
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
               {results.map((anime) => <AnimeCard key={anime.id} anime={anime} />)}
@@ -121,7 +121,7 @@ export default function SearchPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#0a0608] flex items-center justify-center">
+        <div className="min-h-screen bg-[#07080f] flex items-center justify-center">
           <LoadingSpinner size={44} />
         </div>
       }
