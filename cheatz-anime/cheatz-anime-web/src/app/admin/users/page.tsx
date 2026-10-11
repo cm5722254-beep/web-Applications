@@ -16,8 +16,15 @@ export default function AdminUsersPage() {
   const router = useRouter()
 
   const [usersList, setUsersList] = useState<ManagedUser[]>([])
+  const [loadingUsers, setLoadingUsers] = useState(true)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [searchInput, setSearchInput] = useState('')
   const [filterTab, setFilterTab]   = useState<'all'|'vip'|'admin'|'free'>('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [perPage, setPerPage] = useState(20)
+  const [totalPages, setTotalPages] = useState(1)
+  const [metaTotal, setMetaTotal] = useState(0)
   const [selectedUser, setSelectedUser] = useState<ManagedUser | null>(null)
   const [vipModalOpen, setVipModalOpen] = useState(false)
   const [vipDuration, setVipDuration]   = useState('1 Month VIP')
@@ -34,69 +41,119 @@ export default function AdminUsersPage() {
     if (!loading && (!user || !isAdmin)) router.push('/')
   }, [user, isAdmin, loading, router])
 
-  const loadUsers = () => setUsersList(adminService.getUsers())
-  useEffect(() => { loadUsers() }, [])
+  // Debounced search: update searchQuery 300ms after user stops typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchQuery(searchInput)
+      setCurrentPage(1) // Reset to page 1 when searching
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchInput])
+
+  const loadUsers = async () => {
+    setLoadingUsers(true)
+    setErrorMsg(null)
+    
+    try {
+      // Build filters based on current state
+      const filters: any = {
+        page: currentPage,
+        per_page: perPage,
+      }
+      
+      if (searchQuery) {
+        filters.search = searchQuery
+      }
+      
+      // Map filterTab to API params
+      if (filterTab === 'vip') {
+        filters.subscribed = true
+      } else if (filterTab === 'admin') {
+        filters.role = 'admin'
+      }
+      // Note: 'free' tab fetches all users and client-side filters subscribed=false
+      // because API may not support subscribed=false param
+      
+      const response = await adminService.getUsers(filters)
+      
+      let users = response.users
+      
+      // Client-side filter for 'free' tab if API doesn't support subscribed=false
+      if (filterTab === 'free') {
+        users = users.filter(u => !u.subscribed)
+      }
+      
+      setUsersList(users)
+      setMetaTotal(response.meta.total)
+      setTotalPages(response.meta.last_page)
+    } catch (error) {
+      setErrorMsg('Failed to load users. Please try again.')
+      console.error('Failed to load users:', error)
+    } finally {
+      setLoadingUsers(false)
+    }
+  }
+  
+  useEffect(() => {
+    if (!loading && user && isAdmin) {
+      loadUsers()
+    }
+  }, [currentPage, perPage, searchQuery, filterTab, loading, user, isAdmin])
 
   const showToast = (msg: string, type: 'success'|'error'|'info' = 'success') => {
     setToast({ msg, type })
     setTimeout(() => setToast(null), 4000)
   }
 
-  const filtered = useMemo(() => {
-    return usersList.filter(u => {
-      const q = searchQuery.toLowerCase()
-      if (q && !u.name.toLowerCase().includes(q) && !u.email.toLowerCase().includes(q)) return false
-      if (filterTab === 'vip')   return u.subscribed
-      if (filterTab === 'admin') return u.roles.some(r => ['admin','super_admin'].includes(r))
-      if (filterTab === 'free')  return !u.subscribed
-      return true
-    })
-  }, [usersList, searchQuery, filterTab])
+  const filtered = usersList // No client-side filtering - API returns filtered data
 
-  const totalCount = usersList.length
-  const vipCount   = usersList.filter(u => u.subscribed).length
-  const adminCount = usersList.filter(u => u.roles.some(r => ['admin','super_admin'].includes(r))).length
+  // Stats: show metaTotal when filterTab='all', otherwise show filtered count or fetch separately
+  const totalCount = filterTab === 'all' ? metaTotal : usersList.length
+  const vipCount   = filterTab === 'vip' ? metaTotal : usersList.filter(u => u.subscribed).length
+  const adminCount = filterTab === 'admin' ? metaTotal : usersList.filter(u => u.roles.some(r => ['admin','super_admin'].includes(r))).length
 
-  const handleToggleVip = (u: ManagedUser) => {
+  const handleToggleVip = async (u: ManagedUser) => {
     const next = !u.subscribed
-    const res = adminService.setVip(u.id, next, next ? '1 Month VIP' : undefined)
+    const res = await adminService.setVip(u.id, next, next ? '1 Month VIP' : undefined)
     if (res) { loadUsers(); showToast(next ? `VIP activated for ${u.name}!` : `VIP removed from ${u.name}`) }
   }
 
-  const handleApplyVip = () => {
+  const handleApplyVip = async () => {
     if (!selectedUser) return
-    const res = adminService.setVip(selectedUser.id, true, vipDuration)
+    const res = await adminService.setVip(selectedUser.id, true, vipDuration)
     if (res) { loadUsers(); setVipModalOpen(false); showToast(`${vipDuration} set for ${selectedUser.name}!`) }
   }
 
-  const handleRole = (userId: number, role: 'user'|'admin'|'super_admin', name: string) => {
-    const res = adminService.setRole(userId, role)
+  const handleRole = async (userId: number, role: 'user'|'admin'|'super_admin', name: string) => {
+    const res = await adminService.setRole(userId, role)
     if (res) { loadUsers(); showToast(`Role updated to ${role} for ${name}`) }
   }
 
-  const handleDelete = (u: ManagedUser) => {
-    if (u.email.toLowerCase() === 'socheatvinchan@gmail.com') { showToast('Cannot delete Super Admin!', 'error'); return }
-    if (confirm(`Delete ${u.name}?`)) {
-      adminService.deleteUser(u.id)
+  const handleDelete = async (u: ManagedUser) => {
+    if (u.email.toLowerCase() === 'socheatvinchan@gmail.com') { 
+      showToast('Cannot delete Super Admin!', 'error')
+      return 
+    }
+    
+    if (!window.confirm(`Delete ${u.name}? This action cannot be undone.`)) {
+      return
+    }
+    
+    const success = await adminService.deleteUser(u.id)
+    if (success) {
       loadUsers()
       showToast(`Deleted ${u.name}`, 'info')
+    } else {
+      showToast('Failed to delete user', 'error')
     }
   }
 
-  const handleCreate = (e: React.FormEvent) => {
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!nEmail || !nName) return
-    const all = adminService.getUsers()
-    all.push({
-      id: Date.now(), name: nName, email: nEmail,
-      avatar: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120`,
-      roles: nRole === 'super_admin' ? ['user','admin','super_admin'] : nRole === 'admin' ? ['user','admin'] : ['user'],
-      subscribed: nVip, subscription_plan: nVip ? '1 Month VIP' : null,
-      subscription_expires_at: nVip ? new Date(Date.now() + 30*86400000).toISOString() : null,
-      status: 'active', created_at: new Date().toISOString(),
-    })
-    adminService.saveUsers(all)
-    loadUsers()
+    
+    showToast('User creation not yet implemented via API', 'info')
+    // TODO: Implement API endpoint for creating users
     setNewUserModal(false)
     setNName(''); setNEmail(''); setNRole('user'); setNVip(false)
     showToast(`User ${nName} created!`)
@@ -170,7 +227,7 @@ export default function AdminUsersPage() {
         <div className="bg-[#0d0f1a] border border-cyan-500/15 rounded-2xl p-4 mb-5 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 w-full md:w-auto">
             {([['all','All',totalCount],['vip','👑 VIP',vipCount],['admin','🛡️ Admin',adminCount],['free','👤 Free',totalCount-vipCount]] as const).map(([id,label,cnt]) => (
-              <button key={id} onClick={() => setFilterTab(id as any)}
+              <button key={id} onClick={() => { setFilterTab(id as any); setCurrentPage(1); }}
                 className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                   filterTab === id ? 'bg-cyan-600 text-white shadow-[0_0_10px_rgba(225,29,72,0.35)]' : 'text-neutral-500 hover:text-neutral-300 hover:bg-cyan-500/8'
                 }`}>
@@ -180,16 +237,32 @@ export default function AdminUsersPage() {
           </div>
           <div className="relative w-full md:w-72">
             <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500" />
-            <input type="text" placeholder="Search name or email..." value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+            <input type="text" placeholder="Search name or email..." value={searchInput}
+              onChange={e => setSearchInput(e.target.value)}
               className="w-full bg-[#07080f] border border-cyan-500/15 focus:border-cyan-500/40 rounded-xl pl-10 pr-9 py-2 text-sm text-white placeholder-neutral-600 outline-none transition-colors" />
-            {searchQuery && (
-              <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300">
+            {searchInput && (
+              <button onClick={() => setSearchInput('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300">
                 <X size={14} />
               </button>
             )}
           </div>
         </div>
+
+        {/* Error Banner */}
+        {errorMsg && (
+          <div className="bg-red-950/40 border border-red-500/30 rounded-2xl p-4 mb-5 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <AlertCircle size={20} className="text-red-400" />
+              <div>
+                <p className="text-red-300 font-semibold text-sm">{errorMsg}</p>
+              </div>
+            </div>
+            <button onClick={() => { setErrorMsg(null); loadUsers(); }}
+              className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 rounded-xl text-red-300 text-sm font-semibold transition-colors">
+              Retry
+            </button>
+          </div>
+        )}
 
         {/* Table */}
         <div className="bg-[#0d0f1a] border border-cyan-500/15 rounded-2xl overflow-hidden shadow-xl">
@@ -205,7 +278,37 @@ export default function AdminUsersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-cyan-500/8">
-                {filtered.length === 0 ? (
+                {loadingUsers ? (
+                  // Loading skeleton: 5 rows with pulsing placeholders
+                  [...Array(5)].map((_, idx) => (
+                    <tr key={idx} className="animate-pulse">
+                      <td className="py-4 px-4 sm:px-5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-cyan-500/10" />
+                          <div className="space-y-2">
+                            <div className="h-3 w-32 bg-cyan-500/10 rounded" />
+                            <div className="h-2 w-40 bg-cyan-500/10 rounded" />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="h-7 w-24 bg-cyan-500/10 rounded-xl" />
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="h-8 w-28 bg-cyan-500/10 rounded-xl" />
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="h-6 w-20 bg-cyan-500/10 rounded-full" />
+                      </td>
+                      <td className="py-4 px-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <div className="h-7 w-16 bg-cyan-500/10 rounded-lg" />
+                          <div className="h-7 w-7 bg-cyan-500/10 rounded-lg" />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : filtered.length === 0 ? (
                   <tr><td colSpan={5} className="py-12 text-center text-neutral-500 font-sans">No users found</td></tr>
                 ) : filtered.map(u => {
                   const isRoot = u.email.toLowerCase() === 'socheatvinchan@gmail.com'
@@ -225,8 +328,16 @@ export default function AdminUsersPage() {
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <span className="font-bold text-white text-sm">{u.name}</span>
                               {isRoot && <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded font-extrabold">OWNER</span>}
+                              {u.login_provider === 'google' && (
+                                <span className="text-[10px] bg-red-500/15 text-red-300 border border-red-500/20 px-1.5 py-0.5 rounded font-bold">G</span>
+                              )}
                             </div>
                             <span className="text-xs text-neutral-500">{u.email}</span>
+                            {u.last_login_at && (
+                              <span className="text-[10px] text-neutral-600 block mt-0.5">
+                                Last login: {new Date(u.last_login_at).toLocaleDateString()}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </td>
@@ -283,7 +394,15 @@ export default function AdminUsersPage() {
 
                       <td className="py-4 px-4 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <button onClick={() => adminService.toggleStatus(u.id) && loadUsers()}
+                          <button onClick={async () => {
+                            const res = await adminService.toggleStatus(u.id)
+                            if (res) {
+                              await loadUsers()
+                              showToast(res.status === 'active' ? `${u.name} activated` : `${u.name} suspended`)
+                            } else {
+                              showToast('Failed to toggle status', 'error')
+                            }
+                          }}
                             className="p-1.5 rounded-lg bg-[#07080f] border border-cyan-500/10 text-neutral-500 hover:text-amber-400 hover:border-amber-500/30 transition-colors text-[10px] px-2 font-semibold">
                             {u.status === 'active' ? 'Suspend' : 'Activate'}
                           </button>
@@ -302,8 +421,72 @@ export default function AdminUsersPage() {
             </table>
           </div>
           <div className="p-3 bg-[#07080f]/50 border-t border-cyan-500/8 text-xs text-neutral-600 text-center font-sans">
-            Showing {filtered.length} of {totalCount} users
+            Showing {usersList.length} of {metaTotal} users (Page {currentPage} of {totalPages})
           </div>
+          
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="p-4 bg-[#07080f]/50 border-t border-cyan-500/8 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-neutral-500 font-sans">Per page:</span>
+                <select value={perPage} onChange={e => { setPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                  className="bg-[#0d0f1a] border border-cyan-500/15 hover:border-cyan-400/30 text-xs rounded-lg px-3 py-1.5 text-neutral-300 outline-none focus:border-cyan-500/40 transition-colors cursor-pointer">
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}
+                  className="px-3 py-1.5 bg-[#0d0f1a] border border-cyan-500/15 hover:border-cyan-400/30 rounded-lg text-xs text-neutral-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-semibold">
+                  Previous
+                </button>
+                
+                <div className="flex items-center gap-1">
+                  {currentPage > 2 && (
+                    <>
+                      <button onClick={() => setCurrentPage(1)}
+                        className="px-3 py-1.5 bg-[#0d0f1a] border border-cyan-500/15 hover:border-cyan-400/30 rounded-lg text-xs text-neutral-400 transition-colors">
+                        1
+                      </button>
+                      {currentPage > 3 && <span className="text-neutral-600 px-1">...</span>}
+                    </>
+                  )}
+                  
+                  {[...Array(5)].map((_, i) => {
+                    const pageNum = currentPage - 2 + i
+                    if (pageNum < 1 || pageNum > totalPages) return null
+                    return (
+                      <button key={pageNum} onClick={() => setCurrentPage(pageNum)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                          pageNum === currentPage 
+                            ? 'bg-cyan-600 text-white border border-cyan-500/50' 
+                            : 'bg-[#0d0f1a] border border-cyan-500/15 hover:border-cyan-400/30 text-neutral-400'
+                        }`}>
+                        {pageNum}
+                      </button>
+                    )
+                  })}
+                  
+                  {currentPage < totalPages - 1 && (
+                    <>
+                      {currentPage < totalPages - 2 && <span className="text-neutral-600 px-1">...</span>}
+                      <button onClick={() => setCurrentPage(totalPages)}
+                        className="px-3 py-1.5 bg-[#0d0f1a] border border-cyan-500/15 hover:border-cyan-400/30 rounded-lg text-xs text-neutral-400 transition-colors">
+                        {totalPages}
+                      </button>
+                    </>
+                  )}
+                </div>
+                
+                <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 bg-[#0d0f1a] border border-cyan-500/15 hover:border-cyan-400/30 rounded-lg text-xs text-neutral-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-semibold">
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </main>
 

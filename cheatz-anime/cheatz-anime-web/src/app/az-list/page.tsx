@@ -8,27 +8,59 @@ import catalog from '@/data/animekill_catalog.json'
 import { Search, ListFilter, Play, ChevronDown } from 'lucide-react'
 
 const LETTERS = ['All', '0-9', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')]
-const INITIAL_LIMIT = 48
-const BATCH_SIZE = 48
+const INITIAL_LIMIT = 9999 // Show all by default
+const BATCH_SIZE = 100
+
+const TYPE_FILTERS = [
+  { value: '', label: 'All Series' },
+  { value: 'donghua', label: 'Donghua' },
+  { value: 'anime', label: 'Anime' },
+  { value: 'movie', label: 'Movies' },
+  { value: 'cartoon', label: 'Cartoon' }
+] as const
+
+const SORT_OPTIONS = [
+  { value: 'az', label: 'A-Z' },
+  { value: 'za', label: 'Z-A' },
+  { value: 'latest', label: 'Latest' },
+  { value: 'score', label: 'Most Viewed' }
+] as const
+
+// Map catalog anime_type to our internal type
+function mapAnimeType(catalogType: string): string {
+  const type = (catalogType || '').toLowerCase()
+  if (type === '3d') return 'donghua'
+  if (type === '2d') return 'cartoon'
+  if (type === 'movie') return 'movie'
+  return 'anime' // Default to anime for everything else
+}
 
 export default function AzListPage() {
   const [selectedLetter, setSelectedLetter] = useState('All')
+  const [selectedType, setSelectedType] = useState('')
+  const [selectedSort, setSelectedSort] = useState('az')
   const [searchQuery, setSearchQuery] = useState('')
   const [limit, setLimit] = useState(INITIAL_LIMIT)
 
   const allAnimes = useMemo(() => {
     const map = (catalog.animes || {}) as Record<string, any>
-    return Object.values(map).sort((a, b) => a.title.localeCompare(b.title))
+    return Object.values(map)
   }, [])
 
   const filteredAnimes = useMemo(() => {
-    return allAnimes.filter((anime) => {
+    let filtered = allAnimes.filter((anime) => {
       // Search filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase()
         const matchesTitle = anime.title.toLowerCase().includes(q)
         const matchesSynonyms = anime.synonyms ? anime.synonyms.toLowerCase().includes(q) : false
         if (!matchesTitle && !matchesSynonyms) return false
+      }
+
+      // Type filter
+      if (selectedType) {
+        const animeType = mapAnimeType(anime.anime_type)
+        if (animeType !== selectedType) return false
       }
 
       // Letter filter
@@ -39,17 +71,50 @@ export default function AzListPage() {
       }
       return firstChar === selectedLetter
     })
-  }, [allAnimes, selectedLetter, searchQuery])
+
+    // Apply sorting
+    switch (selectedSort) {
+      case 'za':
+        filtered.sort((a, b) => b.title.localeCompare(a.title))
+        break
+      case 'latest':
+        filtered.sort((a, b) => (b.total_watch || 0) - (a.total_watch || 0))
+        break
+      case 'score':
+        filtered.sort((a, b) => {
+          const scoreA = parseFloat(a.score || '0')
+          const scoreB = parseFloat(b.score || '0')
+          return scoreB - scoreA
+        })
+        break
+      case 'az':
+      default:
+        filtered.sort((a, b) => a.title.localeCompare(b.title))
+        break
+    }
+
+    return filtered
+  }, [allAnimes, selectedLetter, selectedType, selectedSort, searchQuery])
 
   const displayedAnimes = useMemo(() => {
     return filteredAnimes.slice(0, limit)
   }, [filteredAnimes, limit])
 
-  const totalResults = allAnimes.length || 1386
+  const totalResults = allAnimes.length
   const displayedCount = Math.min(limit, filteredAnimes.length)
 
   const handleLetterChange = (letter: string) => {
     setSelectedLetter(letter)
+    setLimit(INITIAL_LIMIT)
+  }
+
+  const handleTypeChange = (type: string) => {
+    setSelectedType(type)
+    setLimit(INITIAL_LIMIT)
+  }
+
+  const handleSortChange = (sort: string) => {
+    setSelectedSort(sort)
     setLimit(INITIAL_LIMIT)
   }
 
@@ -110,18 +175,61 @@ export default function AzListPage() {
           })}
         </div>
 
+        {/* Type Filters & Sort Options */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          {/* Type Filter Tabs */}
+          <div className="flex flex-wrap gap-2">
+            {TYPE_FILTERS.map((filter) => {
+              const isActive = selectedType === filter.value
+              return (
+                <button
+                  key={filter.value}
+                  onClick={() => handleTypeChange(filter.value)}
+                  className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                    isActive
+                      ? 'bg-cyan-500 text-white shadow-md shadow-cyan-500/30'
+                      : 'bg-brand-surface text-brand-muted border border-brand-border hover:text-brand-text hover:border-brand-violet/50'
+                  }`}
+                >
+                  {filter.label}
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Sort Dropdown */}
+          <div className="relative">
+            <select
+              value={selectedSort}
+              onChange={(e) => handleSortChange(e.target.value)}
+              className="appearance-none bg-brand-surface border border-brand-border rounded-xl px-4 py-2 pr-10 text-sm text-white font-medium focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer"
+            >
+              {SORT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" />
+          </div>
+        </div>
+
         {/* AnimeKill Exact Matching Results Counter */}
         <div className="mb-6 text-sm text-gray-300 font-medium flex items-center justify-between">
           <div>
             Showing <span className="font-bold text-white">{displayedCount}</span> of{' '}
             <span className="font-bold text-white">{filteredAnimes.length}</span> results
           </div>
-          {selectedLetter !== 'All' && (
+          {(selectedLetter !== 'All' || selectedType || searchQuery) && (
             <button
-              onClick={() => handleLetterChange('All')}
+              onClick={() => {
+                handleLetterChange('All')
+                setSelectedType('')
+                setSearchQuery('')
+              }}
               className="text-xs text-brand-glow hover:underline"
             >
-              Reset filter
+              Reset all filters
             </button>
           )}
         </div>
@@ -137,7 +245,10 @@ export default function AzListPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
             {displayedAnimes.map((anime) => {
               const watchUrl = `/anime/${anime.slug}`
-              const poster = anime.poster || `https://animekill.com/poster/${anime.slug}-hd.webp`
+              // Use poster from catalog (full URL), then try animekill CDN pattern
+              const poster = (anime.poster && anime.poster.startsWith('http'))
+                ? anime.poster
+                : `https://animekill.com/poster/${anime.slug}-hd.webp`
               const type = (anime.anime_type || '').toUpperCase()
 
               return (
@@ -154,8 +265,14 @@ export default function AzListPage() {
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       loading="lazy"
                       onError={(e) => {
-                        ;(e.target as HTMLImageElement).src =
-                          'https://animekill.com/poster/tales-of-herding-gods-hd.webp'
+                        const img = e.target as HTMLImageElement
+                        // Try small poster variant first, then generic placeholder
+                        if (!img.dataset.fallback) {
+                          img.dataset.fallback = '1'
+                          img.src = `https://animekill.com/poster/${anime.slug}.jpg`
+                        } else {
+                          img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='400'%3E%3Crect width='300' height='400' fill='%230d0f1a'/%3E%3Ctext x='150' y='220' font-size='14' fill='%23555' text-anchor='middle' font-family='sans-serif'%3ENo Poster%3C/text%3E%3C/svg%3E"
+                        }
                       }}
                     />
 
@@ -201,9 +318,9 @@ export default function AzListPage() {
                     </div>
                     <div className="mt-2.5 flex items-center justify-between text-[11px] text-brand-muted">
                       <span className="text-brand-glow font-medium">
-                        {anime.total_episodes || 24} ភាគ
+                        {anime.total_episodes ? `${anime.total_episodes} ភាគ` : 'HD'}
                       </span>
-                      <span>HD</span>
+                      <span>{anime.score ? `⭐${anime.score}` : 'HD'}</span>
                     </div>
                   </div>
                 </Link>
