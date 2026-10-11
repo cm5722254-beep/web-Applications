@@ -1,11 +1,48 @@
-// ─── Core Types ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// CHEATZ ANIME — Type Definitions
+// Senior-level: discriminated unions, const enums, strict nulls, utility types
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Primitive Enums ──────────────────────────────────────────────────────────
+
+export const ANIME_TYPES = ['anime', 'donghua', 'movie', 'ova', 'ona', 'special', 'cartoon'] as const
+export type AnimeType = (typeof ANIME_TYPES)[number]
+
+export const CONTENT_STATUSES = ['draft', 'published', 'unlisted'] as const
+export type ContentStatus = (typeof CONTENT_STATUSES)[number]
+
+export const AIRING_STATUSES = ['ongoing', 'completed', 'upcoming', 'hiatus'] as const
+export type AiringStatus = (typeof AIRING_STATUSES)[number]
+
+export const AGE_RATINGS = ['G', 'PG', 'PG-13', 'R', 'R+', 'Rx'] as const
+export type AgeRating = (typeof AGE_RATINGS)[number]
+
+export const STREAM_TYPES = ['hls', 'mp4', 'embed'] as const
+export type StreamType = (typeof STREAM_TYPES)[number]
+
+export const USER_STATUSES = ['active', 'suspended', 'banned'] as const
+export type UserStatus = (typeof USER_STATUSES)[number]
+
+export const SUBSCRIPTION_STATUSES = ['active', 'cancelled', 'expired', 'past_due', 'trialing'] as const
+export type SubscriptionStatus = (typeof SUBSCRIPTION_STATUSES)[number]
+
+export const BILLING_INTERVALS = ['monthly', 'yearly', 'lifetime'] as const
+export type BillingInterval = (typeof BILLING_INTERVALS)[number]
+
+export const TRANSACTION_STATUSES = ['pending', 'completed', 'failed', 'refunded'] as const
+export type TransactionStatus = (typeof TRANSACTION_STATUSES)[number]
+
+export const SUBTITLE_REVIEW_STATUSES = ['pending_review', 'approved', 'rejected'] as const
+export type SubtitleReviewStatus = (typeof SUBTITLE_REVIEW_STATUSES)[number]
+
+// ── Domain Models ────────────────────────────────────────────────────────────
 
 export interface User {
-  id: number
+  readonly id: number
   name: string
   email: string
   avatar: string | null
-  status: 'active' | 'suspended' | 'banned'
+  status: UserStatus
   preferred_language: string
   preferred_subtitle_language: string
   ads_enabled: boolean
@@ -16,7 +53,7 @@ export interface User {
 }
 
 export interface Genre {
-  id: number
+  readonly id: number
   name_en: string
   name_km: string | null
   slug: string
@@ -25,7 +62,7 @@ export interface Genre {
 }
 
 export interface AnimeListItem {
-  id: number
+  readonly id: number
   slug: string
   title_en: string
   title_km: string | null
@@ -58,8 +95,8 @@ export interface Anime extends AnimeListItem {
 }
 
 export interface Season {
-  id: number
-  anime_id: number
+  readonly id: number
+  readonly anime_id: number
   slug: string
   title_en: string | null
   title_km: string | null
@@ -75,8 +112,8 @@ export interface Season {
 }
 
 export interface Episode {
-  id: number
-  season_id: number
+  readonly id: number
+  readonly season_id: number
   slug: string
   title_en: string | null
   title_km: string | null
@@ -93,20 +130,20 @@ export interface Episode {
 }
 
 export interface SubtitleTrack {
-  id: number
-  episode_id: number
+  readonly id: number
+  readonly episode_id: number
   language_code: string
   language_name_en: string
   language_name_native: string | null
   format: string
-  status: 'pending_review' | 'approved' | 'rejected'
+  status: SubtitleReviewStatus
   is_default: boolean
   version: number
 }
 
 export interface WatchHistory {
-  id: number
-  episode_id: number
+  readonly id: number
+  readonly episode_id: number
   anime_id?: number
   user_id?: number
   progress_seconds: number
@@ -117,13 +154,13 @@ export interface WatchHistory {
   created_at?: string
   updated_at?: string
   episode?: {
-    id: number
+    readonly id: number
     slug: string
     title_en: string | null
     episode_number: number
     thumbnail_url: string | null
     anime?: {
-      id: number
+      readonly id: number
       slug: string
       title_en: string
       title_km: string | null
@@ -133,7 +170,7 @@ export interface WatchHistory {
 }
 
 export interface SubscriptionPlan {
-  id: number
+  readonly id: number
   name_en: string
   name_km: string | null
   slug: string
@@ -143,7 +180,7 @@ export interface SubscriptionPlan {
   price?: number
   price_usd?: number
   currency: string
-  interval: 'monthly' | 'yearly'
+  interval: BillingInterval
   interval_count?: number
   features: string[]
   is_featured?: boolean
@@ -151,8 +188,8 @@ export interface SubscriptionPlan {
 }
 
 export interface Subscription {
-  id: number
-  status: 'active' | 'cancelled' | 'expired' | 'past_due' | 'trialing'
+  readonly id: number
+  status: SubscriptionStatus
   starts_at: string
   ends_at: string | null
   cancelled_at: string | null
@@ -162,12 +199,12 @@ export interface Subscription {
 }
 
 export interface PaymentTransaction {
-  id: number
+  readonly id: number
   reference: string
   amount_cents: number
   amount: number
   currency: string
-  status: 'pending' | 'completed' | 'failed' | 'refunded'
+  status: TransactionStatus
   provider: string
   provider_order_id: string | null
   plan: SubscriptionPlan
@@ -178,47 +215,136 @@ export interface PaymentTransaction {
 export interface PlaybackResult {
   playback_url: string
   expires_at: string
-  type: 'hls' | 'mp4' | 'embed'
+  type: StreamType
   subtitles: PlaybackSubtitle[]
   token?: string
 }
 
 export interface PlaybackSubtitle {
-  id: number
+  readonly id: number
   language: string
   label: string
   url: string
   default: boolean
 }
 
-// ─── Enums ─────────────────────────────────────────────────────────────────
-
-export type AnimeType = 'anime' | 'donghua' | 'movie' | 'ova' | 'ona' | 'special' | 'cartoon'
-export type ContentStatus = 'draft' | 'published' | 'unlisted'
-export type AiringStatus = 'ongoing' | 'completed' | 'upcoming' | 'hiatus'
-export type AgeRating = 'G' | 'PG' | 'PG-13' | 'R' | 'R+' | 'Rx'
-
-// ─── API Response Wrappers ──────────────────────────────────────────────────
+// ── API Response Wrappers ────────────────────────────────────────────────────
 
 export interface PaginatedResponse<T> {
   data: T[]
-  meta: {
-    current_page: number
-    last_page: number
-    per_page: number
-    total: number
-    from?: number
-    to?: number
-  }
-  links?: {
-    first: string | null
-    last: string | null
-    prev: string | null
-    next: string | null
-  }
+  meta: PaginationMeta
+  links?: PaginationLinks
+}
+
+export interface PaginationMeta {
+  current_page: number
+  last_page: number
+  per_page: number
+  total: number
+  from?: number
+  to?: number
+}
+
+export interface PaginationLinks {
+  first: string | null
+  last: string | null
+  prev: string | null
+  next: string | null
 }
 
 export interface SingleResponse<T> {
   data: T
 }
 
+export interface ApiError {
+  message: string
+  errors?: Record<string, string[]>
+  status?: number
+}
+
+// ── Discriminated Unions ─────────────────────────────────────────────────────
+
+export type LoadingState<T> =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success'; data: T }
+  | { status: 'error'; error: string }
+
+export type AuthState =
+  | { status: 'loading' }
+  | { status: 'authenticated'; user: User }
+  | { status: 'unauthenticated' }
+
+export type StreamState =
+  | { status: 'idle' }
+  | { status: 'resolving' }
+  | { status: 'ready'; url: string; type: StreamType }
+  | { status: 'error'; retries: number }
+
+// ── Utility Types ────────────────────────────────────────────────────────────
+
+/** Pick only the fields required for a card display */
+export type AnimeCardData = Pick<
+  AnimeListItem,
+  'id' | 'slug' | 'title_en' | 'title_km' | 'poster_url' | 'type' | 'airing_status' | 'average_score' | 'genres'
+> & {
+  total_episodes?: number | null
+}
+
+/** Filters accepted by the anime list endpoint */
+export interface AnimeListFilters {
+  type?: AnimeType | string
+  genre?: string
+  sort?: 'views' | 'latest' | 'score' | 'az'
+  per_page?: number
+  page?: number
+  q?: string
+}
+
+/** What gets stored in localStorage */
+export interface StoredSession {
+  user: User
+  token: string
+  expires_at?: string
+}
+
+/** Schedule item for airing schedule page */
+export interface ScheduleItem {
+  slug: string
+  title: string
+  poster: string
+  episode: number
+  airingTime?: string
+}
+
+export type WeeklySchedule = Record<string, ScheduleItem[]>
+
+// ── Video Health ─────────────────────────────────────────────────────────────
+export const VIDEO_CHECK_STATUSES = ['unchecked', 'working', 'broken', 'checking', 'fixed'] as const
+export type VideoCheckStatus = (typeof VIDEO_CHECK_STATUSES)[number]
+
+export interface VideoHealthEntry {
+  episodeId: number
+  animeId: number
+  animeSlug: string
+  animeTitleEn: string
+  seasonNumber: number
+  episodeNumber: number
+  currentUrl: string | null
+  status: VideoCheckStatus
+  errorDetail: string | null
+  fixedUrl: string | null
+  checkedAt: string | null
+}
+
+export interface VideoHealthStats {
+  total: number
+  working: number
+  broken: number
+  checking: number
+  fixed: number
+  unchecked: number
+  lastScanAt: string | null
+  scanProgress: number // 0–100
+  isScanning: boolean
+}

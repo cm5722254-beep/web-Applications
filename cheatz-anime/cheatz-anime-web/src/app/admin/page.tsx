@@ -5,22 +5,178 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   Users, Film, Crown, ShieldCheck, BarChart2,
-  ArrowRight, ExternalLink, TrendingUp,
+  ArrowRight, ExternalLink, TrendingUp, Heart,
+  QrCode, Copy, Check, Sparkles, Gift, Video,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { adminService, type ManagedUser } from '@/services/adminService'
 import { Navbar } from '@/components/layout/Navbar'
 
+// ── KHQR Donation Card ────────────────────────────────────────────────────────
+function KhqrDonationCard() {
+  const [copied, setCopied] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+  const ABAN_NAME = 'SOCHEAT VINCHAN'
+  const ABAN_ID   = 'socheatvinchan@gmail.com'
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(ABAN_ID).catch(() => {})
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="relative bg-gradient-to-br from-[#0d0f1a] via-[#0a0c18] to-[#06080f] border border-red-500/25 rounded-3xl overflow-hidden shadow-[0_0_40px_rgba(220,38,38,0.08)]">
+      {/* Decorative top bar */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-600 via-rose-400 to-red-600" />
+
+      {/* Background glow blobs */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-48 h-48 bg-rose-600/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="relative z-10 p-6 sm:p-8">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-4 mb-6">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 rounded-xl bg-red-500/20 border border-red-500/30 flex items-center justify-center">
+                <Heart size={16} className="text-red-400 fill-red-400" />
+              </div>
+              <span className="text-xs font-extrabold uppercase tracking-widest text-red-400">
+                KHQR Donation
+              </span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-extrabold text-white leading-tight">
+              គាំទ្រ SC-ANIME KH 🇰🇭
+            </h2>
+            <p className="text-neutral-400 text-xs mt-1 font-sans">
+              ស្ទ្រីម QR Code ខ្មែរ · ABA · ACLEDA · Wing
+            </p>
+          </div>
+
+          {/* KHQR logo badge */}
+          <div className="shrink-0 flex flex-col items-center justify-center bg-white rounded-2xl px-3 py-2 shadow-lg">
+            <span className="text-red-600 font-black text-sm tracking-tight leading-none">KHQR</span>
+            <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Cambodia</span>
+          </div>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-6 items-center lg:items-start">
+
+          {/* QR Code */}
+          <div className="flex flex-col items-center gap-3 shrink-0">
+            <div className="relative group">
+              {/* Animated ring */}
+              <div className="absolute -inset-2 rounded-2xl bg-gradient-to-br from-red-500/30 via-rose-400/20 to-red-600/30 blur-md opacity-70 group-hover:opacity-100 transition-opacity" />
+              <div className="relative bg-white p-3 rounded-2xl shadow-2xl border-2 border-red-100">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/khqr.png"
+                  alt="KHQR Donation QR Code — SC-ANIME KH"
+                  className="w-44 h-44 sm:w-52 sm:h-52 object-contain"
+                  draggable={false}
+                />
+              </div>
+            </div>
+            <span className="text-[11px] text-neutral-500 font-sans text-center">
+              📱 Scan with any Khmer banking app
+            </span>
+          </div>
+
+          {/* Info panel */}
+          <div className="flex-1 w-full space-y-4">
+
+            {/* Donor info */}
+            <div className="bg-black/30 border border-white/5 rounded-2xl p-4 space-y-3">
+              <div className="flex items-center gap-2 mb-1">
+                <QrCode size={14} className="text-red-400" />
+                <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Recipient</span>
+              </div>
+
+              <div>
+                <p className="text-[11px] text-neutral-500 mb-0.5">Full Name</p>
+                <p className="text-white font-extrabold text-sm tracking-wide">{ABAN_NAME}</p>
+              </div>
+
+              <div>
+                <p className="text-[11px] text-neutral-500 mb-1">ABA / Account ID</p>
+                <div className="flex items-center gap-2">
+                  <code className="text-red-300 font-mono text-xs bg-red-500/10 border border-red-500/20 px-3 py-1.5 rounded-xl flex-1 truncate">
+                    {ABAN_ID}
+                  </code>
+                  <button
+                    onClick={handleCopy}
+                    className="p-1.5 rounded-xl bg-red-500/15 border border-red-500/25 hover:bg-red-500/25 text-red-400 transition-all shrink-0"
+                    title="Copy"
+                  >
+                    {copied ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Donation amounts */}
+            <div>
+              <p className="text-xs text-neutral-500 font-semibold mb-2 font-sans">💝 ចំនួនដែលពេញនិយម</p>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { usd: '$1', label: '☕ Coffee' },
+                  { usd: '$5', label: '🍜 Noodle' },
+                  { usd: '$10', label: '🎁 Gift' },
+                ].map(amt => (
+                  <div key={amt.usd}
+                    className="bg-red-500/8 border border-red-500/20 hover:border-red-400/40 rounded-xl p-2.5 text-center cursor-default transition-all hover:bg-red-500/15 group">
+                    <p className="text-white font-extrabold text-base group-hover:text-red-300 transition-colors">{amt.usd}</p>
+                    <p className="text-neutral-500 text-[10px] font-sans">{amt.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Supported banks */}
+            <div className="flex flex-wrap gap-2">
+              {['ABA', 'ACLEDA', 'Wing', 'Pi Pay', 'TrueMoney', 'Chip Mong'].map(bank => (
+                <span key={bank}
+                  className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-neutral-400">
+                  {bank}
+                </span>
+              ))}
+            </div>
+
+            {/* Thank you note */}
+            <div className="bg-gradient-to-r from-red-950/40 to-rose-950/20 border border-red-500/15 rounded-xl p-3 flex items-start gap-2">
+              <Sparkles size={13} className="text-red-400 shrink-0 mt-0.5" />
+              <p className="text-[11px] text-neutral-400 leading-relaxed font-sans">
+                អរគុណពីចិត្ត 🙏 ការ donate របស់អ្នកជួយឲ្យ SC-ANIME KH រក្សាការ stream ឥតគិតថ្លៃ
+                សម្រាប់សហគមន៍ Anime ខ្មែរ។
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function AdminDashboardPage() {
   const { user, isAdmin, isSuperAdmin, loading } = useAuth()
   const router = useRouter()
   const [usersList, setUsersList] = useState<ManagedUser[]>([])
+  const [loadingUsers, setLoadingUsers] = useState(true)
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) router.push('/')
   }, [user, isAdmin, loading, router])
 
-  useEffect(() => { setUsersList(adminService.getUsers()) }, [])
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoadingUsers(true)
+      const users = await adminService.getUsers()
+      setUsersList(users)
+      setLoadingUsers(false)
+    }
+    fetchUsers()
+  }, [])
 
   if (loading || !user || !isAdmin) return null
 
@@ -116,6 +272,14 @@ export default function AdminDashboardPage() {
               cta: 'Manage Catalog',
             },
             {
+              href: '/admin/videos/health', icon: Video, color: 'text-rose-400',
+              bg: 'bg-rose-500/10 border-rose-500/20', hover: 'hover:border-rose-500/50 hover:shadow-[0_0_20px_rgba(244,63,94,0.12)]',
+              title: 'Video Health Monitor',
+              titleKm: 'ពិនិត្យវីដេអូ',
+              desc: 'Scan all episodes, auto-fix broken videos, ensure 100% video availability',
+              cta: 'Check Videos',
+            },
+            {
               href: '/', icon: ExternalLink, color: 'text-emerald-400',
               bg: 'bg-emerald-500/10 border-emerald-500/20', hover: 'hover:border-emerald-500/50 hover:shadow-[0_0_20px_rgba(16,185,129,0.12)]',
               title: 'Live Website Preview',
@@ -154,38 +318,48 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="space-y-2.5">
-            {usersList.slice(0, 5).map((u) => {
-              const isSuper = u.email.toLowerCase() === 'socheatvinchan@gmail.com'
-              return (
-                <div key={u.id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-[#07080f] rounded-xl border border-cyan-500/10 gap-3">
-                  <div className="flex items-center gap-3">
-                    <img src={u.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=60'}
-                      alt={u.name} className="w-9 h-9 rounded-full object-cover ring-1 ring-cyan-500/30" />
-                    <div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-white text-xs">{u.name}</span>
-                        {isSuper && <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded font-extrabold">SUPER ADMIN</span>}
+            {loadingUsers ? (
+              <div className="text-center py-8 text-neutral-500">
+                Loading users...
+              </div>
+            ) : usersList.length === 0 ? (
+              <div className="text-center py-8 text-neutral-500">
+                No users found
+              </div>
+            ) : (
+              usersList.slice(0, 5).map((u) => {
+                const isSuper = u.email.toLowerCase() === 'socheatvinchan@gmail.com'
+                return (
+                  <div key={u.id}
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-[#07080f] rounded-xl border border-cyan-500/10 gap-3">
+                    <div className="flex items-center gap-3">
+                      <img src={u.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=60'}
+                        alt={u.name} className="w-9 h-9 rounded-full object-cover ring-1 ring-cyan-500/30" />
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-bold text-white text-xs">{u.name}</span>
+                          {isSuper && <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded font-extrabold">SUPER ADMIN</span>}
+                        </div>
+                        <span className="text-xs text-neutral-500">{u.email}</span>
                       </div>
-                      <span className="text-xs text-neutral-500">{u.email}</span>
+                    </div>
+                    <div className="flex items-center gap-3 self-end sm:self-auto">
+                      {u.subscribed ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold">
+                          <Crown size={11} /> VIP Active
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-1 rounded-full bg-[#111420] text-neutral-500 text-xs border border-cyan-500/10">Free</span>
+                      )}
+                      <Link href="/admin/users"
+                        className="px-3 py-1 text-xs font-semibold rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 hover:bg-cyan-500/20 transition-colors">
+                        Edit
+                      </Link>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 self-end sm:self-auto">
-                    {u.subscribed ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold">
-                        <Crown size={11} /> VIP Active
-                      </span>
-                    ) : (
-                      <span className="px-2.5 py-1 rounded-full bg-[#111420] text-neutral-500 text-xs border border-cyan-500/10">Free</span>
-                    )}
-                    <Link href="/admin/users"
-                      className="px-3 py-1 text-xs font-semibold rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 hover:bg-cyan-500/20 transition-colors">
-                      Edit
-                    </Link>
-                  </div>
-                </div>
-              )
-            })}
+                )
+              })
+            )}
           </div>
         </div>
       </div>
