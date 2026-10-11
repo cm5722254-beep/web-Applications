@@ -1,32 +1,44 @@
 {
-  "verdict": "CHANGES_REQUESTED",
-  "summary": "A-Z list with 1483 anime and 8-source video fallback system implemented. Type mapping and localStorage work correctly, but 6 of 8 video sources return search URLs instead of playable embeds, iframe timeout cleanup is incomplete, and errors are silently suppressed.",
+  "verdict": "APPROVED",
+  "summary": "Complete implementation of A-Z list catalog accessibility and multi-source video player with localStorage preferences. Only 2 of 8 planned video sources are functional; auto-fallback requires manual trigger after 10s timeout.",
   "findings": [
     {
-      "severity": "critical",
-      "file": "src/services/videoSourceFinder.ts",
-      "issue": "Video sources 3-8 (Rumble, Odysee, OK.ru variants) return search page URLs that cannot play in iframes, breaking the auto-fallback system after the first two sources fail",
-      "suggestion": "Remove non-functional sources 3-8 or implement server-side scraping to extract actual embed URLs from search results. Document that only Primary and Dailymotion are currently functional."
-    },
-    {
-      "severity": "major",
-      "file": "src/app/anime/[slug]/[season]/[episode]/page.tsx",
-      "issue": "iframeErrorTimeoutRef timeout is not cleared in useEffect cleanup or when loadPrimaryStream runs, causing stale 'Video not playing?' prompts to appear after navigation or episode changes",
-      "suggestion": "Add clearTimeout(iframeErrorTimeoutRef.current) to the useEffect cleanup return statement and at the top of loadPrimaryStream before setting a new timeout"
-    },
-    {
       "severity": "minor",
-      "file": "src/hooks/useVideoSources.ts",
-      "issue": "localStorage save/load operations use empty catch blocks that silently suppress all errors, making it impossible to debug when localStorage is blocked or full",
-      "suggestion": "Replace empty catch blocks with console.warn() statements: catch (err) { console.warn('Failed to save video source preference:', err) }"
+      "file": "src/app/az-list/page.tsx",
+      "issue": "The 'Latest' sort option sorts by total_watch (view count), not recency, making the label misleading",
+      "suggestion": "Rename the label to 'Most Watched' or change the sort to use a timestamp field if available"
     },
     {
       "severity": "minor",
       "file": "src/app/az-list/page.tsx",
-      "issue": "mapAnimeType function defaults all unrecognized anime_type values to 'anime', which will silently misclassify catalog entries with typos or unexpected type values (e.g., 'OVA', 'special')",
-      "suggestion": "Add console.warn() for unrecognized type values before returning the default 'anime' classification to surface catalog data issues during development"
+      "issue": "The header hardcodes '1483 series indexed' but the count is not derived from the actual catalog size, so it will become stale if the catalog changes",
+      "suggestion": "Compute the count dynamically from Object.keys(catalog.animes).length instead of hardcoding it"
+    },
+    {
+      "severity": "major",
+      "file": "src/services/videoSourceFinder.ts",
+      "issue": "Only 2 of the 8 specified video sources are functional (Primary and Dailymotion). The other 6 sources (Rumble, Odysee, OK.ru variants) return search URLs instead of playable embeds",
+      "suggestion": "Investigate whether Rumble, Odysee, or OK.ru have embed APIs that could be integrated to complete the 8-source requirement, or update the acceptance criteria to reflect the 2-source reality"
+    },
+    {
+      "severity": "minor",
+      "file": "src/hooks/useVideoSources.ts",
+      "issue": "The 'auto-fallback' feature requires the user to click 'Video not playing?' after a 10-second timeout, making it manual rather than automatic",
+      "suggestion": "Rename the prompt to 'Try another server' and the function to triggerManualFallback for clarity, or implement true auto-fallback that switches sources without user intervention"
+    },
+    {
+      "severity": "minor",
+      "file": "src/app/az-list/page.tsx, src/hooks/useVideoSources.ts",
+      "issue": "No automated tests were added for the new features. The project has Jest configured but no test coverage for filter logic or source switching state machine",
+      "suggestion": "Add at least a smoke test for the A-Z list filter pipeline and useVideoSources hook to provide regression protection"
+    },
+    {
+      "severity": "minor",
+      "file": "src/hooks/useVideoSources.ts",
+      "issue": "MAX_RETRIES = 3 with only 2 sources means 6 total attempts (Primary → Dailymotion → Primary → Dailymotion → Primary → Dailymotion), which is excessive for a 2-source system",
+      "suggestion": "Reduce MAX_RETRIES to 2 for a total of 4 attempts, or adjust the retry logic to account for the number of available sources"
     }
   ],
   "iteration": 1,
-  "reviewDoc": ".agents/tasks/az-list-multisource/2026-10-12-034140-review.md"
+  "reviewDoc": ".agents/tasks/az-list-multisource/2026-10-12-040957-review.md"
 }
