@@ -6,11 +6,11 @@ export function Skeleton({ className }: { className?: string }) {
 
 export function AnimeCardSkeleton() {
   return (
-    <div className="rounded-xl overflow-hidden bg-brand-surface border border-brand-border">
+    <div className="rounded-2xl overflow-hidden bg-[#0e111f] border border-white/5">
       <Skeleton className="aspect-[2/3] w-full rounded-none" />
       <div className="p-3 space-y-2">
-        <Skeleton className="h-4 w-3/4" />
-        <Skeleton className="h-3 w-1/2" />
+        <Skeleton className="h-4 w-3/4 rounded-md" />
+        <Skeleton className="h-3 w-1/2 rounded-md" />
       </div>
     </div>
   )
@@ -19,7 +19,7 @@ export function AnimeCardSkeleton() {
 export function LoadingSpinner({ size = 24, className }: { size?: number; className?: string }) {
   return (
     <div
-      className={cn('border-2 border-brand-border border-t-brand-violet rounded-full animate-spin', className)}
+      className={cn('border-2 border-white/10 border-t-cyan-400 rounded-full animate-spin', className)}
       style={{ width: size, height: size }}
     />
   )
@@ -35,11 +35,11 @@ export function ErrorMessage({
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-12 text-center">
       <div className="text-4xl">⚠️</div>
-      <p className="text-brand-muted text-sm max-w-sm">{message}</p>
+      <p className="text-neutral-400 text-sm max-w-sm">{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="text-sm bg-brand-surface border border-brand-border hover:border-brand-violet text-brand-text px-4 py-2 rounded-lg transition-colors"
+          className="text-sm bg-[#0e111f] border border-white/10 hover:border-cyan-500/40 text-neutral-200 px-4 py-2 rounded-xl transition-colors hover:text-cyan-400"
         >
           Try Again
         </button>
@@ -61,8 +61,8 @@ export function EmptyState({
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
       <div className="text-5xl opacity-30">🎬</div>
-      <h3 className="text-brand-text font-semibold">{displayTitle}</h3>
-      {description && <p className="text-brand-muted text-sm max-w-sm">{description}</p>}
+      <h3 className="text-white font-semibold">{displayTitle}</h3>
+      {description && <p className="text-neutral-400 text-sm max-w-sm">{description}</p>}
     </div>
   )
 }
@@ -75,11 +75,11 @@ export function Badge({
   variant?: 'default' | 'premium' | 'success' | 'warning' | 'error'
 }) {
   const variants = {
-    default: 'bg-brand-surface border-brand-border text-brand-muted',
-    premium: 'bg-amber-500/20 border-amber-500/40 text-amber-400',
-    success: 'bg-green-500/20 border-green-500/40 text-green-400',
-    warning: 'bg-yellow-500/20 border-yellow-500/40 text-yellow-400',
-    error: 'bg-red-500/20 border-red-500/40 text-red-400',
+    default:  'bg-[#0e111f] border-white/10 text-neutral-400',
+    premium:  'bg-amber-500/20 border-amber-500/40 text-amber-400',
+    success:  'bg-green-500/20 border-green-500/40 text-green-400',
+    warning:  'bg-yellow-500/20 border-yellow-500/40 text-yellow-400',
+    error:    'bg-red-500/20 border-red-500/40 text-red-400',
   }
 
   return (
@@ -115,4 +115,3 @@ export function Section({
 }
 
 export { Logo3D } from './Logo3D'
-

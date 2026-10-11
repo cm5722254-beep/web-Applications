@@ -7,5 +7,6 @@ export {
   historyService,
   subscriptionService,
   scheduleService,
+  resolveEpisodeVideoUrl,
 } from './animeDataService'
 export type { ScheduleAnimeItem } from './animeDataService'

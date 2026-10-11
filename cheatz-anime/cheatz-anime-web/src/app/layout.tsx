@@ -12,6 +12,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   title: 'SC-ANIME KH — Watch Chinese Donghua, Japanese Anime & Movies in 4K',
   description:
     'The premier streaming catalog for high-definition Chinese Donghua, Japanese Anime, and Movies with fast instant playback in Full HD & 4K.',

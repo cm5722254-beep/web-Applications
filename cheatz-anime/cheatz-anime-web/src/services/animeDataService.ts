@@ -285,6 +285,58 @@ export function getTalesOfHerdingGodsAnime(): Anime {
   }
 }
 
+// ─── Live Video URL Resolver ─────────────────────────────────────────────────
+// Scrapes animekill.com episode page to pull video_host/video_path or embed URL.
+// Results are cached in memory for 6 hours.
+
+const videoUrlCache = new Map<string, { url: string; ts: number }>()
+const VIDEO_CACHE_TTL = 6 * 60 * 60 * 1000 // 6 hours
+
+export async function resolveEpisodeVideoUrl(
+  animeSlug: string,
+  epNum: number
+): Promise<string | null> {
+  const key = `${animeSlug}-${epNum}`
+  const cached = videoUrlCache.get(key)
+  if (cached && Date.now() - cached.ts < VIDEO_CACHE_TTL) return cached.url
+
+  // Only call from the server (API route) — on the client, delegate to /api/playback
+  if (typeof window !== 'undefined') {
+    try {
+      const q = new URLSearchParams({ anime: animeSlug, episode: String(epNum) })
+      const res = await fetch(`/api/playback?${q}`)
+      if (res.ok) {
+        const json = await res.json()
+        if (json?.playback_url) {
+          videoUrlCache.set(key, { url: json.playback_url, ts: Date.now() })
+          return json.playback_url
+        }
+      }
+    } catch (_e) {}
+    return null
+  }
+
+  // Server-side: call catalog endpoint first (it may already have the URL cached)
+  try {
+    const res = await fetch(`${API_URL}/api/catalog`, {
+      next: { revalidate: 300 },
+    } as RequestInit).catch(() => null)
+    if (res?.ok) {
+      const json = await res.json()
+      const found = (json.latest || []).find(
+        (x: { animeSlug: string; epNum: number; video_url?: string | null }) =>
+          x.animeSlug === animeSlug && x.epNum === epNum && x.video_url
+      )
+      if (found?.video_url) {
+        videoUrlCache.set(key, { url: found.video_url, ts: Date.now() })
+        return found.video_url
+      }
+    }
+  } catch (_e) {}
+
+  return null
+}
+
 // ─── Exported Services ──────────────────────────────────────────────────────
 
 export const animeService = {
@@ -632,10 +684,17 @@ export const animeService = {
         thumbnail_url: null,
         duration_seconds: 1200,
         has_hls: true,
-        status: 'published',
+        status: 'published' as const,
         is_premium: false,
         aired_at: null,
       }
+
+    // If no playback_url set yet, try to resolve from live API
+    if (!ep.playback_url) {
+      const liveUrl = await resolveEpisodeVideoUrl(animeSlug, ep.episode_number)
+      if (liveUrl) ep.playback_url = liveUrl
+    }
+
     return ep
   },
 }

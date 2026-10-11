@@ -1,28 +1,26 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Trash2, Clock, Play, RotateCcw, Film } from 'lucide-react'
 import { historyService } from '@/services/api'
+import { useAuth } from '@/hooks/useAuth'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
-import { LoadingSpinner, EmptyState, ErrorMessage } from '@/components/ui'
-import { useAuth } from '@/hooks/useAuth'
-import { useI18n } from '@/i18n'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import Link from 'next/link'
-import { Trash2, Play } from 'lucide-react'
+import { LoadingSpinner, EmptyState } from '@/components/ui'
 
 export default function HistoryPage() {
   const { user, loading } = useAuth()
-  const { t } = useI18n()
   const router = useRouter()
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    if (!loading && !user) router.push('/login')
+    if (!loading && !user) router.push('/login?redirect=/history')
   }, [user, loading, router])
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ['watch-history'],
     queryFn: () => historyService.list(),
     enabled: !!user,
@@ -33,90 +31,147 @@ export default function HistoryPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['watch-history'] }),
   })
 
-  const { mutate: clearAll } = useMutation({
+  const { mutate: clearAll, isPending: clearing } = useMutation({
     mutationFn: historyService.clearAll,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['watch-history'] }),
   })
 
   if (loading || !user) return null
 
+  const entries = data?.data ?? []
+
   return (
-    <div className="min-h-screen bg-brand-bg">
+    <div className="min-h-screen bg-[#07080f] text-white flex flex-col">
       <Navbar />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+      <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-10">
+        {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-brand-text font-khmer">🕐 {t('nav.history')}</h1>
-          {data?.data && data.data.length > 0 && (
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-cyan-500/15 border border-cyan-500/20">
+                <Clock size={22} className="text-cyan-400" />
+              </div>
+              Watch History
+            </h1>
+            <p className="text-neutral-400 text-sm mt-1">
+              {entries.length} episode{entries.length !== 1 ? 's' : ''} watched
+            </p>
+          </div>
+          {entries.length > 0 && (
             <button
               onClick={() => clearAll()}
-              className="text-sm text-red-400 hover:text-red-300 border border-red-400/30 hover:border-red-400/60 px-3 py-1.5 rounded-lg transition-colors"
+              disabled={clearing}
+              className="flex items-center gap-2 text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 border border-red-500/20 px-4 py-2 rounded-xl transition-all"
             >
+              {clearing ? <LoadingSpinner size={14} /> : <RotateCcw size={14} />}
               Clear All
             </button>
           )}
         </div>
 
-        {isError ? (
-          <ErrorMessage message="Failed to load watch history." onRetry={() => refetch()} />
-        ) : isLoading ? (
-          <div className="flex justify-center py-12"><LoadingSpinner size={40} /></div>
-        ) : data?.data.length === 0 ? (
-          <EmptyState title="No watch history" description="Episodes you watch will appear here." />
+        {/* Content */}
+        {isLoading ? (
+          <div className="flex justify-center py-20">
+            <LoadingSpinner size={44} />
+          </div>
+        ) : entries.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-5 py-24 text-center">
+            <div className="w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+              <Film size={36} className="text-cyan-400/50" />
+            </div>
+            <div>
+              <h3 className="text-white font-bold text-lg mb-1">No watch history yet</h3>
+              <p className="text-neutral-400 text-sm">Episodes you watch will appear here automatically.</p>
+            </div>
+            <Link
+              href="/"
+              className="bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-extrabold px-6 py-2.5 rounded-xl hover:scale-105 transition-transform shadow-[0_0_15px_rgba(6,182,212,0.4)] text-sm"
+            >
+              Browse Anime
+            </Link>
+          </div>
         ) : (
           <div className="space-y-3">
-            {data?.data.map((entry) => (
-              <div
-                key={entry.id}
-                className="flex items-center gap-4 bg-brand-surface border border-brand-border rounded-xl p-4"
-              >
-                {/* Thumbnail */}
-                <div className="w-20 h-14 rounded-lg overflow-hidden bg-brand-bg shrink-0">
-                  {entry.episode?.thumbnail_url ? (
-                    <img src={entry.episode.thumbnail_url} alt="" className="w-full h-full object-cover" />
-                  ) : entry.episode?.anime?.poster_url ? (
-                    <img src={entry.episode.anime.poster_url} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-2xl">🎬</div>
-                  )}
-                </div>
+            {entries.map((entry) => {
+              const progressPct = entry.duration_seconds
+                ? Math.min(100, Math.round((entry.progress_seconds / entry.duration_seconds) * 100))
+                : 0
+              const animeSlug = entry.episode?.anime?.slug || ''
+              const epSlug = entry.episode?.slug || 'ep-1'
 
-                {/* Info */}
-                <div className="flex-1 min-w-0">
-                  <p className="text-brand-text text-sm font-semibold truncate font-khmer">
-                    {entry.episode?.anime?.title_km || entry.episode?.anime?.title_en || 'Unknown'}
-                  </p>
-                  <p className="text-brand-muted text-xs truncate">
-                    Ep {entry.episode?.episode_number}: {entry.episode?.title_en || 'Unknown'}
-                  </p>
-                  {/* Progress bar */}
-                  {entry.duration_seconds && (
-                    <div className="w-full bg-brand-border rounded-full h-1 mt-2">
-                      <div
-                        className="bg-brand-violet h-1 rounded-full"
-                        style={{ width: `${Math.min(100, (entry.progress_seconds / entry.duration_seconds) * 100)}%` }}
+              return (
+                <div
+                  key={entry.id}
+                  className="group flex items-center gap-4 bg-[#0e111f] border border-white/5 hover:border-cyan-500/20 rounded-2xl p-4 transition-all"
+                >
+                  {/* Thumbnail */}
+                  <div className="w-20 h-14 rounded-xl overflow-hidden bg-black shrink-0 border border-white/5">
+                    {entry.episode?.thumbnail_url || entry.episode?.anime?.poster_url ? (
+                      <img
+                        src={entry.episode.thumbnail_url || entry.episode.anime!.poster_url || ''}
+                        alt=""
+                        className="w-full h-full object-cover"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
                       />
-                    </div>
-                  )}
-                </div>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-2xl bg-[#0a0c18]">
+                        🎬
+                      </div>
+                    )}
+                  </div>
 
-                {/* Actions */}
-                <div className="flex items-center gap-2 shrink-0">
-                  <p className="text-brand-muted text-xs">
-                    {new Date(entry.last_watched_at).toLocaleDateString()}
-                  </p>
-                  <button
-                    onClick={() => removeEntry(entry.id)}
-                    className="text-brand-muted hover:text-red-400 transition-colors p-1"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-sm font-bold truncate">
+                      {entry.episode?.anime?.title_en || 'Unknown Anime'}
+                    </p>
+                    <p className="text-neutral-400 text-xs truncate mt-0.5">
+                      Episode {entry.episode?.episode_number ?? '?'}{entry.episode?.title_en ? ` — ${entry.episode.title_en}` : ''}
+                    </p>
+                    {entry.duration_seconds ? (
+                      <div className="mt-2.5">
+                        <div className="w-full bg-white/5 rounded-full h-1">
+                          <div
+                            className="bg-gradient-to-r from-cyan-500 to-blue-500 h-1 rounded-full transition-all"
+                            style={{ width: `${progressPct}%` }}
+                          />
+                        </div>
+                        <p className="text-[10px] text-neutral-500 mt-0.5">{progressPct}% watched</p>
+                      </div>
+                    ) : null}
+                  </div>
+
+                  {/* Date + Actions */}
+                  <div className="flex flex-col items-end gap-2 shrink-0">
+                    <p className="text-[11px] text-neutral-500">
+                      {new Date(entry.last_watched_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </p>
+                    <div className="flex items-center gap-1">
+                      {animeSlug && (
+                        <Link
+                          href={`/anime/${animeSlug}/season-1/${epSlug}`}
+                          className="p-1.5 rounded-lg text-cyan-400 hover:bg-cyan-500/15 transition-colors"
+                          title="Resume watching"
+                        >
+                          <Play size={14} fill="currentColor" />
+                        </Link>
+                      )}
+                      <button
+                        onClick={() => removeEntry(entry.id)}
+                        className="p-1.5 rounded-lg text-neutral-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                        title="Remove"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
-      </div>
+      </main>
 
       <Footer />
     </div>
