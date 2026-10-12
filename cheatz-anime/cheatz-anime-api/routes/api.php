@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Auth\GoogleAuthController;
 use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\V1\AnimeController;
 use App\Http\Controllers\Api\V1\EpisodeController;
@@ -39,6 +40,8 @@ Route::prefix('v1')->group(function () {
         Route::post('register', [AuthController::class, 'register'])
             ->middleware('throttle:10,1');
         Route::post('login', [AuthController::class, 'login'])
+            ->middleware('throttle:10,1');
+        Route::post('google/callback', [GoogleAuthController::class, 'callback'])
             ->middleware('throttle:10,1');
         Route::post('forgot-password', [PasswordResetController::class, 'sendLink'])
             ->middleware('throttle:5,1');

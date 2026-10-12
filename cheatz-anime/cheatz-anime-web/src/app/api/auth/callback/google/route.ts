@@ -61,7 +61,37 @@ export async function GET(req: NextRequest) {
 
     const isSuperAdmin = email === 'socheatvinchan@gmail.com'
 
-    const sessionUser = {
+    // Send user data to backend API for registration/login
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 
+                       process.env.NEXT_PUBLIC_BASE_URL || 
+                       'https://apis.animekill.com/api/v1'
+    
+    let backendUser = null
+    let authToken = null
+    
+    try {
+      const loginResponse = await fetch(`${apiBaseUrl}/auth/google/callback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          name,
+          avatar,
+          google_id: googleUser.sub || googleUser.id,
+        }),
+      })
+      
+      if (loginResponse.ok) {
+        const loginData = await loginResponse.json()
+        backendUser = loginData.user || loginData.data?.user
+        authToken = loginData.token || loginData.access_token
+      }
+    } catch (apiError) {
+      console.warn('Backend API registration failed, using fallback:', apiError)
+    }
+    
+    // Fallback to local session if API fails
+    const sessionUser = backendUser || {
       id: isSuperAdmin ? 1 : Math.floor(Math.random() * 900000) + 100000,
       name: isSuperAdmin ? 'Socheat Vinchan (Super Admin)' : name,
       email,
@@ -76,7 +106,7 @@ export async function GET(req: NextRequest) {
       created_at: new Date().toISOString(),
     }
 
-    const authToken = 'google_token_' + Date.now() + '_' + Math.random().toString(36).substring(2)
+    authToken = authToken || ('google_token_' + Date.now() + '_' + Math.random().toString(36).substring(2))
 
     // Render client sync page that stores in localStorage and redirects
     const html = `<!DOCTYPE html>
