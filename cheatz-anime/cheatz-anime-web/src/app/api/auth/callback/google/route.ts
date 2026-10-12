@@ -62,15 +62,13 @@ export async function GET(req: NextRequest) {
     const isSuperAdmin = email === 'socheatvinchan@gmail.com'
 
     // Send user data to backend API for registration/login
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 
-                       process.env.NEXT_PUBLIC_BASE_URL || 
-                       'https://apis.animekill.com/api/v1'
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
     
     let backendUser = null
     let authToken = null
     
     try {
-      const loginResponse = await fetch(`${apiBaseUrl}/auth/google/callback`, {
+      const loginResponse = await fetch(`${appUrl}/api/backend/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -101,7 +99,7 @@ export async function GET(req: NextRequest) {
       preferred_subtitle_language: 'en',
       ads_enabled: false,
       roles: isSuperAdmin ? ['super_admin', 'admin'] : ['user'],
-      subscribed: true, // VIP access enabled
+      subscribed: true,
       email_verified_at: new Date().toISOString(),
       created_at: new Date().toISOString(),
     }

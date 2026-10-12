@@ -44,7 +44,23 @@ export const adminService = {
 
   async getUsers(filters?: AdminUserFilters): Promise<{ users: ManagedUser[]; meta: PaginationMeta }> {
     try {
-      // First try localStorage (client-side managed users)
+      // Try backend API first
+      const response = await apiClient.get('/backend/admin/users', { params: filters })
+      const users = response.data.data || []
+      const meta = response.data.meta || {
+        current_page: 1,
+        last_page: 1,
+        per_page: filters?.per_page || 20,
+        total: Array.isArray(users) ? users.length : 0,
+      }
+      return {
+        users: Array.isArray(users) ? users.map(transformUser) : [],
+        meta,
+      }
+    } catch (error) {
+      console.error('Failed to fetch users from backend:', error)
+      
+      // Fallback to localStorage
       if (typeof window !== 'undefined') {
         const localUsersRaw = localStorage.getItem('sc_anime_managed_users')
         if (localUsersRaw) {
@@ -93,21 +109,6 @@ export const adminService = {
         }
       }
       
-      // Fallback to API if localStorage is empty
-      const response = await apiClient.get('/admin/users', { params: filters })
-      const users = response.data.data || []
-      const meta = response.data.meta || {
-        current_page: 1,
-        last_page: 1,
-        per_page: filters?.per_page || 20,
-        total: Array.isArray(users) ? users.length : 0,
-      }
-      return {
-        users: Array.isArray(users) ? users.map(transformUser) : [],
-        meta,
-      }
-    } catch (error) {
-      console.error('Failed to fetch users:', error)
       return {
         users: [],
         meta: {
