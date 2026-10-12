@@ -128,7 +128,8 @@ export const adminService = {
         const index = users.findIndex(u => u.id === userId)
         
         if (index >= 0) {
-          users[index] = { ...users[index], ...data }
+          const updated: ManagedUser = { ...users[index], ...data } as ManagedUser
+          users[index] = updated
           localStorage.setItem('sc_anime_managed_users', JSON.stringify(users))
           this.syncCurrentSession(users[index])
           return users[index]
