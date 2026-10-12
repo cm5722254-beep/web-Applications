@@ -149,44 +149,58 @@ export async function GET(req: NextRequest) {
       localStorage.setItem('auth_token', ${JSON.stringify(authToken)});
 
       // 2. Auto-register into admin user DB (sc_anime_managed_users)
+      // This is a client-side user registry that admins can view
       var USERS_KEY = 'sc_anime_managed_users';
-      var newUser = ${JSON.stringify(JSON.stringify({
-        id: sessionUser.id,
-        name: sessionUser.name,
-        email: sessionUser.email,
-        avatar: sessionUser.avatar,
-        roles: sessionUser.roles,
-        subscribed: sessionUser.subscribed,
-        subscription_plan: sessionUser.subscribed ? 'Google OAuth' : null,
+      var newUserData = {
+        id: ${JSON.stringify(sessionUser.id)},
+        name: ${JSON.stringify(sessionUser.name)},
+        email: ${JSON.stringify(sessionUser.email)},
+        avatar: ${JSON.stringify(sessionUser.avatar)},
+        roles: ${JSON.stringify(sessionUser.roles)},
+        subscribed: ${JSON.stringify(sessionUser.subscribed)},
+        subscription_plan: ${JSON.stringify(sessionUser.subscribed ? 'Google OAuth VIP' : null)},
         subscription_expires_at: null,
         status: 'active',
         created_at: new Date().toISOString(),
         login_provider: 'google',
         last_login_at: new Date().toISOString(),
-      }))};
+      };
+      
       try {
         var usersRaw = localStorage.getItem(USERS_KEY);
         var users = usersRaw ? JSON.parse(usersRaw) : [];
         var existingIndex = users.findIndex(function(u) {
-          return u.email.toLowerCase() === ${JSON.stringify(email)};
+          return u && u.email && u.email.toLowerCase() === ${JSON.stringify(email.toLowerCase())};
         });
-        var parsedNewUser = JSON.parse(newUser);
+        
         if (existingIndex === -1) {
           // New user — add to list
-          users.push(parsedNewUser);
+          users.push(newUserData);
+          console.log('✅ New user registered:', ${JSON.stringify(email)});
         } else {
-          // Existing user — update login info but preserve roles/VIP set by admin
-          users[existingIndex] = Object.assign({}, users[existingIndex], {
-            name: parsedNewUser.name,
-            avatar: parsedNewUser.avatar,
-            last_login_at: parsedNewUser.last_login_at,
+          // Existing user — update login info but preserve admin-set roles/VIP
+          var existing = users[existingIndex];
+          users[existingIndex] = {
+            id: existing.id,
+            name: newUserData.name,
+            email: newUserData.email,
+            avatar: newUserData.avatar,
+            roles: existing.roles || newUserData.roles,
+            subscribed: existing.subscribed !== undefined ? existing.subscribed : newUserData.subscribed,
+            subscription_plan: existing.subscription_plan || newUserData.subscription_plan,
+            subscription_expires_at: existing.subscription_expires_at || newUserData.subscription_expires_at,
+            status: existing.status || 'active',
+            created_at: existing.created_at || newUserData.created_at,
             login_provider: 'google',
-            status: users[existingIndex].status || 'active',
-          });
+            last_login_at: newUserData.last_login_at,
+          };
+          console.log('✅ User login updated:', ${JSON.stringify(email)});
         }
+        
         localStorage.setItem(USERS_KEY, JSON.stringify(users));
+        console.log('Total users in database:', users.length);
       } catch (dbErr) {
-        console.warn('Admin DB registration failed:', dbErr);
+        console.error('❌ User registration failed:', dbErr);
       }
 
       // 3. Notify auth listeners
