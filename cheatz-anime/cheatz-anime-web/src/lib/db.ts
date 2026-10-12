@@ -128,7 +128,7 @@ export function getPaginatedUsers(params: {
     users = users.filter(u => u.status === params.status)
   }
   if (params.role) {
-    users = users.filter(u => u.roles.includes(params.role))
+    users = users.filter(u => u.roles.includes(params.role as string))
   }
   if (params.subscribed !== undefined) {
     users = users.filter(u => u.subscribed === params.subscribed)
