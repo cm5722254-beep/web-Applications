@@ -363,6 +363,7 @@ export interface AdminUserFilters {
 export interface AdminUserUpdate {
   name?: string
   status?: UserStatus
+  roles?: string[]
   subscribed?: boolean
   subscription_plan?: string | null
   subscription_expires_at?: string | null

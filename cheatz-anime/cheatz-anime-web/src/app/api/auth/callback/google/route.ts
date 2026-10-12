@@ -59,7 +59,9 @@ export async function GET(req: NextRequest) {
     const name = googleUser.name || email.split('@')[0]
     const avatar = googleUser.picture || null
 
-    const isSuperAdmin = email === 'socheatvinchan@gmail.com'
+    const isSuperAdmin = 
+      email === 'socheatvinchan@gmail.com' || 
+      email === 'socheatvireakchan@gmail.com'
 
     // Send user data to backend API for registration/login
     let backendUser = null

@@ -407,7 +407,9 @@ export default function AdminDashboardPage() {
               </div>
             ) : (
               recentUsers.map((u) => {
-                const isSuper = u.email.toLowerCase() === 'socheatvinchan@gmail.com'
+                const isSuper = 
+                  u.email.toLowerCase() === 'socheatvinchan@gmail.com' ||
+                  u.email.toLowerCase() === 'socheatvireakchan@gmail.com'
                 return (
                   <div key={u.id}
                     className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-[#07080f] rounded-xl border border-cyan-500/10 gap-3">

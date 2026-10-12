@@ -15,7 +15,10 @@ interface AuthContextValue {
   isSubscribed: boolean
 }
 
-const SUPERADMIN_EMAIL = 'socheatvinchan@gmail.com'
+const SUPERADMIN_EMAILS = [
+  'socheatvinchan@gmail.com',
+  'socheatvireakchan@gmail.com'
+]
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
@@ -76,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const isSuperAdmin =
-    user?.email?.trim().toLowerCase() === SUPERADMIN_EMAIL.toLowerCase() ||
+    SUPERADMIN_EMAILS.some(email => user?.email?.trim().toLowerCase() === email.toLowerCase()) ||
     (user?.roles?.includes('super_admin') ?? false)
 
   const isAdmin =

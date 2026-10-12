@@ -1,5 +1,5 @@
 import { apiClient } from '@/lib/api'
-import type { User, AdminUserFilters, AdminUserUpdate, PaginationMeta } from '@/types'
+import type { User, AdminUserFilters, AdminUserUpdate, PaginationMeta, UserStatus } from '@/types'
 
 export interface ManagedUser {
   id: number
@@ -10,13 +10,16 @@ export interface ManagedUser {
   subscribed: boolean
   subscription_expires_at?: string | null
   subscription_plan?: string | null
-  status: 'active' | 'suspended'
+  status: UserStatus
   created_at: string
   login_provider?: 'google' | 'email' | null
   last_login_at?: string | null
 }
 
-const SUPERADMIN_EMAIL = 'socheatvinchan@gmail.com'
+const SUPERADMIN_EMAILS = [
+  'socheatvinchan@gmail.com',
+  'socheatvireakchan@gmail.com'
+]
 
 // Transform API user to ManagedUser format
 function transformUser(apiUser: any): ManagedUser {
@@ -39,7 +42,8 @@ function transformUser(apiUser: any): ManagedUser {
 export const adminService = {
   isSuperAdmin(email?: string | null): boolean {
     if (!email) return false
-    return email.trim().toLowerCase() === SUPERADMIN_EMAIL.toLowerCase()
+    const normalized = email.trim().toLowerCase()
+    return SUPERADMIN_EMAILS.some(e => e.toLowerCase() === normalized)
   },
 
   async getUsers(filters?: AdminUserFilters): Promise<{ users: ManagedUser[]; meta: PaginationMeta }> {
