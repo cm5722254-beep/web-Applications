@@ -15,13 +15,15 @@ const cache = new Map<string, VideoSourceCacheEntry>()
  * All available video sources in priority order.
  * Priority 0 = highest (tried first on auto-fallback)
  * 
- * NOTE: Only includes sources that return actual playable embed URLs.
- * Sources returning search pages have been removed for better UX.
+ * Based on APK analysis, the donghua app uses:
+ * - Dailymotion (primary)
+ * - YouTube (secondary)
+ * - AnimKill API with Rumble proxy
  */
 export const VIDEO_SOURCES: VideoSource[] = [
   {
     id: 'primary',
-    name: 'Primary',
+    name: 'AnimKill Server',
     priority: 0,
     getUrl: (baseUrl) => baseUrl,
   },
@@ -33,12 +35,12 @@ export const VIDEO_SOURCES: VideoSource[] = [
       // Try to search Dailymotion API for the episode
       try {
         const animeName = animeSlug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
-        const query = `${animeName} Episode ${epNum} English Sub`
+        const query = `${animeName} Episode ${epNum}`
         
         const params = new URLSearchParams({
-          fields: 'id',
+          fields: 'id,title',
           search: query,
-          limit: '3',
+          limit: '5',
           sort: 'relevance',
         })
         
@@ -58,6 +60,57 @@ export const VIDEO_SOURCES: VideoSource[] = [
       }
       
       // Return the primary URL as fallback
+      return baseUrl
+    },
+  },
+  {
+    id: 'youtube',
+    name: 'YouTube',
+    priority: 2,
+    getUrl: async (baseUrl, animeSlug, epNum) => {
+      // Try to search YouTube for the episode
+      try {
+        const animeName = animeSlug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+        const query = `${animeName} Episode ${epNum} English Sub`
+        
+        // Use YouTube search via a public instance (no API key needed)
+        // Note: This is a basic implementation - in production you'd want to use YouTube Data API
+        const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`
+        
+        // For now, return a YouTube search URL embedded (not ideal but works)
+        // In production, you'd extract video ID from search results
+        const encodedQuery = encodeURIComponent(query)
+        return `https://www.youtube.com/embed?listType=search&list=${encodedQuery}`
+      } catch {
+        // Fallback to baseUrl
+      }
+      
+      return baseUrl
+    },
+  },
+  {
+    id: 'rumble',
+    name: 'Rumble (via AnimKill)',
+    priority: 3,
+    getUrl: async (baseUrl, animeSlug, epNum) => {
+      // Try AnimKill's Rumble resolver
+      try {
+        const apiUrl = `https://apis.animekill.com/users/resolveRumbleStream?anime=${animeSlug}&episode=${epNum}`
+        
+        const res = await fetch(apiUrl, {
+          signal: AbortSignal.timeout(5000),
+        })
+        
+        if (res.ok) {
+          const json: { url?: string } = await res.json()
+          if (json.url) {
+            return json.url
+          }
+        }
+      } catch {
+        // Fallback
+      }
+      
       return baseUrl
     },
   },
