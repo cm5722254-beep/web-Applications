@@ -62,8 +62,6 @@ export async function GET(req: NextRequest) {
     const isSuperAdmin = email === 'socheatvinchan@gmail.com'
 
     // Send user data to backend API for registration/login
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-    
     let backendUser = null
     let authToken = null
     
