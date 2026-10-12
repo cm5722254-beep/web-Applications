@@ -44,6 +44,56 @@ export const adminService = {
 
   async getUsers(filters?: AdminUserFilters): Promise<{ users: ManagedUser[]; meta: PaginationMeta }> {
     try {
+      // First try localStorage (client-side managed users)
+      if (typeof window !== 'undefined') {
+        const localUsersRaw = localStorage.getItem('sc_anime_managed_users')
+        if (localUsersRaw) {
+          let allUsers: ManagedUser[] = JSON.parse(localUsersRaw)
+          
+          // Apply filters
+          if (filters?.search) {
+            const search = filters.search.toLowerCase()
+            allUsers = allUsers.filter(u => 
+              u.name.toLowerCase().includes(search) || 
+              u.email.toLowerCase().includes(search)
+            )
+          }
+          if (filters?.status) {
+            allUsers = allUsers.filter(u => u.status === filters.status)
+          }
+          if (filters?.role) {
+            allUsers = allUsers.filter(u => u.roles.includes(filters.role!))
+          }
+          if (filters?.subscribed !== undefined) {
+            allUsers = allUsers.filter(u => u.subscribed === filters.subscribed)
+          }
+          
+          // Sort by created_at descending
+          allUsers.sort((a, b) => 
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          )
+          
+          // Pagination
+          const perPage = filters?.per_page || 20
+          const page = filters?.page || 1
+          const total = allUsers.length
+          const startIndex = (page - 1) * perPage
+          const endIndex = startIndex + perPage
+          const paginatedUsers = allUsers.slice(startIndex, endIndex)
+          
+          return {
+            users: paginatedUsers,
+            meta: {
+              current_page: page,
+              last_page: Math.ceil(total / perPage),
+              per_page: perPage,
+              total,
+            },
+          }
+        }
+      }
+      
+      // Fallback to API if localStorage is empty
       const response = await apiClient.get('/admin/users', { params: filters })
       const users = response.data.data || []
       const meta = response.data.meta || {
