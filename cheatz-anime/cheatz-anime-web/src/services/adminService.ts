@@ -43,141 +43,107 @@ export const adminService = {
   },
 
   async getUsers(filters?: AdminUserFilters): Promise<{ users: ManagedUser[]; meta: PaginationMeta }> {
-    try {
-      // Try backend API first
-      const response = await apiClient.get('/backend/admin/users', { params: filters })
-      const users = response.data.data || []
-      const meta = response.data.meta || {
+    // Use localStorage directly (Vercel serverless doesn't support file system persistence)
+    if (typeof window !== 'undefined') {
+      const localUsersRaw = localStorage.getItem('sc_anime_managed_users')
+      if (localUsersRaw) {
+        let allUsers: ManagedUser[] = JSON.parse(localUsersRaw)
+        
+        // Apply filters
+        if (filters?.search) {
+          const search = filters.search.toLowerCase()
+          allUsers = allUsers.filter(u => 
+            u.name.toLowerCase().includes(search) || 
+            u.email.toLowerCase().includes(search)
+          )
+        }
+        if (filters?.status) {
+          allUsers = allUsers.filter(u => u.status === filters.status)
+        }
+        if (filters?.role) {
+          allUsers = allUsers.filter(u => u.roles.includes(filters.role!))
+        }
+        if (filters?.subscribed !== undefined) {
+          allUsers = allUsers.filter(u => u.subscribed === filters.subscribed)
+        }
+        
+        // Sort by last_login_at descending (most recent first)
+        allUsers.sort((a, b) => {
+          const aTime = a.last_login_at || a.created_at
+          const bTime = b.last_login_at || b.created_at
+          return new Date(bTime).getTime() - new Date(aTime).getTime()
+        })
+        
+        // Pagination
+        const perPage = filters?.per_page || 20
+        const page = filters?.page || 1
+        const total = allUsers.length
+        const startIndex = (page - 1) * perPage
+        const endIndex = startIndex + perPage
+        const paginatedUsers = allUsers.slice(startIndex, endIndex)
+        
+        return {
+          users: paginatedUsers,
+          meta: {
+            current_page: page,
+            last_page: Math.ceil(total / perPage),
+            per_page: perPage,
+            total,
+          },
+        }
+      }
+    }
+    
+    return {
+      users: [],
+      meta: {
         current_page: 1,
         last_page: 1,
         per_page: filters?.per_page || 20,
-        total: Array.isArray(users) ? users.length : 0,
-      }
-      return {
-        users: Array.isArray(users) ? users.map(transformUser) : [],
-        meta,
-      }
-    } catch (error) {
-      console.error('Failed to fetch users from backend:', error)
-      
-      // Fallback to localStorage
-      if (typeof window !== 'undefined') {
-        const localUsersRaw = localStorage.getItem('sc_anime_managed_users')
-        if (localUsersRaw) {
-          let allUsers: ManagedUser[] = JSON.parse(localUsersRaw)
-          
-          // Apply filters
-          if (filters?.search) {
-            const search = filters.search.toLowerCase()
-            allUsers = allUsers.filter(u => 
-              u.name.toLowerCase().includes(search) || 
-              u.email.toLowerCase().includes(search)
-            )
-          }
-          if (filters?.status) {
-            allUsers = allUsers.filter(u => u.status === filters.status)
-          }
-          if (filters?.role) {
-            allUsers = allUsers.filter(u => u.roles.includes(filters.role!))
-          }
-          if (filters?.subscribed !== undefined) {
-            allUsers = allUsers.filter(u => u.subscribed === filters.subscribed)
-          }
-          
-          // Sort by created_at descending
-          allUsers.sort((a, b) => 
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-          )
-          
-          // Pagination
-          const perPage = filters?.per_page || 20
-          const page = filters?.page || 1
-          const total = allUsers.length
-          const startIndex = (page - 1) * perPage
-          const endIndex = startIndex + perPage
-          const paginatedUsers = allUsers.slice(startIndex, endIndex)
-          
-          return {
-            users: paginatedUsers,
-            meta: {
-              current_page: page,
-              last_page: Math.ceil(total / perPage),
-              per_page: perPage,
-              total,
-            },
-          }
-        }
-      }
-      
-      return {
-        users: [],
-        meta: {
-          current_page: 1,
-          last_page: 1,
-          per_page: filters?.per_page || 20,
-          total: 0,
-        },
-      }
+        total: 0,
+      },
     }
   },
 
   async getUser(userId: number): Promise<ManagedUser | null> {
-    try {
-      const response = await apiClient.get(`/admin/users/${userId}`)
-      const user = response.data.data || response.data
-      return transformUser(user)
-    } catch (error) {
-      console.error('Failed to fetch user:', error)
-      return null
+    if (typeof window !== 'undefined') {
+      const localUsersRaw = localStorage.getItem('sc_anime_managed_users')
+      if (localUsersRaw) {
+        const users: ManagedUser[] = JSON.parse(localUsersRaw)
+        return users.find(u => u.id === userId) || null
+      }
     }
+    return null
   },
 
   async updateUser(userId: number, data: AdminUserUpdate): Promise<ManagedUser | null> {
-    try {
-      const response = await apiClient.put(`/admin/users/${userId}`, data)
-      const user = response.data.data || response.data
-      const updated = transformUser(user)
-      this.syncCurrentSession(updated)
-      return updated
-    } catch (error) {
-      console.error('Failed to update user:', error)
-      return null
+    if (typeof window !== 'undefined') {
+      const localUsersRaw = localStorage.getItem('sc_anime_managed_users')
+      if (localUsersRaw) {
+        const users: ManagedUser[] = JSON.parse(localUsersRaw)
+        const index = users.findIndex(u => u.id === userId)
+        
+        if (index >= 0) {
+          users[index] = { ...users[index], ...data }
+          localStorage.setItem('sc_anime_managed_users', JSON.stringify(users))
+          this.syncCurrentSession(users[index])
+          return users[index]
+        }
+      }
     }
+    return null
   },
 
   async assignRoles(userId: number, roles: string[]): Promise<ManagedUser | null> {
-    try {
-      const response = await apiClient.post(`/admin/users/${userId}/roles`, { roles })
-      const user = response.data.data || response.data
-      const updated = transformUser(user)
-      this.syncCurrentSession(updated)
-      return updated
-    } catch (error) {
-      console.error('Failed to assign roles:', error)
-      return null
-    }
+    return await this.updateUser(userId, { roles })
   },
 
   async suspendUser(userId: number): Promise<ManagedUser | null> {
-    try {
-      const response = await apiClient.post(`/admin/users/${userId}/suspend`)
-      const user = response.data.data || response.data
-      return transformUser(user)
-    } catch (error) {
-      console.error('Failed to suspend user:', error)
-      return null
-    }
+    return await this.updateUser(userId, { status: 'suspended' })
   },
 
   async activateUser(userId: number): Promise<ManagedUser | null> {
-    try {
-      const response = await apiClient.post(`/admin/users/${userId}/activate`)
-      const user = response.data.data || response.data
-      return transformUser(user)
-    } catch (error) {
-      console.error('Failed to activate user:', error)
-      return null
-    }
+    return await this.updateUser(userId, { status: 'active' })
   },
 
   async setVip(userId: number, isVip: boolean, plan: string = '1 Month VIP'): Promise<ManagedUser | null> {
@@ -236,18 +202,21 @@ export const adminService = {
   },
 
   async deleteUser(userId: number): Promise<boolean> {
-    try {
+    if (typeof window !== 'undefined') {
       const user = await this.getUser(userId)
       if (user && this.isSuperAdmin(user.email)) {
         return false // cannot delete superadmin
       }
 
-      await apiClient.delete(`/admin/users/${userId}`)
-      return true
-    } catch (error) {
-      console.error('Failed to delete user:', error)
-      return false
+      const localUsersRaw = localStorage.getItem('sc_anime_managed_users')
+      if (localUsersRaw) {
+        const users: ManagedUser[] = JSON.parse(localUsersRaw)
+        const filtered = users.filter(u => u.id !== userId)
+        localStorage.setItem('sc_anime_managed_users', JSON.stringify(filtered))
+        return true
+      }
     }
+    return false
   },
 
   syncCurrentSession(updatedUser: ManagedUser) {
